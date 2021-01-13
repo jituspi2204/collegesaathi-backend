@@ -10,16 +10,16 @@ var usersRouter = require('./routes/users');
 var dotenv = require('dotenv');
 dotenv.config({path : './config.env'});
 var mongoose = require('mongoose');
-// mongoose.connect(process.env.DATABASE,{
-//   useCreateIndex: true,
-//   useUnifiedTopology: true,
-//   useNewUrlParser: true,
-//   useFindAndModify: false,
-// }).then(res => {
-//   console.log("Connected To Datebase");
-// }).catch(err => { 
-//   console.log("Database Error : " ,err);
-// })
+mongoose.connect(process.env.DATABASE,{
+  useCreateIndex: true,
+  useUnifiedTopology: true,
+  useNewUrlParser: true,
+  useFindAndModify: false,
+}).then(res => {
+  console.log("Connected To Datebase");
+}).catch(err => { 
+  console.log("Database Error : " ,err);
+})
 
 var app = express();
 
