@@ -48,19 +48,19 @@ const sellerSchema = Schema({
     reviews: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: Review
+            ref: 'Review'
         }
     ],
     products: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: Product
+            ref: 'Product'
         }
     ],
     messages: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: Message
+            ref: 'Message'
         }
     ]
 
