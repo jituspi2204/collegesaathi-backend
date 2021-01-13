@@ -1,5 +1,6 @@
 var mongoose = require('mongoose');
 var emailValidator = /[a-zA-Z0-9]*@[a-zA-Z]*\.(com|io)/;
+var phoneNumberValidator = /\+91(\d{10})$/;
 const Schema = mongoose.Schema;
 
 const sellerSchema = Schema({
@@ -22,7 +23,7 @@ const sellerSchema = Schema({
     },
     phoneNumber : {
         type : String,
-        required : [true , 'INVALID_PHONE_NUMBER'],
+        validate: [value => phoneNumberValidator.test(value), 'INVALID_PHONE_NUMBER' ],
         unique : true
     },
     title: {
