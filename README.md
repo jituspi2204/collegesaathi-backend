@@ -6,5 +6,5 @@
 
 1. Run `npm install` command in the terminal.
 2. Run `npm run start:dev` in the terminal.
-3. Hit `http://localhost:3000` 
+3. Hit `http://localhost:3000` in the Browser.
 
