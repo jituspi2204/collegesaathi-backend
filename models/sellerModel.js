@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 const sellerSchema = Schema({
     name : {
         type : String,
-        required = [true , 'INVALID_NAME']
+        require = [true , 'INVALID_NAME']
     },
     image:  {
         type : String,
@@ -14,7 +14,7 @@ const sellerSchema = Schema({
     },
     password : {
         type : String,
-        required : [true , 'INVALID_PASSWORD']
+        require : [true , 'INVALID_PASSWORD']
     },
     email : {
         type : String,
