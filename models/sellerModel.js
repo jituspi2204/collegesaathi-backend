@@ -46,22 +46,11 @@ const sellerSchema = Schema({
             landmark : {type : Number ,default : ''}
         }
     ],
-    reviews: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Review'
-        }
-    ],
+
     products: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Product'
-        }
-    ],
-    messages: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Message'
         }
     ]
 
