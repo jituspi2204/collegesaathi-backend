@@ -52,7 +52,21 @@ const sellerSchema = Schema({
             type: mongoose.Schema.Types.ObjectId,
             ref: 'Product'
         }
-    ]
+    ],
+    otp: {
+        type : String,
+        require : [true , 'INVALID_OTP']
+    },
+    location: {
+        type : {
+            type : String,
+            default : "Point",
+            enum : ["Point"]
+        },
+        coordinates : {
+            type : [Number]
+        }
+    }
 
 })
 
