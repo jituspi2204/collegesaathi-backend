@@ -5,21 +5,21 @@ const Schema = mongoose.Schema;
 const productSchema = Schema({
 	title: {
 		type: String,
-		require: true
+		required: true
 	},
 	catergory: {
 		type: String,
-		require: true
+		required: true
 	},
 	image: [
 		{
 			type: String,
-			require: true
+			required: true
 		}
 	],
 	description: {
 		type: mongoose.Types.EmbeddedDocument,
-		require: true
+		required: true
 	},
 	createdAt: {
 		type: mongoose.Schema.Types.Date,

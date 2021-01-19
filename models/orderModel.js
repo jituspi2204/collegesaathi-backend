@@ -5,17 +5,17 @@ const Schema = mongoose.Schema;
 const orderSchema = Schema({
 	quantity: {
 		type: Number, 
-		require: true
+		required: true
 	},
 	sellerId: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Seller',
-		require: true
+		required: true
 	},
 	productId: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Product',
-		require: true
+		required: true
 	},
 	createdAt: {
 		type: mongoose.Schema.Types.Date,

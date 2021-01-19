@@ -5,22 +5,22 @@ const Schema = mongoose.Schema;
 const userCartSchema = Schema({
 	quantity: {
 		type: Number, 
-		require: true
+		required: true
 	},
 	userId: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'User',
-		require: true
+		required: true
 	},
 	sellerId: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Seller',
-		require: true
+		required: true
 	},
 	sellerCartId: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'SellerCart',
-		require: true
+		required: true
 	},
 	createdAt: {
 		type: mongoose.Schema.Types.Date,

@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 const sellerSchema = Schema({
     name : {
         type : String,
-        require = [true , 'INVALID_NAME']
+        required = [true , 'INVALID_NAME']
     },
     image:  {
         type : String,
@@ -14,7 +14,7 @@ const sellerSchema = Schema({
     },
     password : {
         type : String,
-        require : [true , 'INVALID_PASSWORD']
+        required : [true , 'INVALID_PASSWORD']
     },
     email : {
         type : String,
@@ -28,13 +28,13 @@ const sellerSchema = Schema({
     },
     title: {
         type: String,
-        require: true,
+        required: true,
         enum: ['Artist', 'Interior Designer', 'Seller'],
         default: 'Artist'
     },
     description: {
         type: String, 
-        require: true
+        required: true
     },
     address : [
         {
@@ -55,7 +55,7 @@ const sellerSchema = Schema({
     ],
     otp: {
         type : String,
-        require : [true , 'INVALID_OTP']
+        required : [true , 'INVALID_OTP']
     },
     location: {
         type : {
