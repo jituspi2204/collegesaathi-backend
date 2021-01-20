@@ -1,21 +1,21 @@
 const hoc = require('../utils/hoc');
 const jwtUtils = require('../utils/jwtUtils');
 const firebaseAdmin = require('../utils/admin');
-const Users = require('../../models/userModel');
-
+const Sellers = require('../../models/sellerModel');
+// const Seller = require('../../models/sellerModel');
 
 exports.register = hoc(async (req ,res,next) => {
-    const {name , image , email,address,location,phoneNumber,uid} = {
+    const {name , image , email,address,location,shopName,phoneNumber,uid} = {
         ...req.body
     };
 
     try {
         let isVerified = await firebaseAdmin.checkUser(phoneNumber, uid);
         if(isVerified){
-            let user = await Users.create({
-                name,image,email,address,location,phoneNumber
+            let seller = await Sellers.create({
+                name,image,email,address,location,shopName,phoneNumber
             })
-            let token = await jwtUtils.createToken({phoneNumber, _id : user._id});
+            let token = await jwtUtils.createToken({phoneNumber, _id : seller._id});
             res.status(200).json({
                 message : 'SUCCESS',
                 token
@@ -37,10 +37,10 @@ exports.login = hoc(async (req,res,next) => {
     const {phoneNumber , uid} = {...req.body};
     try {
         let isVerified = await firebaseAdmin.checkUser(phoneNumber, uid);
-        console.log(isVerified);
+        console.log("--",isVerified);
         if(isVerified){
-            let user = await Users.findOne({phoneNumber});
-            if(user){
+            let seller = await Sellers.findOne({phoneNumber});
+            if(seller){
                 let token = await jwtUtils.createToken({phoneNumber , _id : user._id});
                 res.status(200).json({
                     message : 'SUCCESS',
@@ -63,11 +63,14 @@ exports.login = hoc(async (req,res,next) => {
     }
 });
 
-exports.verifyUser = hoc(async(req, res ,next) => {
+
+exports.verifySeller = hoc(async(req, res ,next) => {
     res.status(200).json({
         message : 'SUCCESS',
     })
 })
+
+
 
 
 

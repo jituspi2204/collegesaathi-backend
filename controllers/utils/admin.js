@@ -1,16 +1,19 @@
 const admin = require('firebase-admin');
 
 
-exports.checkUser = (phoneNubmer , uid) => {
-    admin.auth().getUserByPhoneNumber(phoneNubmer)
-    .then(details => {
+exports.checkUser = async (phoneNubmer , uid) => {
+    return true;
+    try {
+        let details = await admin.auth().getUserByPhoneNumber(phoneNubmer)
         if(details.uid === uid){
+            console.log("in");
             return true;
         }else{
             return false;
         }
-    }).catch(err => {
-        console.log(err);
+    } catch (error) {
+        console.log(error);
         return false;
-    })
+    }
+   
 }

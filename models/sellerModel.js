@@ -6,7 +6,7 @@ const Schema = mongoose.Schema;
 const sellerSchema = Schema({
     name : {
         type : String,
-        required = [true , 'INVALID_NAME']
+        required : [true , 'INVALID_NAME']
     },
     image:  {
         type : String,
@@ -14,7 +14,7 @@ const sellerSchema = Schema({
     },
     password : {
         type : String,
-        required : [true , 'INVALID_PASSWORD']
+        // required : [true , 'INVALID_PASSWORD']
     },
     email : {
         type : String,
@@ -26,27 +26,17 @@ const sellerSchema = Schema({
         validate: [value => phoneNumberValidator.test(value), 'INVALID_PHONE_NUMBER' ],
         unique : true
     },
-    title: {
-        type: String,
-        required: true,
-        enum: ['Artist', 'Interior Designer', 'Seller'],
-        default: 'Artist'
+    shopName : {
+        type : String,
+        required : [true ,'SHOP_NAME_IS_EMPTY']
     },
-    description: {
-        type: String, 
-        required: true
+    address : {
+        address : {type : String,default : ''},
+        city : {type : String, default : ''},
+        state : {type : String, default : ''},
+        pincode : {type : Number ,default : 110001},
+        landmark : {type : String ,default : ''}
     },
-    address : [
-        {
-            house : { type : String, default: ''},
-            locality : { type : String, default : ''},
-            city : {type : String, default : ''},
-            state : {type : String, default : ''},
-            pincode : {type : Number ,default : 110001},
-            landmark : {type : Number ,default : ''}
-        }
-    ],
-
     products: [
         {
             type: mongoose.Schema.Types.ObjectId,
@@ -55,7 +45,7 @@ const sellerSchema = Schema({
     ],
     otp: {
         type : String,
-        required : [true , 'INVALID_OTP']
+        // required : [true , 'INVALID_OTP']
     },
     location: {
         type : {
