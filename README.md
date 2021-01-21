@@ -1,4 +1,4 @@
-# Quasars Decor
+# Near Daily Backend
 
 ## To run the server, follow these Steps : 
 
