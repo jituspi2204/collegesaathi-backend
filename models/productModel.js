@@ -9,25 +9,27 @@ const productSchema = Schema({
 	},
 	catergory: {
 		type: String,
-		required: true
+		default : 'Grocery'
+		// required: true
+	},
+	mrp : {
+		type : Number,
+		default : 0.00
 	},
 	image: [
 		{
 			type: String,
-			required: true
+			default : 'product.jpg'
 		}
 	],
-	description: {
-		type: mongoose.Types.EmbeddedDocument,
-		required: true
-	},
+	description:{},
 	createdAt: {
 		type: mongoose.Schema.Types.Date,
-		default: new Date.now()
+		default: new Date(Date.now())
 	},
 	updatedAt: {
 		type: mongoose.Schema.Types.Date,
-		default: new Date.now()
+		default: new Date(Date.now())
 	}
 });
 

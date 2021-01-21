@@ -10,6 +10,6 @@ router.get('/', (req,res) => {
 })
 router.use('/users',users);
 router.use('/sellers',sellers);
-router.use('/product' ,products);
+router.use('/products' ,products);
 
 module.exports = router;

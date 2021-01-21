@@ -9,7 +9,7 @@ const Schema = mongoose.Schema;
 const userSchema = Schema({
     name : {
         type : String,
-        required = [true , 'INVALID_NAME']
+        required : [true , 'INVALID_NAME']
     },
     image:  {
         type : String,
@@ -24,20 +24,17 @@ const userSchema = Schema({
         unique : true,
     },
     phoneNumber : {
-        type : Number,
+        type : String,
         validate : [value => phoneNumberValidator.test(value) , 'INVALID_PHONE_NUMBER'],
         unique : true
     },
-    address : [
-        {
-            house : { type : String, default: ''},
-            locality : { type : String, default : ''},
-            city : {type : String, default : ''},
-            state : {type : String, default : ''},
-            pincode : {type : Number ,default : 110001},
-            landmark : {type : Number ,default : ''}
-        }
-    ],
+    address : [{
+        address : {type : String,default : ''},
+        city : {type : String, default : ''},
+        state : {type : String, default : ''},
+        pincode : {type : Number ,default : 110001},
+        landmark : {type : String ,default : ''}
+    }],
     cart : [
         {
             type : Schema.Types.ObjectId,
@@ -64,7 +61,7 @@ const userSchema = Schema({
     },
     otp : {
         type : String,
-        required : [true , 'INVALID_OTP']
+        // required : [true , 'INVALID_OTP']
     }
 })
 
