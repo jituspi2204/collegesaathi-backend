@@ -39,14 +39,14 @@ const userSchema = Schema({
         {
             type : Schema.Types.ObjectId,
             unique : true,
-            ref: 'Usercart'
+            ref: 'usercart'
         }
     ],
     orders : [
         {
             type : Schema.Types.ObjectId,
             unique : true,
-            ref: 'Order'
+            ref: 'order'
         }
     ],
     location : {

@@ -9,12 +9,12 @@ const sellerCartSchema = Schema({
 	},
 	sellerId: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Seller',
+		ref: 'seller',
 		required: true
 	},
 	productId: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Product',
+		ref: 'product',
 		required: true
 	},
 	price : {

@@ -40,7 +40,7 @@ const sellerSchema = Schema({
     products: [
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'Product'
+            ref: 'product'
         }
     ],
     otp: {

@@ -28,22 +28,22 @@ const orderSchema = Schema({
 	},
 	userId : {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'User',
+		ref: 'user',
 		required: true
 	},
 	sellerCartId : {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'SellerCart',
+		ref: 'sellercart',
 		required: true
 	},
 	sellerId: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Seller',
+		ref: 'seller',
 		required: true
 	},
 	productId: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'Product',
+		ref: 'product',
 		required: true
 	},
 	createdAt: {
