@@ -23,7 +23,9 @@ exports.sellerProducts = hoc(async (req,res,next) => {
     try {
         let {s} = {...req.query};
         let rgx = new RegExp(`.${s}.` , 'ig');
-        let list = await SellerCart.find({title : {$in: [ rgx]} }).populate('sellerId');
+        let prgx = new RegExp(`${s}.` , 'ig');
+        let porgx = new RegExp(`.${s}` , 'ig');
+        let list = await SellerCart.find({title : {$in: [ rgx,porgx,prgx]} }).populate({path : 'sellerId', select : ['shopName','address']});
         res.status(200).json({
             message : 'SUCCESS',
             list
