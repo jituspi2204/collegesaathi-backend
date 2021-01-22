@@ -28,13 +28,7 @@ const userSchema = Schema({
         validate : [value => phoneNumberValidator.test(value) , 'INVALID_PHONE_NUMBER'],
         unique : true
     },
-    address : [{
-        address : {type : String,default : ''},
-        city : {type : String, default : ''},
-        state : {type : String, default : ''},
-        pincode : {type : Number ,default : 110001},
-        landmark : {type : String ,default : ''}
-    }],
+    address : [],
     cart : [
         {
             type : Schema.Types.ObjectId,
