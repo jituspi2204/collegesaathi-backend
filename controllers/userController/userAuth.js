@@ -44,7 +44,8 @@ exports.login = hoc(async (req,res,next) => {
                 let token = await jwtUtils.createToken({phoneNumber , _id : user._id});
                 res.status(200).json({
                     message : 'SUCCESS',
-                    token
+                    token,
+                    user
                 })
             }else{
                 res.status(404).json({
