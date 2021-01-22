@@ -38,14 +38,12 @@ const userSchema = Schema({
     cart : [
         {
             type : Schema.Types.ObjectId,
-            unique : true,
             ref: 'usercart'
         }
     ],
     orders : [
         {
             type : Schema.Types.ObjectId,
-            unique : true,
             ref: 'order'
         }
     ],
