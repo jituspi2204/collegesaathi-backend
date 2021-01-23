@@ -39,7 +39,7 @@ exports.placeOrder = hoc(async (req, res,next) =>{
             quantity,
         });
         await User.findByIdAndUpdate(req.user._id, {
-            $addToSet : {order : order._id}
+            $addToSet : {userOrder : order._id}
         });
         res.status(200).json({
             message : "SUCCESS",
@@ -70,7 +70,7 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
                 quantity : userCart[i].quantity
             });
             await User.findByIdAndUpdate(req.user._id, {
-                $addToSet : {order : order._id},$pull : {cart : {$in : [userCart[i]['_id']]}}
+                $addToSet : {userOrder : order._id},$pull : {userCart : {$in : [userCart[i]['_id']]}}
             });
         }
         await UserCart.deleteMany({userId : req.user._id});

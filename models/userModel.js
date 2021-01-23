@@ -29,13 +29,13 @@ const userSchema = Schema({
         unique : true
     },
     address : [],
-    cart : [
+    userCart : [
         {
             type : Schema.Types.ObjectId,
             ref: 'usercart'
         }
     ],
-    orders : [
+    userOrders : [
         {
             type : Schema.Types.ObjectId,
             ref: 'order'

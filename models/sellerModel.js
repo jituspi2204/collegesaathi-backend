@@ -37,7 +37,7 @@ const sellerSchema = Schema({
         pincode : {type : Number ,default : 110001},
         landmark : {type : String ,default : ''}
     },
-    products: [
+    sellerProducts: [
         {
             type: mongoose.Schema.Types.ObjectId,
             ref: 'product'
