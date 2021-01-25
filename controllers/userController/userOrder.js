@@ -70,7 +70,7 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
                 quantity : userCart[i].quantity
             });
             await User.findByIdAndUpdate(req.user._id, {
-                $addToSet : {userOrder : order._id},$pull : {userCart : {$in : [userCart[i]['_id']]}}
+                $addToSet : {userOrder : order._id},$pull : {userCartItems : {$in : [userCart[i]['_id']]}}
             });
         }
         await UserCart.deleteMany({userId : req.user._id});

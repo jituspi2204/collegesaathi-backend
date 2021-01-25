@@ -29,7 +29,7 @@ const userSchema = Schema({
         unique : true
     },
     address : [],
-    userCart : [
+    userCartItems : [
         {
             type : Schema.Types.ObjectId,
             ref: 'usercart'

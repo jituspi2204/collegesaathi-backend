@@ -13,8 +13,9 @@ exports.register = hoc(async (req ,res,next) => {
         let isVerified = await firebaseAdmin.checkUser(phoneNumber, uid);
         if(isVerified){
             let user = await Users.create({
-                name,image,email,address,location,phoneNumber
+                name,image,email,address,location,phoneNumber,userCart : [],userOrders : []
             })
+            console.log(user);
             let token = await jwtUtils.createToken({phoneNumber, _id : user._id});
             res.status(200).json({
                 message : 'SUCCESS',

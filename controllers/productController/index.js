@@ -2,7 +2,6 @@ const Product = require('../../models/productModel');
 const SellerCart = require('../../models/sellerCartModel');
 const hoc = require('../utils/hoc');
 
-
 exports.getProduct = hoc(async (req,res,next) => {
     try {
         let {s} = {...req.query};
@@ -37,3 +36,5 @@ exports.sellerProducts = hoc(async (req,res,next) => {
         })
     }
 })
+
+
