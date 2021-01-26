@@ -39,7 +39,8 @@ exports.addToCart = hoc(async(req ,res,next) => {
 
 exports.getMyCart = hoc(async(req ,res,next) => {
     try {
-        let myCart = await UserCart.find({userId : req.user._id}).populate({path : 'sellerId', select : ['shopName','address']});
+        let myCart = await UserCart.find({userId : req.user._id}).populate({path : 'sellerId', select : ['shopName','address']})
+        .populate('productId');
         res.status(200).json({
             message : "SUCCESS",
             myCart
