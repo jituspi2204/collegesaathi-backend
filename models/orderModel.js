@@ -26,6 +26,11 @@ const orderSchema = Schema({
 	orderId: {
 		type : String,
 	},
+	method : {
+		type : String,
+		default : 'COD',
+		enum : ['COD', 'NetBanking', 'DebitCard','Paytm','CreditCard','Other']
+	},
 	userId : {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'user',

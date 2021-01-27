@@ -813,7 +813,7 @@ const data = [
 
 exports.addData = async (req , res) => {
     for(let i = 0;i < data.length;i++){
-        let pd = await Product.create({...data[i]});
+        let pd = await Products.create({...data[i]});
         console.log(i + " - " + pd._id);
     }
     res.send('Done');

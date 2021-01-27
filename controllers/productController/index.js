@@ -36,5 +36,3 @@ exports.sellerProducts = hoc(async (req,res,next) => {
         })
     }
 })
-
-
