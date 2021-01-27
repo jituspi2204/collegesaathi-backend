@@ -101,7 +101,9 @@ exports.getShops = hoc(async (req, res,next) =>{
                 $geoNear : {
                     near: [lng, lat],
                     distanceField : "distance",
-                    maxDistance : range
+                    maxDistance : (range / 6371),
+                    distanceMultiplier : 6371,
+                    spherical : true
                 }
             },
             {
