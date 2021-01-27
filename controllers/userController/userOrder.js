@@ -92,10 +92,22 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
 exports.getShops = hoc(async (req, res,next) =>{
     try {
         let {lat,lng,range} = {...req.query};
-        let shops = await Seller.find({
-            "location.coordinates": {
-              $geoWithin: { $centerSphere: [[lng,lat], (range / 6327.1)] },
-            }},{shopName : 1,address : 1,name : 1,image: 1});
+        lat = parseFloat(lat);
+        lng = parseFloat(lng);
+        range=parseFloat(range);
+        console.log(typeof lat);
+        let shops = await Seller.aggregate([
+            {
+                $geoNear : {
+                    near: [lng, lat],
+                    distanceField : "distance",
+                    maxDistance : range
+                }
+            },
+            {
+                $project : {name : 1,shopName: 1,address : 1,image: 1,distance : 1}
+            },
+        ]);
         res.status(200).json({
             message : "SUCCESS",
             shops
