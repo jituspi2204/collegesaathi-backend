@@ -48,7 +48,7 @@ const orderSchema = Schema({
 	},
 	productId: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'product',
+		ref: 'Product',
 		required: true
 	},
 	createdAt: {

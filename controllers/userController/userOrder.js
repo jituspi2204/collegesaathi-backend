@@ -11,7 +11,7 @@ const Orders = require('../../models/orderModel');
 
 exports.getOrders = hoc(async (req, res,next) =>{
     try {
-      let myOrders = await Orders.find({userId : req.user._id});
+      let myOrders = await Orders.find({userId : req.user._id}).populate({path : 'sellerId', select : ['shopName','address']}).populate({path : 'productId'});
       res.status(200).json({
         message : "SUCCESS",
         myOrders
