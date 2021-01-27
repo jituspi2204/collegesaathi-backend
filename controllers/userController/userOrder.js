@@ -3,6 +3,7 @@ const jwtUtils = require('../utils/jwtUtils');
 const firebaseAdmin = require('../utils/admin');
 const Users = require('../../models/userModel');
 const SellerCart = require('../../models/sellerCartModel');
+const Seller = require('../../models/sellerModel');
 const Products = require('../../models/productModel');
 const UserCart = require('../../models/userCartModel');
 const User = require('../../models/userModel');
@@ -78,6 +79,26 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
         await UserCart.deleteMany({userId : req.user._id});
         res.status(200).json({
             message : "SUCCESS",
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message : "SERVER_ERROR",
+        })
+    }
+})
+
+
+exports.getShops = hoc(async (req, res,next) =>{
+    try {
+        let {lat,lng,range} = {...req.query};
+        let shops = await Seller.find({
+            "location.coordinates": {
+              $geoWithin: { $centerSphere: [[lng,lat], (range / 6327.1)] },
+            }});
+        res.status(200).json({
+            message : "SUCCESS",
+            shops
         })
     } catch (error) {
         console.log(error);
