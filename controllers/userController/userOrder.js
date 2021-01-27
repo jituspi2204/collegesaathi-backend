@@ -95,10 +95,27 @@ exports.getShops = hoc(async (req, res,next) =>{
         let shops = await Seller.find({
             "location.coordinates": {
               $geoWithin: { $centerSphere: [[lng,lat], (range / 6327.1)] },
-            }});
+            }},{shopName : 1,address : 1,name : 1,image: 1});
         res.status(200).json({
             message : "SUCCESS",
             shops
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message : "SERVER_ERROR",
+        })
+    }
+})
+
+
+exports.getShopProducts = hoc(async (req, res,next) =>{
+    try {
+        let {shopId} = {...req.query};
+        let shopItems = await SellerCart.find({sellerId : shopId}).populate({path : 'sellerId', select : ['shopName','address']}).populate({path : 'productId'});
+        res.status(200).json({
+            message : "SUCCESS",
+            shopItems
         })
     } catch (error) {
         console.log(error);

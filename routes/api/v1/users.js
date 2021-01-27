@@ -17,6 +17,7 @@ router.get('/order',authController.verifyUserMiddleware,userController.userOrder
 router.post('/order',authController.verifyUserMiddleware,userController.userOrder.placeOrder);
 router.post('/order/by-cart',authController.verifyUserMiddleware,userController.userOrder.placeOrderByCart);
 router.get('/shops',authController.verifyUserMiddleware,userController.userOrder.getShops);
+router.get('/shop-items',authController.verifyUserMiddleware,userController.userOrder.getShopProducts);
 
 
 module.exports = router;
