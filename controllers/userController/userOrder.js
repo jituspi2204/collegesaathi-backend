@@ -55,6 +55,7 @@ exports.placeOrder = hoc(async (req, res,next) =>{
 
 exports.placeOrderByCart = hoc(async (req, res,next) =>{
     try {
+        let {method} = {...req.body};
         let userCart = await UserCart.find({userId : req.user._id});
         let orderId =  new Date(Date.now()).getMilliseconds();
         for (let i = 0;i< userCart.length ;i++){
@@ -67,7 +68,8 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
                 title : userCart[i].title,
                 price : userCart[i].price,
                 discount: userCart[i].discount,
-                quantity : userCart[i].quantity
+                quantity : userCart[i].quantity,
+                method
             });
             await User.findByIdAndUpdate(req.user._id, {
                 $addToSet : {userOrder : order._id},$pull : {userCartItems : {$in : [userCart[i]['_id']]}}
