@@ -36,18 +36,26 @@ exports.updateOrderStatus = hoc(async(req ,res) => {
 
 exports.updateOrder = hoc(async(req ,res) => {
     try {
-        let {address,orderId} = {...req.body};
-        await Order.updateOne({sellerId : req.seller._id, _id : orderId},{
-            $addToSet : {tracking : {
-                time : new Date(Date.now()).toTimeString(),
-                date : new Date(Date.now()).toDateString(),
-                address,
-                status : "Your order has been packed and send to courier person." 
-            }}
-        });
-        res.status(200).json({
-            message : "SUCCESS",
-        })
+        let {address,orderId,status} = {...req.body};
+        if(status === 'Shipped' || status === 'Packed'){
+            await Order.updateOne({sellerId : req.seller._id, _id : orderId},{
+                $addToSet : {tracking : {
+                    time : new Date(Date.now()).toLocaleTimeString(),
+                    date : new Date(Date.now()).toDateString(),
+                    address,
+                    status
+                }}
+            });
+            res.status(200).json({
+                message : "SUCCESS",
+            })
+
+        }else{
+            res.status(404).json({
+                message : "INVALID_STATUS",
+            })
+
+        }
     
     } catch (error) {
         console.log(error);

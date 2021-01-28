@@ -15,7 +15,7 @@ router.post('/delete-product',authMiddlerware.verifySellerMiddleware, seller.sel
 router.post('/update-location', authMiddlerware.verifySellerMiddleware,seller.sellerInfo.updateLocation);
 router.post('/update-details', authMiddlerware.verifySellerMiddleware,seller.sellerInfo.updateSellerDetails);
 router.post('/order/update', authMiddlerware.verifySellerMiddleware,seller.sellerOrder.updateOrderStatus);
-router.post('/order/packed', authMiddlerware.verifySellerMiddleware,seller.sellerOrder.updateOrder);
+router.post('/order/update-tracking', authMiddlerware.verifySellerMiddleware,seller.sellerOrder.updateOrder);
 router.get('/notifications', authMiddlerware.verifySellerMiddleware, seller.sellerInfo.getNotifications);
 router.delete('/notifications', authMiddlerware.verifySellerMiddleware, seller.sellerInfo.deleteNotifications);
 
