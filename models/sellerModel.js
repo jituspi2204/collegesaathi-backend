@@ -47,6 +47,16 @@ const sellerSchema = Schema({
         type : String,
         // required : [true , 'INVALID_OTP']
     },
+    shopRating:{
+        rating : {
+            type : Number,
+            default : 0,
+        },
+        count : {
+            type : Number,
+            default : 0
+        }
+    },
     location: {
         type : {
             type : String,

@@ -9,6 +9,8 @@ const User = require('../../models/userModel');
 // const { findOne } = require('../../models/productModel');
 const Orders = require('../../models/orderModel');
 const Notification = require('../../models/notificationsModel');
+const Review = require('../../models/reviewModel');
+
 
 exports.getOrders = hoc(async (req, res,next) =>{
     try {
@@ -59,6 +61,14 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
         let {method} = {...req.body};
         let userCart = await UserCart.find({userId : req.user._id});
         let orderId =  Date.now() + '';
+        let tracking = [
+            {
+                time : new Date(Date.now()).toLocaleTimeString(),
+                date : new Date(Date.now()).toDateString(),
+                address : '',
+                status : "Ordered"
+            }
+        ]
         for (let i = 0;i< userCart.length ;i++){
             let order = await Orders.create({
                 userId : req.user._id,
@@ -70,10 +80,11 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
                 price : userCart[i].price,
                 discount: userCart[i].discount,
                 quantity : userCart[i].quantity,
-                method
+                method,
+                tracking
             });
             await User.findByIdAndUpdate(req.user._id, {
-                $addToSet : {userOrder : order._id},$pull : {userCartItems : {$in : [userCart[i]['_id']]}}
+                $addToSet : {userOrders : order._id},$pull : {userCartItems : {$in : [userCart[i]['_id']]}}
             });
             await Notification.create({
                 senderName : req.user.name,
@@ -137,6 +148,49 @@ exports.getShopProducts = hoc(async (req, res,next) =>{
             message : "SUCCESS",
             shopItems
         })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message : "SERVER_ERROR",
+        })
+    }
+})
+
+
+exports.reviewProduct = hoc(async (req, res,next) =>{
+    try {
+        let {sellerId,sellerCartId,orderId,rating,message} = {...req.body};
+        rating = parseFloat(rating);
+        let order = await Orders.findById(orderId);
+        let oldReview = await Review.findOne({orderId});
+        if(order.status === 'Delivered' && !oldReview){
+            let review = await Review.create( {
+                userName : req.user.name,
+                image : req.user.image,
+                userId : req.user._id,
+                rating,
+                message,
+                sellerId,
+                sellerCartId,
+                orderId
+            });
+            await Orders.findByIdAndUpdate(orderId,{
+                $set : {reviewId : review._id}
+            })
+            await Seller.findByIdAndUpdate(sellerId , {
+                $inc : {'shopRating.count' : 1,'shopRating.rating' : rating}
+            })
+            await SellerCart.findByIdAndUpdate(sellerCartId,{
+                $inc : {'productRating.count' : 1,'productRating.rating' : rating}
+            })
+            res.status(200).json({
+                message : "SUCCESS",
+            })
+        }else{
+            res.status(401).json({
+                message : "INVALID_REVIEW",
+            })
+        }
     } catch (error) {
         console.log(error);
         res.status(500).json({

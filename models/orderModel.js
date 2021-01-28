@@ -34,9 +34,13 @@ const orderSchema = Schema({
 	status : {
 		type : String,
 		default : 'Pending',
-		enum : ['Pending', 'Accepted','Delivered','Cancelled']
+		enum : ['Pending','Delivered','Cancelled','Shipped','Packed','Out for Delivery']
 	},
 	tracking : [],
+	reviewId: {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'review',
+	},
 	userId : {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'user',

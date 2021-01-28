@@ -20,5 +20,6 @@ router.get('/shops',authController.verifyUserMiddleware,userController.userOrder
 router.get('/shop-items',authController.verifyUserMiddleware,userController.userOrder.getShopProducts);
 router.get('/notifications', authController.verifyUserMiddleware,userController.userInfo.getNotifications);
 router.delete('/notifications', authController.verifyUserMiddleware,userController.userInfo.deleteNotifications);
+router.post('/review', authController.verifyUserMiddleware,userController.userOrder.reviewProduct);
 
 module.exports = router;

@@ -28,6 +28,16 @@ const sellerCartSchema = Schema({
 	amount : {
 		type : Number,
 	},
+	productRating : {
+		rating : {
+            type : Number,
+            default : 0,
+        },
+        count : {
+            type : Number,
+            default : 0
+        }
+	},
 	title : {
 		type : String,
 		required : [true , "INVALID_TITLE"]
