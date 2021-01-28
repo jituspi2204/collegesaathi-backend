@@ -39,7 +39,7 @@ const orderSchema = Schema({
 	tracking : [],
 	reviewId: {
 		type: mongoose.Schema.Types.ObjectId,
-		ref: 'review',
+		ref: 'Review',
 	},
 	userId : {
 		type: mongoose.Schema.Types.ObjectId,
