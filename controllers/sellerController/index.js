@@ -1,5 +1,5 @@
 const sellerAuth = require('./sellerAuth');
 const sellerInfo = require('./sellerInfo');
 const sellerCart = require('./sellerCart');
-
-module.exports = {sellerAuth,sellerInfo,sellerCart};
+const sellerOrder = require('./sellerOrders');
+module.exports = {sellerAuth,sellerInfo,sellerCart,sellerOrder};

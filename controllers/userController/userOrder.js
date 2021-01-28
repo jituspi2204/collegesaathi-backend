@@ -1,7 +1,6 @@
 const hoc = require('../utils/hoc');
 const jwtUtils = require('../utils/jwtUtils');
 const firebaseAdmin = require('../utils/admin');
-const Users = require('../../models/userModel');
 const SellerCart = require('../../models/sellerCartModel');
 const Seller = require('../../models/sellerModel');
 const Products = require('../../models/productModel');
@@ -9,6 +8,7 @@ const UserCart = require('../../models/userCartModel');
 const User = require('../../models/userModel');
 // const { findOne } = require('../../models/productModel');
 const Orders = require('../../models/orderModel');
+const Notification = require('../../models/notificationsModel');
 
 exports.getOrders = hoc(async (req, res,next) =>{
     try {
@@ -58,7 +58,7 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
     try {
         let {method} = {...req.body};
         let userCart = await UserCart.find({userId : req.user._id});
-        let orderId =  new Date(Date.now()).getMilliseconds();
+        let orderId =  Date.now() + '';
         for (let i = 0;i< userCart.length ;i++){
             let order = await Orders.create({
                 userId : req.user._id,
@@ -74,6 +74,12 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
             });
             await User.findByIdAndUpdate(req.user._id, {
                 $addToSet : {userOrder : order._id},$pull : {userCartItems : {$in : [userCart[i]['_id']]}}
+            });
+            await Notification.create({
+                senderName : req.user.name,
+                recieverId : userCart[i].sellerId,
+                title : 'New Order',
+                message : `You have a new order with ID ${orderId} dated ${new Date(Date.now()).toDateString()} from ${req.user.name}. You can accept or decline the order.`
             });
         }
         await UserCart.deleteMany({userId : req.user._id});

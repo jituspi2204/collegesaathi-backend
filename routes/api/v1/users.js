@@ -18,6 +18,7 @@ router.post('/order',authController.verifyUserMiddleware,userController.userOrde
 router.post('/order/by-cart',authController.verifyUserMiddleware,userController.userOrder.placeOrderByCart);
 router.get('/shops',authController.verifyUserMiddleware,userController.userOrder.getShops);
 router.get('/shop-items',authController.verifyUserMiddleware,userController.userOrder.getShopProducts);
-
+router.get('/notifications', authController.verifyUserMiddleware,userController.userInfo.getNotifications);
+router.delete('/notifications', authController.verifyUserMiddleware,userController.userInfo.deleteNotifications);
 
 module.exports = router;

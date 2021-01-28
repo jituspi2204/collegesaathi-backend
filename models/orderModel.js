@@ -31,6 +31,12 @@ const orderSchema = Schema({
 		default : 'COD',
 		enum : ['COD', 'NetBanking', 'DebitCard','Paytm','CreditCard','Other']
 	},
+	status : {
+		type : String,
+		default : 'Pending',
+		enum : ['Pending', 'Accepted','Delivered','Cancelled']
+	},
+	tracking : [],
 	userId : {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'user',
