@@ -15,11 +15,12 @@ exports.register = hoc(async (req ,res,next) => {
             let user = await Users.create({
                 name,image,email,address,location,phoneNumber,userCart : [],userOrders : []
             })
-            console.log(user);
+            // console.log(user);
             let token = await jwtUtils.createToken({phoneNumber, _id : user._id});
             res.status(200).json({
                 message : 'SUCCESS',
-                token
+                token,
+                user
             })
         }else{
             res.status(401).json({

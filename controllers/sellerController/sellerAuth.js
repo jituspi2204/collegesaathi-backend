@@ -18,7 +18,8 @@ exports.register = hoc(async (req ,res,next) => {
             let token = await jwtUtils.createToken({phoneNumber, _id : seller._id});
             res.status(200).json({
                 message : 'SUCCESS',
-                token
+                token,
+                seller
             })
         }else{
             res.status(401).json({
@@ -41,10 +42,11 @@ exports.login = hoc(async (req,res,next) => {
         if(isVerified){
             let seller = await Sellers.findOne({phoneNumber});
             if(seller){
-                let token = await jwtUtils.createToken({phoneNumber , _id : user._id});
+                let token = await jwtUtils.createToken({phoneNumber , _id : seller._id});
                 res.status(200).json({
                     message : 'SUCCESS',
-                    token
+                    token,
+                    seller
                 })
             }else{
                 res.status(404).json({
@@ -57,6 +59,7 @@ exports.login = hoc(async (req,res,next) => {
             })
         }
     } catch (error) {
+        console.log(error);
         res.status(401).json({
             message : 'UNAUTHORIZED_USER'
         })
