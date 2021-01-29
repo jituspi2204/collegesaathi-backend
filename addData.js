@@ -820,6 +820,12 @@ exports.addData = async (req , res) => {
 
 }
 
+exports.temp = async(req,res) => {
+  await SellerCart.updateMany({},{
+    $set : {'extraDetails.barcode' : '893038343443'}
+  })
+  res.send('Done');
+}
 
 exports.addToCart = async (req , res) => {
     let products = await Products.find({});

@@ -20,7 +20,21 @@ exports.getAllProducts = hoc(async(req , res ,next) => {
         })
     }
 })
-
+exports.getAllProductsById = hoc(async(req , res ,next) => {
+    try {
+        let {id} = {...req.query};
+        let myProduct = await SellerCart.find({sellerId : req.seller._id,_id : id}).populate({path : 'productId'});
+        res.status(200).json({
+            message : "SUCCESS",
+            myProduct 
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message : "SERVER_ERROR"
+        })
+    }
+})
 
 exports.addProduct = hoc(async (req,res,next) => {
     try {

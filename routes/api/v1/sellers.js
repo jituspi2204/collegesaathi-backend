@@ -9,6 +9,7 @@ router.get('/verify-seller', authMiddlerware.verifySellerMiddleware,seller.selle
 router.post('/register', seller.sellerAuth.register);
 router.post('/login', seller.sellerAuth.login);
 router.get('/my-products', authMiddlerware.verifySellerMiddleware,seller.sellerCart.getAllProducts);
+router.get('/my-products-id', authMiddlerware.verifySellerMiddleware,seller.sellerCart.getAllProductsById);
 router.post('/add-product',authMiddlerware.verifySellerMiddleware,seller.sellerCart.addProduct);
 router.post('/update-product', authMiddlerware.verifySellerMiddleware,seller.sellerCart.updateProduct);
 router.post('/delete-product',authMiddlerware.verifySellerMiddleware, seller.sellerCart.deleteProduct);
