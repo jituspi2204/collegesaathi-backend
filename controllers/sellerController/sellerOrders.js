@@ -83,3 +83,21 @@ exports.getAllOrders = hoc(async(req ,res) => {
         })
     }
 })
+
+
+exports.getOrderById = hoc(async(req ,res) => {
+    try {
+        let {id} = {...req.query};
+        // if(status === 'Shipped' || status === 'Packed'){
+            let order = await Order.findOne({sellerId : req.seller._id,_id : id}).populate({path : 'productId'}).populate({path : 'reviewId'});
+            res.status(200).json({
+                message : "SUCCESS",
+                order
+            })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message : "SERVER_ERROR",
+        })
+    }
+})

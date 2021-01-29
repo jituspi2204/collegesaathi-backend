@@ -41,6 +41,7 @@ exports.addProduct = hoc(async (req,res,next) => {
         let {productId,quantity,price,discount,title,extraDetails} = {...req.body};
         let product = await Products.findById(productId);
         let oldCart = await SellerCart.findOne({sellerId : req.seller._id, productId});
+        console.log(oldCart,product);
         if(product && !oldCart){
             let newCart = await SellerCart.create({
                 sellerId : req.seller._id,
