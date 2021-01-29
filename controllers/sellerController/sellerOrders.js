@@ -65,3 +65,21 @@ exports.updateOrder = hoc(async(req ,res) => {
         })
     }
 })
+
+
+exports.getAllOrders = hoc(async(req ,res) => {
+    try {
+        let {address,orderId,status} = {...req.body};
+        // if(status === 'Shipped' || status === 'Packed'){
+            let orders = await Order.find({sellerId : req.seller._id}).populate({path : 'productId'}).populate({path : 'reviewId'});
+            res.status(200).json({
+                message : "SUCCESS",
+                orders
+            })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message : "SERVER_ERROR",
+        })
+    }
+})

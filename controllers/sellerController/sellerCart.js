@@ -8,7 +8,7 @@ const SellerCart = require('../../models/sellerCartModel');
 
 exports.getAllProducts = hoc(async(req , res ,next) => {
     try {
-        let myProducts = await SellerCart.find({sellerId : req.seller._id});
+        let myProducts = await SellerCart.find({sellerId : req.seller._id}).populate({path : 'productId'});
         res.status(200).json({
             message : "SUCCESS",
             myProducts 
