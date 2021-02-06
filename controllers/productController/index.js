@@ -33,6 +33,21 @@ exports.getProductById = hoc(async (req,res,next) => {
     }
 })
 
+exports.getProductByBarcode = hoc(async (req,res,next) => {
+    try {
+        let {barcode} = {...req.query};
+        let product = await Product.findOne({barcode});
+        res.status(200).json({
+            message : 'SUCCESS',
+            product
+        })
+    } catch (error) {
+        res.status(500).json({
+            message : "SERVER_ERROR"
+        })
+    }
+})
+
 exports.sellerProducts = hoc(async (req,res,next) => {
     try {
         let {s} = {...req.query};

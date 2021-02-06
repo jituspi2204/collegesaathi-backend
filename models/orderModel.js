@@ -36,6 +36,7 @@ const orderSchema = Schema({
 		default : 'Pending',
 		enum : ['Pending','Delivered','Cancelled','Shipped','Packed','Out for Delivery']
 	},
+	address : {},
 	tracking : [],
 	reviewId: {
 		type: mongoose.Schema.Types.ObjectId,
@@ -59,6 +60,11 @@ const orderSchema = Schema({
 	productId: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Product',
+		required: true
+	},
+	transporterId : {
+		type: mongoose.Schema.Types.ObjectId,
+		ref: 'transporter',
 		required: true
 	},
 	createdAt: {

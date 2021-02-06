@@ -1,0 +1,15 @@
+var express = require('express');
+var router = express.Router();
+const transporterController = require('../../../controllers/transporterController');
+const authController = require('../../../controllers/authController');
+/* GET users listing. */
+router.get('/',authController.verifyTransporterMiddleware,transporterController.transpoterInfo.info);
+router.get('/verify-user', authController.verifyTransporterMiddleware,transporterController.transpoterAuth.verifyUser);
+router.post('/login', transporterController.transpoterAuth.login);
+router.post('/register',transporterController.transpoterAuth.register);
+router.get('/orders', authController.verifyTransporterMiddleware,transporterController.transpoterOrders.getAllOrders);
+router.get('/orders/id/', authController.verifyTransporterMiddleware,transporterController.transpoterOrders.getOrderById);
+router.post('/orders/update', authController.verifyTransporterMiddleware,transporterController.transpoterOrders.updateOrder);
+
+
+module.exports = router;

@@ -3,6 +3,7 @@ const jwtUtils = require('../utils/jwtUtils');
 const firebaseAdmin = require('../utils/admin');
 const Sellers = require('../../models/sellerModel');
 const Users = require('../../models/userModel');
+const Transporter = require('../../models/transporterModel');
 
 
 exports.verifySellerMiddleware = hoc(async(req , res, next) => {
@@ -47,3 +48,23 @@ exports.verifyUserMiddleware = hoc(async(req , res, next) => {
     }
 })
 
+
+exports.verifyTransporterMiddleware = hoc(async(req , res, next) => {
+    let token = req.headers.authorization.split(' ')[1];
+    try {
+        let payload = await jwtUtils.verifyToken(token);
+        if(payload){
+            let user = await Transporter.findById(payload._id);
+            req.user = user;
+            next();
+        }else{
+            res.status(401).json({
+                message : 'UNAUTHORIZED_USER'
+            })
+        }
+    } catch (error) {
+        res.status(401).json({
+            message : 'UNAUTHORIZED_USER'
+        })
+    }
+})

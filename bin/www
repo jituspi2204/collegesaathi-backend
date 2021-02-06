@@ -4,6 +4,7 @@
  * Module dependencies.
  */
 
+var {arr} = require('../io')
 var app = require('../app');
 var debug = require('debug')('quasars-backend:server');
 var http = require('http');
@@ -20,7 +21,28 @@ app.set('port', port);
  */
 
 var server = http.createServer(app);
+var socketio = require('socket.io');
+var io = socketio(server);
 
+io.on('connection', (socket) => {
+  console.log("New User connected", socket.id);
+  socket.emit('join-room',"delivery");
+  socket.on('join',(room) => {
+    console.log("Room Joined",room);
+    socket.join(room);
+  })
+  socket.emit('getLocation' , "Provide your location");
+  socket.on('location' , (coords) =>{
+    try {
+      arr.push(coords);
+      console.log(coords);
+    } catch (error) {
+      console.log(error);
+    }
+  })
+})
+
+app.set('socketio', io);
 /**
  * Listen on provided port, on all network interfaces.
  */

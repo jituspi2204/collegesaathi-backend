@@ -10,6 +10,25 @@ const User = require('../../models/userModel');
 const Orders = require('../../models/orderModel');
 const Notification = require('../../models/notificationsModel');
 const Review = require('../../models/reviewModel');
+const Transporter = require('../../models/transporterModel');
+
+
+function deg2rad(deg) {
+    return deg * (Math.PI/180)
+  }
+function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
+    var R = 6371; // Radius of the earth in km
+    var dLat = deg2rad(lat2-lat1);  // deg2rad below
+    var dLon = deg2rad(lon2-lon1); 
+    var a = 
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(deg2rad(lat1)) * Math.cos(deg2rad(lat2)) * 
+      Math.sin(dLon/2) * Math.sin(dLon/2)
+      ; 
+    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
+    var d = R * c; // Distance in km
+    return d;
+  }
 
 
 exports.getOrders = hoc(async (req, res,next) =>{
@@ -58,9 +77,23 @@ exports.placeOrder = hoc(async (req, res,next) =>{
 
 exports.placeOrderByCart = hoc(async (req, res,next) =>{
     try {
-        let {method} = {...req.body};
+        let {method,address} = {...req.body};
         let userCart = await UserCart.find({userId : req.user._id});
         let orderId =  Date.now() + '';
+
+        let transporters = await Transporter.find({pincode : address.pincode});
+        let minOrders = Number.MAX_VALUE;
+        let transporter = -1;
+        for(let i = 0; i < transporters.length;i++){
+            let orders = await Orders.find({transporterId  : transporters[i]._id}).countDocuments();
+            if(orders < minOrders){
+                minOrders = orders;
+                transporter = i;
+            }
+        }
+        if(transporter === -1){
+            return res.status(404).json({status : "DELIVERY_NOT_AVAILABLE"});
+        }
         let tracking = [
             {
                 time : new Date(Date.now()).toLocaleTimeString(),
@@ -81,7 +114,9 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
                 discount: userCart[i].discount,
                 quantity : userCart[i].quantity,
                 method,
-                tracking
+                tracking,
+                address,
+                transporterId : transporters[transporter]._id
             });
             await User.findByIdAndUpdate(req.user._id, {
                 $addToSet : {userOrders : order._id},$pull : {userCartItems : {$in : [userCart[i]['_id']]}}
@@ -90,8 +125,11 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
                 senderName : req.user.name,
                 recieverId : userCart[i].sellerId,
                 title : 'New Order',
-                message : `You have a new order with ID ${orderId} dated ${new Date(Date.now()).toDateString()} from ${req.user.name}. You can accept or decline the order.`
+                message : `You have a new order with ID 
+                ${orderId} dated ${new Date(Date.now()).toDateString()} 
+                from ${req.user.name}. You can accept or decline the order.`
             });
+
         }
         await UserCart.deleteMany({userId : req.user._id});
         res.status(200).json({
