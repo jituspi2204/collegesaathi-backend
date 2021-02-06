@@ -38,7 +38,7 @@ exports.getOrderById = hoc(async(req ,res) => {
 exports.updateOrder = hoc(async(req ,res) => {
     try {
         let {address,orderId,status} = {...req.body};
-        if(status === 'Delivered'){
+        if(status === 'Shipped'){
             await Order.updateOne({transporterId : req.user._id, _id : orderId,status : 'Packed'},{
                 $addToSet : {tracking : {
                     time : new Date(Date.now()).toLocaleTimeString(),
