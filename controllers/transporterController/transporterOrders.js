@@ -23,7 +23,7 @@ exports.getAllOrders = hoc(async (req, res,next) => {
 exports.getOrderById = hoc(async(req ,res) => {
     try {
         let {id} = {...req.query};
-            let order = await Order.findOne({sellerId : req.seller._id,_id : id}).populate({path : 'productId'}).populate({path : 'reviewId'});
+            let order = await Order.findOne({transporterId : req.user._id,_id : id}).populate({path : 'productId'}).populate({path : 'reviewId'});
             res.status(200).json({
                 message : "SUCCESS",
                 order
