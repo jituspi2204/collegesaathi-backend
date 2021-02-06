@@ -77,10 +77,7 @@ exports.placeOrder = hoc(async (req, res,next) =>{
 
 exports.placeOrderByCart = hoc(async (req, res,next) =>{
     try {
-        let {method,address} = {...req.body};
-        let userCart = await UserCart.find({userId : req.user._id});
-        let orderId =  Date.now() + '';
-
+        let {method,address,name} = {...req.body};
         let transporters = await Transporter.find({pincode : address.pincode});
         let minOrders = Number.MAX_VALUE;
         let transporter = -1;
@@ -94,6 +91,9 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
         if(transporter === -1){
             return res.status(404).json({status : "DELIVERY_NOT_AVAILABLE"});
         }
+        let userCart = await UserCart.find({userId : req.user._id}).populate({path : 'sellerId',select : ['phoneNumber','shopName','address']});
+        let orderId =  Date.now() + '';
+
         let tracking = [
             {
                 time : new Date(Date.now()).toLocaleTimeString(),
@@ -113,9 +113,14 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
                 price : userCart[i].price,
                 discount: userCart[i].discount,
                 quantity : userCart[i].quantity,
+                sellerPhoneNumber: userCart[i].sellerId.phoneNumber,
+                shopName: userCart[i].sellerId.shopName,
+                sellerAddress : userCart[i].sellerId.address,
+                recieverPhoneNumber : req.user.phoneNumber,
                 method,
                 tracking,
                 address,
+                recieverName : name,
                 transporterId : transporters[transporter]._id
             });
             await User.findByIdAndUpdate(req.user._id, {

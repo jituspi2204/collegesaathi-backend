@@ -7,7 +7,8 @@ const Order = require('../../models/orderModel');
 exports.getAllOrders = hoc(async (req, res,next) => {
 
     try {
-        let orders = await Order.find({transporterId : req.user._id});
+        let orders = await Order.find({transporterId : req.user._id})
+        .populate({path : 'productId',select : ['image']});
         res.status(200).json({
             message : 'SUCCESS',
             orders

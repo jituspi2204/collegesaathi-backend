@@ -26,6 +26,11 @@ const orderSchema = Schema({
 	orderId: {
 		type : String,
 	},
+	shopName : {
+		type : String,
+		required : true
+
+	},
 	method : {
 		type : String,
 		default : 'COD',
@@ -36,8 +41,21 @@ const orderSchema = Schema({
 		default : 'Pending',
 		enum : ['Pending','Delivered','Cancelled','Shipped','Packed','Out for Delivery']
 	},
+	sellerAddress : {},
 	address : {},
+	recieverName : {
+		type : String,
+		required : true,
+	},
 	tracking : [],
+	sellerPhoneNumber : {
+		type : String,
+		required : true,
+	},
+	recieverPhoneNumber : {
+		type : String,
+		required : true,
+	},
 	reviewId: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Review',
