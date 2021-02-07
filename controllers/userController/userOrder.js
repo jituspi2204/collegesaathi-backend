@@ -150,6 +150,8 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
         await UserCart.deleteMany({userId : req.user._id});
         res.status(200).json({
             message : "SUCCESS",
+            pin : token,
+            orderId : orderId
         })
     } catch (error) {
         console.log(error);
