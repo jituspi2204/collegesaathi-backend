@@ -11,6 +11,7 @@ const Orders = require('../../models/orderModel');
 const Notification = require('../../models/notificationsModel');
 const Review = require('../../models/reviewModel');
 const Transporter = require('../../models/transporterModel');
+const crypto = require('crypto');
 
 
 function deg2rad(deg) {
@@ -91,9 +92,10 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
         if(transporter === -1){
             return res.status(404).json({status : "DELIVERY_NOT_AVAILABLE"});
         }
-        let userCart = await UserCart.find({userId : req.user._id}).populate({path : 'sellerId',select : ['phoneNumber','shopName','address']});
+        let userCart = await UserCart.find({userId : req.user._id})
+        .populate({path : 'sellerId',select : ['phoneNumber','shopName','address']});
         let orderId =  Date.now() + '';
-
+        const token = await crypto.randomBytes(6).toString('hex');
         let tracking = [
             {
                 time : new Date(Date.now()).toLocaleTimeString(),
@@ -124,7 +126,8 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
                 transporterId : transporters[transporter]._id
             });
             await User.findByIdAndUpdate(req.user._id, {
-                $addToSet : {userOrders : order._id},$pull : {userCartItems : {$in : [userCart[i]['_id']]}}
+                $addToSet : {userOrders : order._id,tokens : token,ordersList : orderId},
+                $pull : {userCartItems : {$in : [userCart[i]['_id']]}}
             });
             await Notification.create({
                 senderName : req.user.name,
@@ -133,6 +136,14 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
                 message : `You have a new order with ID 
                 ${orderId} dated ${new Date(Date.now()).toDateString()} 
                 from ${req.user.name}. You can accept or decline the order.`
+            });
+            await Notification.create({
+                senderName : req.user.name,
+                recieverId : transporters[transporter]._id,
+                title : 'New Order',
+                message : `You have a new order with ID 
+                ${orderId} dated ${new Date(Date.now()).toDateString()} 
+                from ${req.user.name}.`
             });
 
         }

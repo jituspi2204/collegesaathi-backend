@@ -21,7 +21,6 @@ exports.updateOrderStatus = hoc(async(req ,res) => {
                 message : `${req.seller.shopName} has ${status[i].status.toLowerCase()} your order dated ${new Date(Date.now()).toDateString()}.`
             });
         }
-
         res.status(200).json({
             message : "SUCCESS",
         })
@@ -54,9 +53,7 @@ exports.updateOrder = hoc(async(req ,res) => {
             res.status(404).json({
                 message : "INVALID_STATUS",
             })
-
         }
-    
     } catch (error) {
         console.log(error);
         res.status(500).json({
@@ -70,7 +67,10 @@ exports.getAllOrders = hoc(async(req ,res) => {
     try {
         let {address,orderId,status} = {...req.body};
         // if(status === 'Shipped' || status === 'Packed'){
-            let orders = await Order.find({sellerId : req.seller._id}).populate({path : 'productId'}).populate({path : 'reviewId'});
+            let orders = await Order.find({sellerId : req.seller._id})
+            .populate({path : 'productId'})
+            .populate({path : 'reviewId'})
+            .sort({createdAt : 1});
             res.status(200).json({
                 message : "SUCCESS",
                 orders
@@ -88,7 +88,9 @@ exports.getOrderById = hoc(async(req ,res) => {
     try {
         let {id} = {...req.query};
         // if(status === 'Shipped' || status === 'Packed'){
-            let order = await Order.findOne({sellerId : req.seller._id,_id : id}).populate({path : 'productId'}).populate({path : 'reviewId'});
+            let order = await Order.findOne({sellerId : req.seller._id,_id : id})
+            .populate({path : 'productId'})
+            .populate({path : 'reviewId'});
             res.status(200).json({
                 message : "SUCCESS",
                 order

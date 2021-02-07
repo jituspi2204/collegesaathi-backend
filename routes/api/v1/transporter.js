@@ -10,6 +10,8 @@ router.post('/register',transporterController.transpoterAuth.register);
 router.get('/orders', authController.verifyTransporterMiddleware,transporterController.transpoterOrders.getAllOrders);
 router.get('/orders/id/', authController.verifyTransporterMiddleware,transporterController.transpoterOrders.getOrderById);
 router.post('/orders/update', authController.verifyTransporterMiddleware,transporterController.transpoterOrders.updateOrder);
+router.get('/notifications', authController.verifyTransporterMiddleware,transporterController.transpoterInfo.getNotifications);
+router.delete('/notifications', authController.verifyTransporterMiddleware,transporterController.transpoterInfo.deleteNotifications);
 
 
 module.exports = router;
