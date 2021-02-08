@@ -2,6 +2,7 @@ const hoc = require('../utils/hoc');
 const jwtUtils = require('../utils/jwtUtils');
 const firebaseAdmin = require('../utils/admin');
 const Transporter = require('../../models/transporterModel');
+const Notification = require('../../models/notificationsModel');
 
 exports.info = hoc(async (req, res,next) => {
     res.status(200).json({
@@ -18,6 +19,7 @@ exports.getNotifications = hoc(async (req, res ,next) => {
             notifications
         })
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             message : "SERVER_ERROR"
         })
