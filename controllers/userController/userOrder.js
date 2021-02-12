@@ -5,18 +5,24 @@ const SellerCart = require('../../models/sellerCartModel');
 const Seller = require('../../models/sellerModel');
 const Products = require('../../models/productModel');
 const UserCart = require('../../models/userCartModel');
+const fs = require('fs');
 const User = require('../../models/userModel');
 // const { findOne } = require('../../models/productModel');
 const Orders = require('../../models/orderModel');
 const Notification = require('../../models/notificationsModel');
 const Review = require('../../models/reviewModel');
 const Transporter = require('../../models/transporterModel');
+const createBill  = require('../../utils/createBill');
+var path = require('path');  
 const crypto = require('crypto');
 
 
 function deg2rad(deg) {
     return deg * (Math.PI/180)
-  }
+}
+
+
+
 function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
     var R = 6371; // Radius of the earth in km
     var dLat = deg2rad(lat2-lat1);  // deg2rad below
@@ -29,8 +35,49 @@ function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
     var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)); 
     var d = R * c; // Distance in km
     return d;
-  }
+}
 
+
+function gnData(orders){
+
+    let orderSet = new Set();
+    let shops = {};
+    orders.forEach((item,idx) => {
+        if(!orderSet.has(item.sellerId)){
+            orderSet.add(item.sellerId)
+            shops[item.sellerId] = {
+                shopName : item.shopName,
+                shop_id : item.sellerId._id,
+                shop_phoneNumber : item.sellerPhoneNumber,
+                address  : item.sellerAddress,
+                products : []
+            }
+        }
+        shops[item.sellerId]['products'].push({
+            "amount": item.amount,
+            "_id": item._id,
+            "orderId": item.orderId,
+            "title": item.title,
+            "price": item.price,
+            "discount": item.discount,
+            "quantity": item.quantity,
+        })
+    })
+     
+    shops = Object.values(shops).map((item) => {
+        return item;
+    })
+    let user = orders[0];
+    return {
+        u_address  : user.address,
+        u_name : user.recieverName,
+        u_phoneNumber : user.recieverPhoneNumber,
+        u_id : user.userId,
+        orderId : user.orderId,
+        "method": user.method,
+        shops : shops
+    }
+}
 
 exports.getOrders = hoc(async (req, res,next) =>{
     try {
@@ -78,6 +125,7 @@ exports.placeOrder = hoc(async (req, res,next) =>{
 
 exports.placeOrderByCart = hoc(async (req, res,next) =>{
     try {
+        let billData = [];
         let {method,address,name} = {...req.body};
         let transporters = await Transporter.find({pincode : address.pincode});
         let minOrders = Number.MAX_VALUE;
@@ -146,8 +194,11 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
                 from ${req.user.name}.`
             });
 
+            billData.push(order);
+
         }
         await UserCart.deleteMany({userId : req.user._id});
+        await new createBill(gnData(billData)).generateBill();
         res.status(200).json({
             message : "SUCCESS",
             pin : token,
@@ -245,6 +296,26 @@ exports.reviewProduct = hoc(async (req, res,next) =>{
         }else{
             res.status(401).json({
                 message : "INVALID_REVIEW",
+            })
+        }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message : "SERVER_ERROR",
+        })
+    }
+})
+
+exports.getInvoice = hoc(async(req ,res) => {
+    try {
+        let {id} = {...req.query};
+        let order = await Orders.findOne({orderId : id,userId : req.user._id});
+        if(order){
+            res.download(`public/bills/${id}.pdf`, function (err) {
+         });
+        }else{
+            res.status(404).json({
+                message : "FILE_NOT_FOUND",
             })
         }
     } catch (error) {

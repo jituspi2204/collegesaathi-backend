@@ -50,13 +50,20 @@ exports.getProductByBarcode = hoc(async (req,res,next) => {
 
 exports.sellerProducts = hoc(async (req,res,next) => {
     try {
-        let {s} = {...req.query};
-        let rgx = new RegExp(`.${s}.` , 'ig');
-        let prgx = new RegExp(`${s}.` , 'ig');
-        let porgx = new RegExp(`.${s}` , 'ig');
-        let list = await SellerCart.find({title : {$in: [ rgx,porgx,prgx]} })
-        .populate({path : 'sellerId', select : ['shopName','address']})
-        .populate({path : 'productId'});
+        let {s,sellerId} = {...req.query};
+        let list = [];
+        if(s){
+            let rgx = new RegExp(`.${s}.` , 'ig');
+            let prgx = new RegExp(`${s}.` , 'ig');
+            let porgx = new RegExp(`.${s}` , 'ig');
+            list = await SellerCart.find({title : {$in: [ rgx,porgx,prgx]} })
+            .populate({path : 'sellerId', select : ['shopName','address']})
+            .populate({path : 'productId'});
+        }else if(sellerId){
+            list = await SellerCart.find({sellerId: sellerId})
+            .populate({path : 'sellerId', select : ['shopName','address']})
+            .populate({path : 'productId'});
+        }
         res.status(200).json({
             message : 'SUCCESS',
             list
@@ -68,3 +75,22 @@ exports.sellerProducts = hoc(async (req,res,next) => {
         })
     }
 })
+
+exports.sellerCart = hoc(async (req,res,next) => {
+    try {
+        let {sellerCartId} = {...req.query};
+        let sellerCart = await SellerCart.findById(sellerCartId)
+        .populate({path : 'sellerId', select : ['shopName','address']})
+        .populate({path : 'productId'});
+        res.status(200).json({
+            message : 'SUCCESS',
+            sellerCart
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message : "SERVER_ERROR"
+        })
+    }
+})
+

@@ -68,30 +68,4 @@ app.use(function(err, req, res, next) {
   res.send('Error');
 });
 
-// app.listen(3000,() => {
-  //   console.log("Server");
-  //   new bills({
-    //     uadderss  : {address : "Aditya Apartment ambherahia village sector 19 dwarka",city : "Delhi" ,state : "Delhi", pincode : "110075"},
-    //     address  : {address : "Aditya Apartment ambherahia village sector 19 dwarka",city : "Delhi" ,state : "Delhi", pincode : "110075"},
-    //     b_name : "Ram mohan sharma",
-    //     shopName : "Sharma Kirana Store",
-    //     products : [
-//       {
-//         "amount": 218,
-//         "method": "COD",
-//         "createdAt": "2021-01-28T19:10:38.624Z",
-//         "updatedAt": "2021-01-28T19:10:38.624Z",
-//         "_id": "60130dee7de0054af422a32e",
-//         "orderId": "1611861486446",
-//         "sellerId": "600ec314e383050015f71cee",
-//         "title": "Aashirvaad Atta - Whole Wheat, 10 kg Pouch ",
-//         "price": 110,
-//         "discount": 1,
-//         "quantity": 2,
-//     },
-//     ]
-
-//   }).generateBill()
-// })
-
 module.exports = app;

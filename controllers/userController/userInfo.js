@@ -12,6 +12,22 @@ exports.info = hoc(async (req, res,next) => {
     })
 })
 
+exports.addAddress = hoc(async (req, res ,next) => {
+    try {
+        let {address} = {...req.body};
+        await Users.findByIdAndUpdate(req.user._id, {
+           $addToSet : {address : address}
+        });
+        res.status(200).json({
+            message : "SUCCESS"
+        })
+    } catch (error) {
+        res.status(500).json({
+            message : "SERVER_ERROR"
+        })
+    }
+})
+
 
 exports.updateLocation = hoc(async (req, res ,next) => {
     try {

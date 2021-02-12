@@ -9,6 +9,7 @@ router.get('/search-id', productController.getProductById);
 router.get('/search-barcode', productController.getProductByBarcode);
 router.get('/add-to-cart', addProduct.temp);
 router.get('/seller-products',productController.sellerProducts);
+router.get('/seller-cart',productController.sellerCart);
 
 
 module.exports = router;

@@ -8,6 +8,7 @@ router.get('/verify-user', authController.verifyUserMiddleware,userController.us
 router.post('/login', userController.userAuth.login);
 router.post('/register',userController.userAuth.register);
 router.post('/update-location',authController.verifyUserMiddleware,userController.userInfo.updateLocation);
+router.post('/add-address',authController.verifyUserMiddleware,userController.userInfo.addAddress);
 router.post('/update-details' ,authController.verifyUserMiddleware,userController.userInfo.updateUserDetails);
 router.get('/cart',authController.verifyUserMiddleware,userController.userCart.getMyCart);
 router.post('/cart/add',authController.verifyUserMiddleware,userController.userCart.addToCart);
@@ -21,5 +22,6 @@ router.get('/shop-items',authController.verifyUserMiddleware,userController.user
 router.get('/notifications', authController.verifyUserMiddleware,userController.userInfo.getNotifications);
 router.delete('/notifications', authController.verifyUserMiddleware,userController.userInfo.deleteNotifications);
 router.post('/review', authController.verifyUserMiddleware,userController.userOrder.reviewProduct);
+router.get('/order/download', authController.verifyUserMiddleware,userController.userOrder.getInvoice);
 
 module.exports = router;
