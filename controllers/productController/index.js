@@ -52,7 +52,15 @@ exports.sellerProducts = hoc(async (req,res,next) => {
     try {
         let {s,sellerId} = {...req.query};
         let list = [];
-        if(s){
+        if(s && sellerId){
+            let rgx = new RegExp(`.${s}.` , 'ig');
+            let prgx = new RegExp(`${s}.` , 'ig');
+            let porgx = new RegExp(`.${s}` , 'ig');
+            list = await SellerCart.find({title : {$in: [ rgx,porgx,prgx]} ,sellerId : sellerId})
+            .populate({path : 'sellerId', select : ['shopName','address']})
+            .populate({path : 'productId'});
+        }
+        else if(s){
             let rgx = new RegExp(`.${s}.` , 'ig');
             let prgx = new RegExp(`${s}.` , 'ig');
             let porgx = new RegExp(`.${s}` , 'ig');
