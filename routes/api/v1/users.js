@@ -23,6 +23,7 @@ router.get('/notifications', authController.verifyUserMiddleware,userController.
 router.delete('/notifications', authController.verifyUserMiddleware,userController.userInfo.deleteNotifications);
 router.post('/review', authController.verifyUserMiddleware,userController.userOrder.reviewProduct);
 router.get('/order/download', authController.verifyUserMiddleware,userController.userOrder.getInvoice);
+router.get('/subscribed-shops', authController.verifyUserMiddleware,userController.userInfo.getSubscribedShopsDetails);
 router.get('/subscribe-shop', authController.verifyUserMiddleware,userController.userInfo.subscribeShop);
 router.get('/unsubscribe-shop', authController.verifyUserMiddleware,userController.userInfo.unsubscribeShop);
 

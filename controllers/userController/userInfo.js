@@ -4,6 +4,7 @@ const firebaseAdmin = require('../utils/admin');
 const Users = require('../../models/userModel');
 const Notification = require('../../models/notificationsModel');
 const User = require('../../models/userModel');
+const Seller = require('../../models/sellerModel');
 
 
 exports.info = hoc(async (req, res,next) => {
@@ -92,6 +93,20 @@ exports.deleteNotifications = hoc(async (req, res ,next) => {
         })
     }
 })
+exports.getSubscribedShopsDetails = hoc(async (req, res ,next) => {
+    try {
+        let ss = req.user.subscribedShops;
+        let shops = await Seller.find({_id : {$in : ss}},{shopName : 1,address : 1,phoneNumber : 1,image : 1})
+        res.status(200).json({
+            message : "SUCCESS",
+            shops
+        })
+    } catch (error) {
+        res.status(500).json({
+            message : "SERVER_ERROR"
+        })
+    }
+})
 
 exports.subscribeShop = hoc(async (req, res ,next) => {
     const {sellerId} = {...req.query};
@@ -124,3 +139,4 @@ exports.unsubscribeShop = hoc(async (req, res ,next) => {
         })
     }
 })
+
