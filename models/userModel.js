@@ -35,6 +35,7 @@ const userSchema = Schema({
             ref: 'usercart'
         }
     ],
+    subscribedShops : [],
     userOrders : [
         {
             type : Schema.Types.ObjectId,

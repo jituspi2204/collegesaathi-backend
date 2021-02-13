@@ -3,6 +3,7 @@ const jwtUtils = require('../utils/jwtUtils');
 const firebaseAdmin = require('../utils/admin');
 const Users = require('../../models/userModel');
 const Notification = require('../../models/notificationsModel');
+const User = require('../../models/userModel');
 
 
 exports.info = hoc(async (req, res,next) => {
@@ -84,6 +85,38 @@ exports.deleteNotifications = hoc(async (req, res ,next) => {
         res.status(200).json({
             message : "SUCCESS",
             notifications
+        })
+    } catch (error) {
+        res.status(500).json({
+            message : "SERVER_ERROR"
+        })
+    }
+})
+
+exports.subscribeShop = hoc(async (req, res ,next) => {
+    const {sellerId} = {...req.query};
+    try {
+        await User.findByIdAndUpdate(req.user._id, {
+            $addToSet : {subscribedShops : sellerId}
+        });
+        res.status(200).json({
+            message : "SUCCESS",
+        })
+    } catch (error) {
+        res.status(500).json({
+            message : "SERVER_ERROR"
+        })
+    }
+})
+
+exports.unsubscribeShop = hoc(async (req, res ,next) => {
+    const {sellerId} = {...req.query};
+    try {
+        await User.findByIdAndUpdate(req.user._id, {
+            $pull : {subscribedShops : sellerId}
+        });
+        res.status(200).json({
+            message : "SUCCESS",
         })
     } catch (error) {
         res.status(500).json({
