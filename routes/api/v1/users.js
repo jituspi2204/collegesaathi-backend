@@ -6,6 +6,7 @@ const authController = require('../../../controllers/authController');
 router.get('/',authController.verifyUserMiddleware,userController.userInfo.info);
 router.get('/verify-user', authController.verifyUserMiddleware,userController.userAuth.verifyUser);
 router.post('/login', userController.userAuth.login);
+router.get('/banners',userController.userInfo.banners);
 router.post('/register',userController.userAuth.register);
 router.post('/update-location',authController.verifyUserMiddleware,userController.userInfo.updateLocation);
 router.post('/add-address',authController.verifyUserMiddleware,userController.userInfo.addAddress);

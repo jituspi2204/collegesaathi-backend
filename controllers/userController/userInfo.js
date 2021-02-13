@@ -14,6 +14,13 @@ exports.info = hoc(async (req, res,next) => {
     })
 })
 
+exports.banners = hoc(async (req, res,next) => {
+    res.status(200).json({
+        message : 'SUCCESS',
+        banners : ['bn-0.jpg','bn-1.jpg','bn-2.jpg']
+    })
+})
+
 exports.addAddress = hoc(async (req, res ,next) => {
     try {
         let {address} = {...req.body};
@@ -118,6 +125,7 @@ exports.subscribeShop = hoc(async (req, res ,next) => {
             message : "SUCCESS",
         })
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             message : "SERVER_ERROR"
         })
