@@ -50,13 +50,20 @@ exports.getProductByBarcode = hoc(async (req,res,next) => {
 
 exports.sellerProducts = hoc(async (req,res,next) => {
     try {
-        let {s,sellerId} = {...req.query};
+        let {s,sellerId,category} = {...req.query};
         let list = [];
         if(s && sellerId){
             let rgx = new RegExp(`.${s}.` , 'ig');
             let prgx = new RegExp(`${s}.` , 'ig');
             let porgx = new RegExp(`.${s}` , 'ig');
             list = await SellerCart.find({title : {$in: [ rgx,porgx,prgx]} ,sellerId : sellerId})
+            .populate({path : 'sellerId', select : ['shopName','address']})
+            .populate({path : 'productId'});
+        }else if(category & sellerId){
+            let rgx = new RegExp(`.${category}.` , 'ig');
+            let prgx = new RegExp(`${category}.` , 'ig');
+            let porgx = new RegExp(`.${category}` , 'ig');
+            list = await SellerCart.find({category : {$in: [ rgx,porgx,prgx]} ,sellerId : sellerId})
             .populate({path : 'sellerId', select : ['shopName','address']})
             .populate({path : 'productId'});
         }

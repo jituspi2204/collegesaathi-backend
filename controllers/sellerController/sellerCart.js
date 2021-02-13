@@ -51,6 +51,8 @@ exports.addProduct = hoc(async (req,res,next) => {
                 discount,
                 title,
                 extraDetails,
+                category : product.catergory,
+                image : product.image
             });
             res.status(200).json({
                 message : 'SUCCESS'

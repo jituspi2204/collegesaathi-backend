@@ -28,6 +28,28 @@ const sellerCartSchema = Schema({
 	amount : {
 		type : Number,
 	},
+	category : {
+		type: String,
+		default : 'Other',
+		enum : [
+			"Fruits & Vegetables",
+			"Foodgrains , Oil & Masla",
+			"Bakery, Cakes & Dairy",
+			"Beverages" ,
+			"Snacks",
+			"Beauty & Hygiene",
+			"Household",
+			"Kitchen & Garden",
+			"Non-veg Food",
+			"Gourment & World Food",
+			"Baby care",
+			"Clothing",
+			"Electronics",
+			"Stationery",
+			'Other'
+		]
+	},
+	image : [],
 	productRating : {
 		rating : {
             type : Number,
