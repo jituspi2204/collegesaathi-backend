@@ -170,7 +170,7 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
                 method,
                 tracking,
                 address : req.user.address[0],
-                recieverName : name,
+                recieverName : req.user.name,
                 transporterId : transporters[transporter]._id
             });
             await User.findByIdAndUpdate(req.user._id, {
