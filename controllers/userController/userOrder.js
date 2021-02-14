@@ -127,7 +127,7 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
     try {
         let billData = [];
         let {method,address,name} = {...req.body};
-        let transporters = await Transporter.find({pincode : address.pincode});
+        let transporters = await Transporter.find({pincode : req.user.address[0].pincode});
         let minOrders = Number.MAX_VALUE;
         let transporter = -1;
         for(let i = 0; i < transporters.length;i++){
@@ -169,7 +169,7 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
                 recieverPhoneNumber : req.user.phoneNumber,
                 method,
                 tracking,
-                address,
+                address : req.user.address[0],
                 recieverName : name,
                 transporterId : transporters[transporter]._id
             });
@@ -195,7 +195,6 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
             });
 
             billData.push(order);
-
         }
         await UserCart.deleteMany({userId : req.user._id});
         await new createBill(gnData(billData)).generateBill();
