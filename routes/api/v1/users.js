@@ -27,6 +27,8 @@ router.get('/order/download', authController.verifyUserMiddleware,userController
 router.get('/subscribed-shops', authController.verifyUserMiddleware,userController.userInfo.getSubscribedShopsDetails);
 router.get('/subscribe-shop', authController.verifyUserMiddleware,userController.userInfo.subscribeShop);
 router.get('/unsubscribe-shop', authController.verifyUserMiddleware,userController.userInfo.unsubscribeShop);
+router.get('/search-history', authController.verifyUserMiddleware,userController.userInfo.addHistory);
+router.delete('/search-history', authController.verifyUserMiddleware,userController.userInfo.deleteHistory);
 
 
 module.exports = router;

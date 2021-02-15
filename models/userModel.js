@@ -42,6 +42,8 @@ const userSchema = Schema({
             ref: 'order'
         }
     ],
+    searchHistory : [],
+    productHistory : [],
     ordersList : [],
     tokens : [],
     location : {

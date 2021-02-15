@@ -13,6 +13,7 @@ const Notification = require('../../models/notificationsModel');
 const Review = require('../../models/reviewModel');
 const Transporter = require('../../models/transporterModel');
 const createBill  = require('../../utils/createBill');
+const email = require('../../utils/email');
 var path = require('path');  
 const crypto = require('crypto');
 
@@ -198,6 +199,10 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
         }
         await UserCart.deleteMany({userId : req.user._id});
         await new createBill(gnData(billData)).generateBill();
+        await new email({
+            name : req.user.name,
+            email : req.user.email
+        },`https://quiet-scrubland-22380.herokuapp.com/bills/${orderId}.pdf`).orderedEmail();
         res.status(200).json({
             message : "SUCCESS",
             pin : token,

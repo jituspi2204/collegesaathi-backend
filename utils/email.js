@@ -51,5 +51,13 @@ module.exports = class Mail {
         "Temporary login password !!"
       );
     }
+    async orderedEmail() {
+      await this.send(
+        "welcome",
+        "Your Order Invoice",
+        "",
+        {link : this.url}
+      );
+    }
   };
   

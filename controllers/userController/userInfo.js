@@ -147,4 +147,35 @@ exports.unsubscribeShop = hoc(async (req, res ,next) => {
         })
     }
 })
+exports.addHistory = hoc(async (req, res ,next) => {
+    const {s} = {...req.query};
+    try {
+        await User.findByIdAndUpdate(req.user._id, {
+            $addToSet : {searchHistory : s}
+        });
+        res.status(200).json({
+            message : "SUCCESS",
+        })
+    } catch (error) {
+        res.status(500).json({
+            message : "SERVER_ERROR"
+        })
+    }
+})
+
+exports.deleteHistory = hoc(async (req, res ,next) => {
+    const {s} = {...req.query};
+    try {
+        await User.findByIdAndUpdate(req.user._id, {
+            $pull : {searchHistory : s}
+        });
+        res.status(200).json({
+            message : "SUCCESS",
+        })
+    } catch (error) {
+        res.status(500).json({
+            message : "SERVER_ERROR"
+        })
+    }
+})
 
