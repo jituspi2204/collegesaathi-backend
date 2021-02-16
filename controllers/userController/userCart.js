@@ -23,7 +23,7 @@ exports.addToCart = hoc(async(req ,res,next) => {
             quantity,
         });
         await User.findByIdAndUpdate(req.user._id, {
-            $addToSet : {userCart : userCart._id}
+            $addToSet : {userCartItems : userCart._id}
         });
         res.status(200).json({
             message : "SUCCESS",
