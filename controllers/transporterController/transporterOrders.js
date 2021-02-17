@@ -24,7 +24,7 @@ exports.getAllOrders = hoc(async (req, res,next) => {
 exports.getOrderById = hoc(async(req ,res) => {
     try {
         let {id} = {...req.query};
-        let order = await Order.findOne({transporterId : req.user._id,_id : id})
+        let order = await Order.findOne({transporterId : req.user._id,orderId : id})
         .populate({path : 'productId'})
         .populate({path : 'reviewId'});
         res.status(200).json({
@@ -60,7 +60,7 @@ exports.updateOrder = hoc(async(req ,res) => {
             let user = await User.findById(order.userId).select('ordersList tokens');
             let index = user.ordersList.indexOf(id);
             if(pin === user.tokens[index]){
-                await Order.updateOne({transporterId : req.user._id, _id : orderId,status : 'Shipped'},{
+                let order = await Order.updateOne({transporterId : req.user._id, _id : orderId,status : 'Shipped'},{
                     $addToSet : {tracking : {
                         time : new Date(Date.now()).toLocaleTimeString(),
                         date : new Date(Date.now()).toDateString(),
@@ -71,6 +71,7 @@ exports.updateOrder = hoc(async(req ,res) => {
                 });
                 res.status(200).json({
                     message : "SUCCESS",
+                    order
                 })
             }else{
                 res.status(404).json({
