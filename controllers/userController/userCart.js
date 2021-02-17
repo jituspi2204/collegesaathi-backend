@@ -39,7 +39,8 @@ exports.addToCart = hoc(async(req ,res,next) => {
 
 exports.getMyCart = hoc(async(req ,res,next) => {
     try {
-        let myCart = await UserCart.find({userId : req.user._id}).populate({path : 'sellerId', select : ['shopName','address']})
+        let myCart = await UserCart.find({userId : req.user._id})
+        .populate({path : 'sellerId', select : ['shopName','address']})
         .populate('productId');
         res.status(200).json({
             message : "SUCCESS",
@@ -79,7 +80,7 @@ exports.deleteMyCart = hoc(async(req ,res,next) => {
         let {userCartId} = {...req.body};
         await UserCart.findOneAndDelete({_id : userCartId , userId : req.user._id});
         await User.findByIdAndUpdate(req.user._id, {
-            $pull : {userCart : {$in : [userCartId]}}
+            $pull : {userCartItems : {$in : [userCartId]}}
         });
         res.status(200).json({
             message : "SUCCESS",

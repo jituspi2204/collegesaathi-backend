@@ -46,6 +46,8 @@ const userSchema = Schema({
     productHistory : [],
     ordersList : [],
     tokens : [],
+    offers :[],
+    notifications : [],
     location : {
         type : {
             type : String,
