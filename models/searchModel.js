@@ -11,10 +11,7 @@ const searchSchema = Schema({
         type : String,
         required : true
     },
-    image : {
-        type : String,
-        default : 'product.png'
-    },
+    image : [],
     category : {
         type : String,
         required : true

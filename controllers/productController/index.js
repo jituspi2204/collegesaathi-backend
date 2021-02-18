@@ -56,6 +56,7 @@ exports.getSellerProductById = hoc(async (req,res,next) => {
             product
         })
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             message : "SERVER_ERROR"
         })
