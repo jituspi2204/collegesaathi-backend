@@ -82,7 +82,9 @@ function gnData(orders){
 
 exports.getOrders = hoc(async (req, res,next) =>{
     try {
-      let myOrders = await Orders.find({userId : req.user._id}).populate({path : 'sellerId', select : ['shopName','address']}).populate({path : 'productId'}).populate({path : 'reviewId'});
+      let myOrders = await Orders.find({userId : req.user._id})
+      .populate({path : 'sellerId', select : ['shopName','address']})
+      .populate({path : 'productId'}).populate({path : 'reviewId'});
       res.status(200).json({
         message : "SUCCESS",
         myOrders
@@ -97,23 +99,84 @@ exports.getOrders = hoc(async (req, res,next) =>{
 
 exports.placeOrder = hoc(async (req, res,next) =>{
     try {
-        let {sellerCartId,productId, sellerId,quantity} = {...req.body};
-        let sellerCart = await SellerCart.findById(sellerCartId);
+        let billData = [];
+        let {method,sellerCartId,productId,sellerId,quantity} = {...req.body};
+        let transporters = await Transporter.find({pincode : req.user.address[0].pincode});
+        let minOrders = Number.MAX_VALUE;
+        let transporter = -1;
+        for(let i = 0; i < transporters.length;i++){
+            let orders = await Orders.find({transporterId  : transporters[i]._id})
+            .countDocuments();
+            if(orders < minOrders){
+                minOrders = orders;
+                transporter = i;
+            }
+        }
+        if(transporter === -1){
+            return res.status(404).json({status : "DELIVERY_NOT_AVAILABLE"});
+        }
+       
+        let orderId =  Date.now() + '';
+        const token = await crypto.randomBytes(6).toString('hex');
+        let tracking = [
+            {
+                time : new Date(Date.now()).toLocaleTimeString(),
+                date : new Date(Date.now()).toDateString(),
+                address : '',
+                status : "Ordered"
+            }
+        ]
+        let sellerCart = await SellerCart.findById(sellerCartId)
+        .populate({path : 'sellerId', select : ['shopName','address','phoneNumber']})
+        .populate({path : 'productId'});
         let order = await Orders.create({
             userId : req.user._id,
-            sellerId,
-            productId,
-            sellerCartId,
+            orderId : orderId,
+            sellerId : sellerId,
+            productId : productId,
+            sellerCartId : sellerCartId,
             title : sellerCart.title,
             price : sellerCart.price,
             discount: sellerCart.discount,
-            quantity,
+            quantity : quantity,
+            sellerPhoneNumber: sellerCart.sellerId.phoneNumber,
+            shopName: sellerCart.sellerId.shopName,
+            sellerAddress : sellerCart.sellerId.address,
+            recieverPhoneNumber : req.user.phoneNumber,
+            method,
+            tracking,
+            address : req.user.address[0],
+            recieverName : req.user.name,
+            transporterId : transporters[transporter]._id
         });
         await User.findByIdAndUpdate(req.user._id, {
-            $addToSet : {userOrder : order._id}
+            $addToSet : {userOrders : order._id,tokens : token,ordersList : orderId},
         });
+
+        await Notification.create({
+            senderName : req.user.name,
+            recieverId : sellerId,
+            title : 'New Order',
+            message : `You have a new order with ID ${orderId} dated ${new Date(Date.now()).toDateString()} from ${req.user.name}. You can accept or decline the order.`
+        });
+        await Notification.create({
+            senderName : req.user.name,
+            recieverId : transporters[transporter]._id,
+            title : 'New Order',
+            message : `You have a new order with ID ${orderId} dated ${new Date(Date.now()).toDateString()} from ${req.user.name}.`
+        });
+
+        billData.push(order);
+        await new createBill(gnData(billData)).generateBill();
+        await new email({
+            name : req.user.name,
+            email : req.user.email
+        },`https://quiet-scrubland-22380.herokuapp.com/bills/${orderId}.pdf`)
+        .orderedEmail();
         res.status(200).json({
             message : "SUCCESS",
+            pin : token,
+            orderId : orderId
         })
     } catch (error) {
         console.log(error);
@@ -132,7 +195,8 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
         let minOrders = Number.MAX_VALUE;
         let transporter = -1;
         for(let i = 0; i < transporters.length;i++){
-            let orders = await Orders.find({transporterId  : transporters[i]._id}).countDocuments();
+            let orders = await Orders.find({transporterId  : transporters[i]._id})
+            .countDocuments();
             if(orders < minOrders){
                 minOrders = orders;
                 transporter = i;
@@ -202,7 +266,8 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
         await new email({
             name : req.user.name,
             email : req.user.email
-        },`https://quiet-scrubland-22380.herokuapp.com/bills/${orderId}.pdf`).orderedEmail();
+        },`https://quiet-scrubland-22380.herokuapp.com/bills/${orderId}.pdf`)
+        .orderedEmail();
         res.status(200).json({
             message : "SUCCESS",
             pin : token,
@@ -235,7 +300,15 @@ exports.getShops = hoc(async (req, res,next) =>{
                 }
             },
             {
-                $project : {name : 1,shopName: 1,address : 1,image: 1,distance : 1,shopRating : 1,phoneNumber : 1}
+                $project : {
+                    name : 1,
+                    shopName: 1,
+                    address : 1,
+                    image: 1,
+                    distance : 1,
+                    shopRating : 1,
+                    phoneNumber : 1
+                }
             },
         ]);
         res.status(200).json({
@@ -254,7 +327,9 @@ exports.getShops = hoc(async (req, res,next) =>{
 exports.getShopProducts = hoc(async (req, res,next) =>{
     try {
         let {shopId} = {...req.query};
-        let shopItems = await SellerCart.find({sellerId : shopId}).populate({path : 'sellerId', select : ['shopName','address']}).populate({path : 'productId'});
+        let shopItems = await SellerCart.find({sellerId : shopId})
+        .populate({path : 'sellerId', select : ['shopName','address']})
+        .populate({path : 'productId'});
         res.status(200).json({
             message : "SUCCESS",
             shopItems
