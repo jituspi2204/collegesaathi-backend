@@ -349,7 +349,14 @@ exports.reviewProduct = hoc(async (req, res,next) =>{
         rating = parseFloat(rating);
         let order = await Orders.findById(orderId);
         let oldReview = await Review.findOne({orderId});
-        if(order.status === 'Delivered' && !oldReview){
+        if(oldReview){
+            await Review.findByIdAndUpdate(oldReview._id,{
+                $set : {rating ,message}
+            })
+            res.status(200).json({
+                message : "SUCCESS",
+            })
+        }else if(order.status === 'Delivered'){
             let review = await Review.create( {
                 userName : req.user.name,
                 image : req.user.image,

@@ -201,7 +201,8 @@ exports.likeReview = hoc(async (req, res,next) => {
     try {
         let id = req.query.id;
         await Review.findByIdAndUpdate(id , {
-            $addToSet : {liked : req.user._id}
+            $addToSet : {liked : req.user._id},
+            $pull : {disliked : req.user._id}
         })
         res.status(200).json({
             message : 'SUCCESS',
@@ -218,7 +219,9 @@ exports.dislikeReview = hoc(async (req, res,next) => {
     try {
         let id = req.query.id;
         await Review.findByIdAndUpdate(id , {
-            $addToSet : {disliked : req.user._id}
+            $addToSet : {disliked : req.user._id},
+            $pull : {liked : req.user._id}
+
         })
         res.status(200).json({
             message : 'SUCCESS',
