@@ -14,7 +14,8 @@ exports.addToCart = hoc(async(req ,res,next) => {
         let userCart = await UserCart.findOne({userId : req.user._id,sellerCartId});
         if(userCart){
             await UserCart.findByIdAndUpdate(userCart._id, {
-                quantity
+                quantity,
+                amount : quantity * (userCart.price - userCart.discount)
             });
         }else{
             let sellerCart = await SellerCart.findById(sellerCartId);

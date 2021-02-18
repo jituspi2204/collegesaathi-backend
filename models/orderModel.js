@@ -100,7 +100,6 @@ orderSchema.pre('save' , function(next){
 	next();
 });
 orderSchema.pre('updateOne' , function(next){
-	this.amount = (this.price - this.discount) * this.quantity;
 	this.updatedAt = new Date(Date.now());
 	next();
 });
