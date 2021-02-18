@@ -1,5 +1,6 @@
 const Product = require('../../models/productModel');
 const Review = require('../../models/reviewModel');
+const Search = require('../../models/searchModel');
 const SellerCart = require('../../models/sellerCartModel');
 const hoc = require('../utils/hoc');
 
@@ -36,8 +37,20 @@ exports.getProductById = hoc(async (req,res,next) => {
 
 exports.getSellerProductById = hoc(async (req,res,next) => {
     try {
-        let {id} = {...req.query};
-        let product = await SellerCart.findById(id);
+        let {id,sellerCartId} = {...req.query};
+        let product = await SellerCart.findById(sellerCartId)
+        .populate({path : 'sellerId', select : ['shopName','address']})
+        .populate({path : 'productId'});
+        await Search.create({
+            title : product.title,
+            price : product.price,
+            sellerCartId : product._id,
+            sellerId : product.sellerId,
+            productId: product.productId._id,
+            image : product.productId.image,
+            userId : id,
+            category : product.category
+        })
         res.status(200).json({
             message : 'SUCCESS',
             product

@@ -9,6 +9,7 @@ const Review = require('../../models/reviewModel');
 
 
 exports.info = hoc(async (req, res,next) => {
+
     res.status(200).json({
         message : 'SUCCESS',
         user : req.user
