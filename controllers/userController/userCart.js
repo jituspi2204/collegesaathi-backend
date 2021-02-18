@@ -11,20 +11,27 @@ const User = require('../../models/userModel');
 exports.addToCart = hoc(async(req ,res,next) => {
     try {
         let {sellerCartId,productId, sellerId,quantity} = {...req.body};
-        let sellerCart = await SellerCart.findById(sellerCartId);
-        let userCart = await UserCart.create({
-            userId : req.user._id,
-            sellerId,
-            productId,
-            sellerCartId,
-            title : sellerCart.title,
-            price : sellerCart.price,
-            discount: sellerCart.discount,
-            quantity,
-        });
-        await User.findByIdAndUpdate(req.user._id, {
-            $addToSet : {userCartItems : userCart._id}
-        });
+        let userCart = await UserCart.findOne({userId : req.user._id,sellerCartId});
+        if(userCart){
+            await UserCart.findByIdAndUpdate(userCart._id, {
+                quantity
+            });
+        }else{
+            let sellerCart = await SellerCart.findById(sellerCartId);
+            userCart = await UserCart.create({
+                userId : req.user._id,
+                sellerId,
+                productId,
+                sellerCartId,
+                title : sellerCart.title,
+                price : sellerCart.price,
+                discount: sellerCart.discount,
+                quantity,
+            });
+            await User.findByIdAndUpdate(req.user._id, {
+                $addToSet : {userCartItems : userCart._id}
+            });
+        }
         res.status(200).json({
             message : "SUCCESS",
         })
