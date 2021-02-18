@@ -1,4 +1,5 @@
 const Product = require('../../models/productModel');
+const Review = require('../../models/reviewModel');
 const SellerCart = require('../../models/sellerCartModel');
 const hoc = require('../utils/hoc');
 
@@ -116,6 +117,22 @@ exports.sellerCart = hoc(async (req,res,next) => {
         res.status(200).json({
             message : 'SUCCESS',
             sellerCart
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message : "SERVER_ERROR"
+        })
+    }
+})
+
+exports.getReviews = hoc(async (req,res,next) => {
+    try {
+        let {id} = {...req.query};
+        let reviews = await Review.find({sellerCartId : id});
+        res.status(200).json({
+            message : 'SUCCESS',
+            reviews
         })
     } catch (error) {
         console.log(error);

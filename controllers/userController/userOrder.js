@@ -235,7 +235,7 @@ exports.getShops = hoc(async (req, res,next) =>{
                 }
             },
             {
-                $project : {name : 1,shopName: 1,address : 1,image: 1,distance : 1}
+                $project : {name : 1,shopName: 1,address : 1,image: 1,distance : 1,shopRating : 1,phoneNumber : 1}
             },
         ]);
         res.status(200).json({
