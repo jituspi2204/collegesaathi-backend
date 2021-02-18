@@ -22,6 +22,7 @@ router.get('/shops',authController.verifyUserMiddleware,userController.userOrder
 router.get('/shop-items',authController.verifyUserMiddleware,userController.userOrder.getShopProducts);
 router.get('/notifications', authController.verifyUserMiddleware,userController.userInfo.getNotifications);
 router.delete('/notifications', authController.verifyUserMiddleware,userController.userInfo.deleteNotifications);
+router.get('/reviews', authController.verifyUserMiddleware,userController.userOrder.reviewProduct);
 router.post('/review', authController.verifyUserMiddleware,userController.userOrder.reviewProduct);
 router.get('/order/download', authController.verifyUserMiddleware,userController.userOrder.getInvoice);
 router.get('/subscribed-shops', authController.verifyUserMiddleware,userController.userInfo.getSubscribedShopsDetails);
@@ -29,6 +30,8 @@ router.get('/subscribe-shop', authController.verifyUserMiddleware,userController
 router.get('/unsubscribe-shop', authController.verifyUserMiddleware,userController.userInfo.unsubscribeShop);
 router.get('/search-history', authController.verifyUserMiddleware,userController.userInfo.addHistory);
 router.delete('/search-history', authController.verifyUserMiddleware,userController.userInfo.deleteHistory);
+router.get('/review/like', authController.verifyUserMiddleware,userController.userInfo.likeReview);
+router.get('/review/dislike', authController.verifyUserMiddleware,userController.userInfo.dislikeReview);
 
 
 module.exports = router;

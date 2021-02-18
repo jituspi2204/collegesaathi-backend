@@ -35,6 +35,8 @@ const reviewSchema = Schema({
         type : Schema.Types.ObjectId,
         required : true,
     },
+    liked : [],
+    disliked : [],
 	createdAt: {
 		type: mongoose.Schema.Types.Date,
 		default: new Date(Date.now())

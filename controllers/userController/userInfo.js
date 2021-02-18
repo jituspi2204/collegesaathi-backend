@@ -5,6 +5,7 @@ const Users = require('../../models/userModel');
 const Notification = require('../../models/notificationsModel');
 const User = require('../../models/userModel');
 const Seller = require('../../models/sellerModel');
+const Review = require('../../models/reviewModel');
 
 
 exports.info = hoc(async (req, res,next) => {
@@ -20,6 +21,22 @@ exports.banners = hoc(async (req, res,next) => {
         banners : ['bn-0.jpg','bn-1.jpg','bn-2.jpg']
     })
 })
+
+exports.getReviews = hoc(async (req, res,next) => {
+    try {
+        let reviews = await Review.find({userId : req.user._id})
+        res.status(200).json({
+            message : 'SUCCESS',
+            reviews
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message : "SERVER_ERROR"
+        })
+    }
+})
+
 
 exports.addAddress = hoc(async (req, res ,next) => {
     try {
@@ -180,3 +197,36 @@ exports.deleteHistory = hoc(async (req, res ,next) => {
     }
 })
 
+exports.likeReview = hoc(async (req, res,next) => {
+    try {
+        let id = req.query.id;
+        await Review.findByIdAndUpdate(id , {
+            $addToSet : {liked : req.user._id}
+        })
+        res.status(200).json({
+            message : 'SUCCESS',
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message : "SERVER_ERROR"
+        })
+    }
+})
+
+exports.dislikeReview = hoc(async (req, res,next) => {
+    try {
+        let id = req.query.id;
+        await Review.findByIdAndUpdate(id , {
+            $addToSet : {disliked : req.user._id}
+        })
+        res.status(200).json({
+            message : 'SUCCESS',
+        })
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message : "SERVER_ERROR"
+        })
+    }
+})
