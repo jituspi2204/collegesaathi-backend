@@ -6,13 +6,29 @@ const Notification = require('../../models/notificationsModel');
 const User = require('../../models/userModel');
 const Seller = require('../../models/sellerModel');
 const Review = require('../../models/reviewModel');
+const SellerCart = require('../../models/sellerCartModel');
 
 
 exports.info = hoc(async (req, res,next) => {
-
+    let items = await SellerCart.find({})
+    .populate({path : 'sellerId', select : ['shopName','address']})
+    .populate({path : 'productId'})
+    .limit(4);
+    let deals = [{
+        title : "Deals for Today",
+        products : items,
+        image : 'deals-today.jpg'
+    }]
+    let list = [{
+        title :"More To Explore",
+        subTitle :"Based on Yours Interest",
+        products : items
+    }]
     res.status(200).json({
         message : 'SUCCESS',
-        user : req.user
+        user : req.user,
+        deals,
+        list
     })
 })
 
