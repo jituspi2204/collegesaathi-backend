@@ -17,7 +17,7 @@ exports.info = hoc(async (req, res,next) => {
     let deals = [{
         title : "Deals for Today",
         products : items,
-        image : 'deals-today.jpeg'
+        image : 'deals-today.jpg'
     },{
         title : "Discount for You",
         products : items,
