@@ -18,10 +18,18 @@ exports.info = hoc(async (req, res,next) => {
         title : "Deals for Today",
         products : items,
         image : 'deals-today.jpg'
+    },{
+        title : "Discount for You",
+        products : items,
+        image : 'deals-discount.jpg'
     }]
     let list = [{
         title :"More To Explore",
         subTitle :"Based on Yours Interest",
+        products : items
+    },{
+        title :"Top Selections",
+        subTitle :"Recommended Products ",
         products : items
     }]
     res.status(200).json({
