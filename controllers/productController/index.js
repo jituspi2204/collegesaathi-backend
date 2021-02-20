@@ -140,6 +140,23 @@ exports.sellerCart = hoc(async (req,res,next) => {
     }
 })
 
+exports.userRecommendations = hoc(async (req,res,next) => {
+    try {
+        let {userId} = {...req.query};
+        let list = await SellerCart.find({});
+        res.status(200).json({
+            message : 'SUCCESS',
+            list
+        })
+    } catch (error) {
+        res.status(500).json({
+            message : "SERVER_ERROR"
+        })
+    }
+})
+
+
+
 exports.getReviews = hoc(async (req,res,next) => {
     try {
         let {id} = {...req.query};
