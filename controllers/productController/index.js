@@ -143,7 +143,9 @@ exports.sellerCart = hoc(async (req,res,next) => {
 exports.userRecommendations = hoc(async (req,res,next) => {
     try {
         let {userId} = {...req.query};
-        let list = await SellerCart.find({});
+        let list = await SellerCart.find({})
+        .populate({path : 'sellerId', select : ['shopName','address']})
+        .populate({path : 'productId'});
         res.status(200).json({
             message : 'SUCCESS',
             list
