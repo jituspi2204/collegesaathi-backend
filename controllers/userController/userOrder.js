@@ -24,7 +24,46 @@ function deg2rad(deg) {
     return deg * (Math.PI/180)
 }
 
-
+const getPayment = async(req) => {
+    try {
+        let {card,orderId,amount,cardToken,save} = {...req.body};
+        let token = null;
+        if(card){
+            token = await stripe.tokens.create({
+                card: {
+                    number : card.number,
+                    exp_month : card.expMonth,
+                    exp_year : card.expYear,
+                    cvc : card.cvc,
+                    currency : 'inr',
+                    name : card.name,
+                },
+            });
+            if(save){
+                await User.findByIdAndUpdate(req.user._id,{
+                    $addToSet : {savedCards : token.id}
+                })
+            }
+            token = token.id;
+        }else{
+            token = cardToken;
+        }
+        stripe.charges.create({
+            amount,
+            currency : 'inr',
+            source : token,
+            metadata : {
+                orderId
+            }
+        }).then(charge => {
+            return charge
+        }).catch(err => {
+            throw new Error("INVALID_CARD")
+        })
+    } catch (error) {
+        throw new Error("INVALID_CARD")
+    }
+}
 
 function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
     var R = 6371; // Radius of the earth in km
@@ -101,8 +140,12 @@ exports.getOrders = hoc(async (req, res,next) =>{
 
 exports.placeOrder = hoc(async (req, res,next) =>{
     try {
+        let {method,sellerCartId,productId,sellerId,quantity,} = {...req.body};
+        let charge = {};
+        if(method !== 'COD'){
+            charge = await getPayment(req);
+        }
         let billData = [];
-        let {method,sellerCartId,productId,sellerId,quantity} = {...req.body};
         let transporters = await Transporter.find({pincode : req.user.address[0].pincode});
         let minOrders = Number.MAX_VALUE;
         let transporter = -1;
@@ -147,6 +190,7 @@ exports.placeOrder = hoc(async (req, res,next) =>{
             recieverPhoneNumber : req.user.phoneNumber,
             method,
             tracking,
+            trasactionId : charge.id ? charge.id : '',
             address : req.user.address[0],
             recieverName : req.user.name,
             transporterId : transporters[transporter]._id
@@ -178,7 +222,8 @@ exports.placeOrder = hoc(async (req, res,next) =>{
         res.status(200).json({
             message : "SUCCESS",
             pin : token,
-            orderId : orderId
+            orderId : orderId,
+            charge
         })
     } catch (error) {
         console.log(error);
@@ -191,8 +236,12 @@ exports.placeOrder = hoc(async (req, res,next) =>{
 
 exports.placeOrderByCart = hoc(async (req, res,next) =>{
     try {
-        let billData = [];
         let {method,address,name} = {...req.body};
+        let charge = {};
+        if(method !== 'COD'){
+            charge = await getPayment(req);
+        }
+        let billData = [];
         let transporters = await Transporter.find({pincode : req.user.address[0].pincode});
         let minOrders = Number.MAX_VALUE;
         let transporter = -1;
@@ -236,6 +285,7 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
                 recieverPhoneNumber : req.user.phoneNumber,
                 method,
                 tracking,
+                trasactionId : charge.id ? charge.id : '',
                 address : req.user.address[0],
                 recieverName : req.user.name,
                 transporterId : transporters[transporter]._id
@@ -249,16 +299,13 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
                 recieverId : userCart[i].sellerId,
                 title : 'New Order',
                 message : `You have a new order with ID 
-                ${orderId} dated ${new Date(Date.now()).toDateString()} 
-                from ${req.user.name}. You can accept or decline the order.`
+                ${orderId} dated ${new Date(Date.now()).toDateString()} from ${req.user.name}. You can accept or decline the order.`
             });
             await Notification.create({
                 senderName : req.user.name,
                 recieverId : transporters[transporter]._id,
                 title : 'New Order',
-                message : `You have a new order with ID 
-                ${orderId} dated ${new Date(Date.now()).toDateString()} 
-                from ${req.user.name}.`
+                message : `You have a new order with ID ${orderId} dated ${new Date(Date.now()).toDateString()} from ${req.user.name}.`
             });
 
             billData.push(order);
@@ -273,7 +320,8 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
         res.status(200).json({
             message : "SUCCESS",
             pin : token,
-            orderId : orderId
+            orderId : orderId,
+            charge
         })
     } catch (error) {
         console.log(error);

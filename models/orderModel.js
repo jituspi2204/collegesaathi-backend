@@ -56,6 +56,9 @@ const orderSchema = Schema({
 		type : String,
 		required : true,
 	},
+	transactionId : {
+		type : String
+	},
 	reviewId: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Review',
