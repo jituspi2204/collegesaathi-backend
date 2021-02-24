@@ -14,6 +14,8 @@ const Review = require('../../models/reviewModel');
 const Transporter = require('../../models/transporterModel');
 const createBill  = require('../../utils/createBill');
 const email = require('../../utils/email');
+const Stripe = require('stripe');
+const stripe = Stripe('sk_test_51IONG6EjWr7qmS87BXlKPLdgrI6U6zs0uTcSrVYqcZhZPYX38ZPz4oDknlWoEu1OsoibFjpxEGqci9k0U1CYZOhR00TdU2J65s');
 var path = require('path');  
 const crypto = require('crypto');
 
@@ -404,6 +406,60 @@ exports.getInvoice = hoc(async(req ,res) => {
                 message : "FILE_NOT_FOUND",
             })
         }
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message : "SERVER_ERROR",
+        })
+    }
+})
+
+
+
+
+exports.userPayment =  hoc(async(req ,res) => {
+    try {
+        let {card,orderId,amount,cardToken,save} = {...req.body};
+        let token = null;
+        if(card){
+            token = await stripe.tokens.create({
+                card: {
+                    number : card.number,
+                    exp_month : card.expMonth,
+                    exp_year : card.expYear,
+                    cvc : card.cvc,
+                    currency : 'inr',
+                    name : card.name,
+                },
+            });
+            if(save){
+                await User.findByIdAndUpdate(req.user._id,{
+                    $addToSet : {savedCards : token.id}
+                })
+            }
+            token = token.id;
+        }else{
+            token = cardToken;
+        }
+        stripe.charges.create({
+            amount,
+            currency : 'inr',
+            source : token,
+            metadata : {
+                orderId
+            }
+        }).then(charge => {
+            res.status(200).json({
+                status : "SUCCESS",
+                charge
+            })
+        }).catch(err => {
+            console.log(err);
+            res.status(500).json({
+                message : "SERVER_ERROR",
+            })
+        })
+        // res.send(token)
     } catch (error) {
         console.log(error);
         res.status(500).json({

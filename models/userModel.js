@@ -42,6 +42,7 @@ const userSchema = Schema({
             ref: 'order'
         }
     ],
+    savedCards : [],
     searchHistory : [],
     productHistory : [],
     ordersList : [],

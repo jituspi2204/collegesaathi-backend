@@ -32,6 +32,8 @@ router.get('/search-history', authController.verifyUserMiddleware,userController
 router.delete('/search-history', authController.verifyUserMiddleware,userController.userInfo.deleteHistory);
 router.get('/review/like', authController.verifyUserMiddleware,userController.userInfo.likeReview);
 router.get('/review/dislike', authController.verifyUserMiddleware,userController.userInfo.dislikeReview);
+router.get('/saved-cards', authController.verifyUserMiddleware,userController.userInfo.savedCards);
+router.post('/payment', authController.verifyUserMiddleware,userController.userOrder.userPayment);
 
 
 module.exports = router;

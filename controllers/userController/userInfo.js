@@ -7,7 +7,8 @@ const User = require('../../models/userModel');
 const Seller = require('../../models/sellerModel');
 const Review = require('../../models/reviewModel');
 const SellerCart = require('../../models/sellerCartModel');
-
+const Stripe = require('stripe');
+const stripe = Stripe('sk_test_51IONG6EjWr7qmS87BXlKPLdgrI6U6zs0uTcSrVYqcZhZPYX38ZPz4oDknlWoEu1OsoibFjpxEGqci9k0U1CYZOhR00TdU2J65s');
 
 exports.info = hoc(async (req, res,next) => {
     let items = await SellerCart.find({})
@@ -257,4 +258,23 @@ exports.dislikeReview = hoc(async (req, res,next) => {
             message : "SERVER_ERROR"
         })
     }
+})
+
+exports.savedCards = hoc(async(req,res) => {
+    let tokens = req.user.savedCards.map(value => {
+        return stripe.tokens.retrieve(value);
+    })
+   try {
+        let cards = await Promise.all(tokens);
+        res.status(200).json({
+            status : "SUCCESS",
+            cards
+        })
+   } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message : "SERVER_ERROR"
+        })
+   }
+
 })
