@@ -28,7 +28,9 @@ const getPayment = async(req) => {
     try {
         let {card,orderId,amount,cardToken,save} = {...req.body};
         let token = null;
-        if(card){
+        if(cardToken){
+            token = cardToken;
+        }else{
             token = await stripe.tokens.create({
                 card: {
                     number : card.number,
@@ -45,8 +47,6 @@ const getPayment = async(req) => {
                 })
             }
             token = token.id;
-        }else{
-            token = cardToken;
         }
         stripe.charges.create({
             amount,
@@ -58,9 +58,11 @@ const getPayment = async(req) => {
         }).then(charge => {
             return charge
         }).catch(err => {
+            console.log(err);
             throw new Error("INVALID_CARD")
         })
     } catch (error) {
+        console.log(error);
         throw new Error("INVALID_CARD")
     }
 }
