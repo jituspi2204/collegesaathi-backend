@@ -436,16 +436,17 @@ exports.getInvoice = hoc(async(req ,res) => {
 
 exports.userPayment =  hoc(async(req ,res) => {
     try {
-        let orderId = req.query.orderId;
+        let orderId = req.body.orderId;
         var options = {
             amount: 5000, 
             currency: "INR",
-            receipt: "order_rcptid_11"
+            receipt: orderId
           };
         instance.orders.create(options, function(err, order) {
             if(order){
                 res.send(order)
             }else{
+                console.log(err);
                 res.status(500).json()
             }
           });
