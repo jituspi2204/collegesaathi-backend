@@ -19,7 +19,7 @@ const stripe = Stripe('sk_test_51IONG6EjWr7qmS87BXlKPLdgrI6U6zs0uTcSrVYqcZhZPYX3
 var path = require('path');  
 const crypto = require('crypto');
 const Razorpay = require('razorpay');
-var instance = new Razorpay({ key_id: 'rzp_test_x8frk6CfYWVOEw', key_secret: 'TtGKB8K5bZ5aqkguQRezZj9g' })
+var instance = new Razorpay({ key_id: 'rzp_test_F7dJtxqCBiBD7R', key_secret: 'hA8qn9opp0YoDes0A79AG2ux' })
 function deg2rad(deg) {
     return deg * (Math.PI/180)
 }
