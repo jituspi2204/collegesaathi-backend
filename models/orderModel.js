@@ -31,6 +31,10 @@ const orderSchema = Schema({
 		required : true
 
 	},
+	paymentStatus : {
+		type : Boolean,
+		default : false
+	},
 	method : {
 		type : String,
 		default : 'COD',

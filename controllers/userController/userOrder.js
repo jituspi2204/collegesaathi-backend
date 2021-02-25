@@ -18,54 +18,13 @@ const Stripe = require('stripe');
 const stripe = Stripe('sk_test_51IONG6EjWr7qmS87BXlKPLdgrI6U6zs0uTcSrVYqcZhZPYX38ZPz4oDknlWoEu1OsoibFjpxEGqci9k0U1CYZOhR00TdU2J65s');
 var path = require('path');  
 const crypto = require('crypto');
-
-
+const Razorpay = require('razorpay');
+var instance = new Razorpay({ key_id: 'rzp_test_x8frk6CfYWVOEw', key_secret: 'TtGKB8K5bZ5aqkguQRezZj9g' })
 function deg2rad(deg) {
     return deg * (Math.PI/180)
 }
 
-const getPayment = async(req) => {
-    try {
-        let {card,orderId,amount,cardToken,save} = {...req.body};
-        let token = null;
-        if(cardToken){
-            token = cardToken;
-        }else{
-            token = await stripe.tokens.create({
-                card: {
-                    number : card.number,
-                    exp_month : card.expMonth,
-                    exp_year : card.expYear,
-                    cvc : card.cvc,
-                    currency : 'inr',
-                    name : card.name,
-                },
-            });
-            if(save){
-                await User.findByIdAndUpdate(req.user._id,{
-                    $addToSet : {savedCards : token.id}
-                })
-            }
-            token = token.id;
-        }
-        stripe.charges.create({
-            amount,
-            currency : 'inr',
-            source : token,
-            metadata : {
-                orderId
-            }
-        }).then(charge => {
-            return charge
-        }).catch(err => {
-            console.log(err);
-            throw new Error("INVALID_CARD")
-        })
-    } catch (error) {
-        console.log(error);
-        throw new Error("INVALID_CARD")
-    }
-}
+
 
 function getDistanceFromLatLonInKm(lat1,lon1,lat2,lon2) {
     var R = 6371; // Radius of the earth in km
@@ -143,10 +102,24 @@ exports.getOrders = hoc(async (req, res,next) =>{
 exports.placeOrder = hoc(async (req, res,next) =>{
     try {
         let {method,sellerCartId,productId,sellerId,quantity,} = {...req.body};
-        let charge = {};
+        let orderId =  Date.now() + '';
+        let sellerCart = await SellerCart.findById(sellerCartId)
+        .populate({path : 'sellerId', select : ['shopName','address','phoneNumber']})
+        .populate({path : 'productId'});
+        let amount = (sellerCart.price - sellerCart.discount) * quantity;
+        let receipt = {};
         if(method !== 'COD'){
-            charge = await getPayment(req);
+            var options = {
+                amount: amount * 100, 
+                currency: "INR",
+                receipt: orderId,
+                notes : {
+                    orderId : orderId
+                }
+            };
+            receipt = await instance.orders.create(options);
         }
+        console.log("Recueot ," , receipt);
         let billData = [];
         let transporters = await Transporter.find({pincode : req.user.address[0].pincode});
         let minOrders = Number.MAX_VALUE;
@@ -162,8 +135,6 @@ exports.placeOrder = hoc(async (req, res,next) =>{
         if(transporter === -1){
             return res.status(404).json({status : "DELIVERY_NOT_AVAILABLE"});
         }
-       
-        let orderId =  Date.now() + '';
         const token = await crypto.randomBytes(6).toString('hex');
         let tracking = [
             {
@@ -173,9 +144,7 @@ exports.placeOrder = hoc(async (req, res,next) =>{
                 status : "Ordered"
             }
         ]
-        let sellerCart = await SellerCart.findById(sellerCartId)
-        .populate({path : 'sellerId', select : ['shopName','address','phoneNumber']})
-        .populate({path : 'productId'});
+       
         let order = await Orders.create({
             userId : req.user._id,
             orderId : orderId,
@@ -192,7 +161,7 @@ exports.placeOrder = hoc(async (req, res,next) =>{
             recieverPhoneNumber : req.user.phoneNumber,
             method,
             tracking,
-            trasactionId : charge.id ? charge.id : '',
+            transactionId : receipt.id,
             address : req.user.address[0],
             recieverName : req.user.name,
             transporterId : transporters[transporter]._id
@@ -215,17 +184,17 @@ exports.placeOrder = hoc(async (req, res,next) =>{
         });
 
         billData.push(order);
-        await new createBill(gnData(billData)).generateBill();
-        await new email({
-            name : req.user.name,
-            email : req.user.email
-        },`https://quiet-scrubland-22380.herokuapp.com/bills/${orderId}.pdf`)
-        .orderedEmail();
+        // await new createBill(gnData(billData)).generateBill();
+        // await new email({
+        //     name : req.user.name,
+        //     email : req.user.email
+        // },`https://quiet-scrubland-22380.herokuapp.com/bills/${orderId}.pdf`)
+        // .orderedEmail();
         res.status(200).json({
             message : "SUCCESS",
             pin : token,
             orderId : orderId,
-            charge
+            receipt
         })
     } catch (error) {
         console.log(error);
@@ -236,13 +205,12 @@ exports.placeOrder = hoc(async (req, res,next) =>{
 })
 
 
+
+
+
 exports.placeOrderByCart = hoc(async (req, res,next) =>{
     try {
         let {method,address,name} = {...req.body};
-        let charge = {};
-        if(method !== 'COD'){
-            charge = await getPayment(req);
-        }
         let billData = [];
         let transporters = await Transporter.find({pincode : req.user.address[0].pincode});
         let minOrders = Number.MAX_VALUE;
@@ -287,7 +255,6 @@ exports.placeOrderByCart = hoc(async (req, res,next) =>{
                 recieverPhoneNumber : req.user.phoneNumber,
                 method,
                 tracking,
-                trasactionId : charge.id ? charge.id : '',
                 address : req.user.address[0],
                 recieverName : req.user.name,
                 transporterId : transporters[transporter]._id
@@ -469,47 +436,19 @@ exports.getInvoice = hoc(async(req ,res) => {
 
 exports.userPayment =  hoc(async(req ,res) => {
     try {
-        let {card,orderId,amount,cardToken,save} = {...req.body};
-        let token = null;
-        if(card){
-            token = await stripe.tokens.create({
-                card: {
-                    number : card.number,
-                    exp_month : card.expMonth,
-                    exp_year : card.expYear,
-                    cvc : card.cvc,
-                    currency : 'inr',
-                    name : card.name,
-                },
-            });
-            if(save){
-                await User.findByIdAndUpdate(req.user._id,{
-                    $addToSet : {savedCards : token.id}
-                })
+        let orderId = req.query.orderId;
+        var options = {
+            amount: 5000, 
+            currency: "INR",
+            receipt: "order_rcptid_11"
+          };
+        instance.orders.create(options, function(err, order) {
+            if(order){
+                res.send(order)
+            }else{
+                res.status(500).json()
             }
-            token = token.id;
-        }else{
-            token = cardToken;
-        }
-        stripe.charges.create({
-            amount,
-            currency : 'inr',
-            source : token,
-            metadata : {
-                orderId
-            }
-        }).then(charge => {
-            res.status(200).json({
-                status : "SUCCESS",
-                charge
-            })
-        }).catch(err => {
-            console.log(err);
-            res.status(500).json({
-                message : "SERVER_ERROR",
-            })
-        })
-        // res.send(token)
+          });
     } catch (error) {
         console.log(error);
         res.status(500).json({
