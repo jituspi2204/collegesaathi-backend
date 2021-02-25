@@ -38,7 +38,7 @@ const orderSchema = Schema({
 	method : {
 		type : String,
 		default : 'COD',
-		enum : ['COD', 'NetBanking', 'DebitCard','Paytm','CreditCard','Other']
+		enum : ['COD', 'Digital']
 	},
 	status : {
 		type : String,
