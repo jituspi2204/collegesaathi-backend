@@ -84,13 +84,24 @@ function gnData(orders){
 
 exports.getOrders = hoc(async (req, res,next) =>{
     try {
-      let myOrders = await Orders.find({userId : req.user._id})
-      .populate({path : 'sellerId', select : ['shopName','address']})
-      .populate({path : 'productId'}).populate({path : 'reviewId'});
-      res.status(200).json({
-        message : "SUCCESS",
-        myOrders
-    })
+      let {id} = {...req.query};
+      if(id){
+        let myOrder = await Orders.findOne({_id : id,userId : req.user._id})
+        .populate({path : 'sellerId', select : ['shopName','address']})
+        .populate({path : 'productId'}).populate({path : 'reviewId'});
+        res.status(200).json({
+            message : "SUCCESS",
+            myOrder
+        })
+      }else{
+          let myOrders = await Orders.find({userId : req.user._id})
+          .populate({path : 'sellerId', select : ['shopName','address']})
+          .populate({path : 'productId'}).populate({path : 'reviewId'});
+          res.status(200).json({
+            message : "SUCCESS",
+            myOrders
+        })
+      }
     } catch (error) {
         console.log(error);
         res.status(500).json({
@@ -435,7 +446,6 @@ exports.userPayment =  hoc(async(req ,res) => {
         let {razorpay_payment_id,razorpay_signature,orderId
         } = {...req.body};
         let order  = await Orders.findOne({orderId});
-        // console.log("RF" , order);
         let key = await crypto.createHmac('sha256','hA8qn9opp0YoDes0A79AG2ux')
         .update(order.refrenceId + "|" + razorpay_payment_id)
         .digest('hex');
@@ -453,13 +463,11 @@ exports.userPayment =  hoc(async(req ,res) => {
             .orderedEmail();
             res.status(200).send({
                 order : [{...order}],
-                // key,
                 message : "SUCCESS"
             })
         }else{
             res.status(401).send({
                 order,
-                // key,
                 message : "INVALID_TRANSACTION"
             })
         }
