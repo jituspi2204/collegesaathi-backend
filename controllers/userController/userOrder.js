@@ -86,7 +86,7 @@ exports.getOrders = hoc(async (req, res,next) =>{
     try {
       let {id} = {...req.query};
       if(id){
-        let myOrder = await Orders.findOne({_id : id,userId : req.user._id})
+        let myOrder = await Orders.findOne({orderId : id,userId : req.user._id})
         .populate({path : 'sellerId', select : ['shopName','address']})
         .populate({path : 'productId'}).populate({path : 'reviewId'});
         res.status(200).json({
