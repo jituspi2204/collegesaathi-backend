@@ -42,7 +42,7 @@ const orderSchema = Schema({
 	},
 	status : {
 		type : String,
-		default : 'Pending',
+		default : 'Cancelled',
 		enum : ['Pending','Delivered','Cancelled','Shipped','Packed','Out for Delivery']
 	},
 	sellerAddress : {},
@@ -61,6 +61,9 @@ const orderSchema = Schema({
 		required : true,
 	},
 	transactionId : {
+		type : String
+	},
+	refrenceId : {
 		type : String
 	},
 	reviewId: {

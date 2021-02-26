@@ -120,7 +120,6 @@ exports.placeOrder = hoc(async (req, res,next) =>{
             receipt = await instance.orders.create(options);
         }
         console.log("Recueot ," , receipt);
-        let billData = [];
         let transporters = await Transporter.find({pincode : req.user.address[0].pincode});
         let minOrders = Number.MAX_VALUE;
         let transporter = -1;
@@ -144,7 +143,10 @@ exports.placeOrder = hoc(async (req, res,next) =>{
                 status : "Ordered"
             }
         ]
-       
+        let status = 'Cancelled';
+        if(method === 'COD'){
+            status = 'Pending'
+        }
         let order = await Orders.create({
             userId : req.user._id,
             orderId : orderId,
@@ -161,7 +163,8 @@ exports.placeOrder = hoc(async (req, res,next) =>{
             recieverPhoneNumber : req.user.phoneNumber,
             method,
             tracking,
-            transactionId : receipt.id,
+            status,
+            refrenceId : receipt.id,
             address : req.user.address[0],
             recieverName : req.user.name,
             transporterId : transporters[transporter]._id
@@ -182,19 +185,12 @@ exports.placeOrder = hoc(async (req, res,next) =>{
             title : 'New Order',
             message : `You have a new order with ID ${orderId} dated ${new Date(Date.now()).toDateString()} from ${req.user.name}.`
         });
-
-        billData.push(order);
-        // await new createBill(gnData(billData)).generateBill();
-        // await new email({
-        //     name : req.user.name,
-        //     email : req.user.email
-        // },`https://quiet-scrubland-22380.herokuapp.com/bills/${orderId}.pdf`)
-        // .orderedEmail();
         res.status(200).json({
             message : "SUCCESS",
             pin : token,
             orderId : orderId,
-            receipt
+            receipt,
+            order : [{...order}]
         })
     } catch (error) {
         console.log(error);
@@ -436,20 +432,37 @@ exports.getInvoice = hoc(async(req ,res) => {
 
 exports.userPayment =  hoc(async(req ,res) => {
     try {
-        let orderId = req.body.orderId;
-        var options = {
-            amount: 5000, 
-            currency: "INR",
-            receipt: orderId
-          };
-        instance.orders.create(options, function(err, order) {
-            if(order){
-                res.send(order)
-            }else{
-                console.log(err);
-                res.status(500).json()
-            }
-          });
+        let {razorpay_payment_id,razorpay_signature,orderId
+        } = {...req.body};
+        let order  = await Orders.findOne({orderId});
+        console.log("RF" , order);
+        let key = await crypto.createHmac('sha256','hA8qn9opp0YoDes0A79AG2ux')
+        .update(order.refrenceId + "|" + razorpay_payment_id)
+        .digest('hex');
+        if(key === razorpay_signature){
+            await Orders.updateMany({orderId},{
+                $set : {transactionId : razorpay_payment_id,status : "Pending"}
+            })
+            let billData = [];
+            billData.push(order);
+            await new createBill(gnData(billData)).generateBill();
+            await new email({
+                name : req.user.name,
+                email : req.user.email
+            },`https://quiet-scrubland-22380.herokuapp.com/bills/${orderId}.pdf`)
+            .orderedEmail();
+            res.status(200).send({
+                order : [{...order}],
+                key,
+                message : "SUCCESS"
+            })
+        }else{
+            res.status(401).send({
+                order,
+                key,
+                message : "INVALID_TRANSACTION"
+            })
+        }
     } catch (error) {
         console.log(error);
         res.status(500).json({
