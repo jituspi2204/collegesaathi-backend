@@ -435,7 +435,7 @@ exports.userPayment =  hoc(async(req ,res) => {
         let {razorpay_payment_id,razorpay_signature,orderId
         } = {...req.body};
         let order  = await Orders.findOne({orderId});
-        console.log("RF" , order);
+        // console.log("RF" , order);
         let key = await crypto.createHmac('sha256','hA8qn9opp0YoDes0A79AG2ux')
         .update(order.refrenceId + "|" + razorpay_payment_id)
         .digest('hex');
@@ -453,13 +453,13 @@ exports.userPayment =  hoc(async(req ,res) => {
             .orderedEmail();
             res.status(200).send({
                 order : [{...order}],
-                key,
+                // key,
                 message : "SUCCESS"
             })
         }else{
             res.status(401).send({
                 order,
-                key,
+                // key,
                 message : "INVALID_TRANSACTION"
             })
         }
