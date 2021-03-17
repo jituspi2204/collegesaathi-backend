@@ -8,7 +8,7 @@ exports.getProduct = hoc(async (req,res,next) => {
     try {
         let {s} = {...req.query};
         let rgx = new RegExp(`.${s}.` , 'ig');
-        let list = await Product.find({title : {$in: [ rgx]} });
+        let list = await Product.find({name : {$in: [ rgx]} });
         res.status(200).json({
             message : 'SUCCESS',
             list
@@ -42,7 +42,7 @@ exports.getSellerProductById = hoc(async (req,res,next) => {
         .populate({path : 'sellerId', select : ['shopName','address']})
         .populate({path : 'productId'});
         await Search.create({
-            title : product.title,
+            name : product.name,
             price : product.price,
             sellerCartId : product._id,
             sellerId : product.sellerId,
@@ -87,28 +87,24 @@ exports.sellerProducts = hoc(async (req,res,next) => {
             let rgx = new RegExp(`.${s}.` , 'ig');
             let prgx = new RegExp(`${s}.` , 'ig');
             let porgx = new RegExp(`.${s}` , 'ig');
-            list = await SellerCart.find({title : {$in: [ rgx,porgx,prgx]} ,sellerId : sellerId})
+            list = await SellerCart.find({name : {$in: [ rgx,porgx,prgx]} ,sellerId : sellerId})
             .populate({path : 'sellerId', select : ['shopName','address']})
-            .populate({path : 'productId'});
         }else if(category & sellerId){
             let rgx = new RegExp(`.${category}.` , 'ig');
             let prgx = new RegExp(`${category}.` , 'ig');
             let porgx = new RegExp(`.${category}` , 'ig');
             list = await SellerCart.find({category : {$in: [ rgx,porgx,prgx]} ,sellerId : sellerId})
             .populate({path : 'sellerId', select : ['shopName','address']})
-            .populate({path : 'productId'});
         }
         else if(s){
             let rgx = new RegExp(`.${s}.` , 'ig');
             let prgx = new RegExp(`${s}.` , 'ig');
             let porgx = new RegExp(`.${s}` , 'ig');
-            list = await SellerCart.find({title : {$in: [ rgx,porgx,prgx]} })
+            list = await SellerCart.find({name : {$in: [ rgx,porgx,prgx]} })
             .populate({path : 'sellerId', select : ['shopName','address']})
-            .populate({path : 'productId'});
         }else if(sellerId){
             list = await SellerCart.find({sellerId: sellerId})
             .populate({path : 'sellerId', select : ['shopName','address']})
-            .populate({path : 'productId'});
         }
         res.status(200).json({
             message : 'SUCCESS',
