@@ -388,7 +388,7 @@ exports.placeOrderByCart = hoc(async (req, res, next) => {
         await UserCart.deleteMany({ userId: req.user._id });
         await User.findByIdAndUpdate(req.user._id, {
             $addToSet: { ordersList: { id: order._id, orderId, pin: token } },
-            $pull: { userCartItems: { $in: cartIDs } },
+            $set: { userCartItems: [] },
         });
         res.status(200).json({
             message: 'SUCCESS',
