@@ -22,7 +22,7 @@ const transporterSchema = Schema({
         unique : true
     },
     pincode : {
-        type : String
+        type: String,
     },
     otp: {
         type : String,

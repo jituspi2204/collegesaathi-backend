@@ -3,15 +3,19 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const userCartSchema = Schema({
-	title : {
+	name : {
 		type : String,
 		required : true
+	},
+	image: {
+		type: String,
+		default : 'product.png'
 	},
 	quantity: {
 		type: Number, 
 		required: true
 	},
-	price : {
+	mrp : {
 		type : Number,
 		required : true
 	},
@@ -27,11 +31,6 @@ const userCartSchema = Schema({
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'user',
 		required: true
-	},
-	productId : {
-		type : mongoose.Schema.Types.ObjectId,
-		ref : 'Product',
-		required : true,	
 	},
 	sellerId: {
 		type: mongoose.Schema.Types.ObjectId,
@@ -55,7 +54,7 @@ const userCartSchema = Schema({
 
 
 userCartSchema.pre('save' , function(next){
-	this.amount = (this.price - this.discount) * this.quantity;
+	this.amount = (this.mrp - this.discount) * this.quantity;
 	next();
 });
 userCartSchema.pre('updateOne' , function(next){

@@ -30,9 +30,17 @@ exports.updateLocation = hoc(async (req, res ,next) => {
 
 exports.updateSellerDetails = hoc(async (req, res ,next) => {
     try {
-        let {updatedDetails} = {...req.body};
+        let { updatedDetails } = { ...req.body };
+        let newDetails = {};
+        if (updatedDetails.name) {
+            newDetails.name = updatedDetails.name;
+        } if (updatedDetails.shopName) {
+            newDetails.shopName = updatedDetails.shopName
+        } if (updatedDetails.email) {
+            newDetails.email = updatedDetails.email
+        }
         await Sellers.findByIdAndUpdate(req.seller._id, {
-           ...updatedDetails
+           ...newDetails
         });
         res.status(200).json({
             message : "SUCCESS"

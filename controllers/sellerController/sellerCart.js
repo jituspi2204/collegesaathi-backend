@@ -6,28 +6,22 @@ const Products = require('../../models/productModel');
 const SellerCart = require('../../models/sellerCartModel');
 
 
-exports.getAllProducts = hoc(async(req , res ,next) => {
+exports.getProduct = hoc(async(req , res ,next) => {
     try {
-        let myProducts = await SellerCart.find({sellerId : req.seller._id}).populate({path : 'productId'});
-        res.status(200).json({
-            message : "SUCCESS",
-            myProducts 
-        })
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            message : "SERVER_ERROR"
-        })
-    }
-})
-exports.getAllProductsById = hoc(async(req , res ,next) => {
-    try {
-        let {id} = {...req.query};
-        let myProduct = await SellerCart.find({sellerId : req.seller._id,_id : id}).populate({path : 'productId'});
-        res.status(200).json({
-            message : "SUCCESS",
-            myProduct 
-        })
+        let { id } = { ...req.query };
+        if (id) {
+            let cartItem = await SellerCart.findOne({ sellerId: req.seller._id, _id: id });
+            res.status(200).json({
+                message: 'SUCCESS',
+                cartItem,
+            });
+        } else {
+            let cart = await SellerCart.find({sellerId : req.seller._id});
+            res.status(200).json({
+                message : "SUCCESS",
+                cart  
+            })
+        }
     } catch (error) {
         console.log(error);
         res.status(500).json({
@@ -36,33 +30,41 @@ exports.getAllProductsById = hoc(async(req , res ,next) => {
     }
 })
 
+
 exports.addProduct = hoc(async (req,res,next) => {
     try {
-        let {productId,quantity,price,discount,title,extraDetails} = {...req.body};
+        let {productId,quantity,mrp,discount,moreDetails} = {...req.body};
         let product = await Products.findById(productId);
-        let oldCart = await SellerCart.findOne({sellerId : req.seller._id, productId});
-        console.log(oldCart,product);
-        if(product && !oldCart){
+        let oldCart = await SellerCart.findOne({ sellerId: req.seller._id, productId });
+        if (product && !oldCart) {
             let newCart = await SellerCart.create({
-                sellerId : req.seller._id,
-                productId,
+                sellerId: req.seller._id,
                 quantity,
-                price,
+                mrp,
                 discount,
-                title,
-                extraDetails,
-                category : product.catergory,
-                image : product.image
+                moreDetails,
+                barcode: product.barcode,
+                details: product.details,
+                images: product.images,
+                name: product.name,
+                description: product.description,
+                category : product.category
             });
             res.status(200).json({
-                message : 'SUCCESS'
+                message: 'SUCCESS',
+                cart : newCart
             })
-        }else{
+        }else if(oldCart){
             res.status(404).json({
-                message : 'PRODUCT_NOT_FOUND',
+                message : 'PRODUCT_ALREADY_ADDED',
             })
+        } else {
+            res.status(404).json({
+                message: 'PRODUCT_NOT_FOUND',
+            });
         }
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             message : 'SERVER_ERROR',
         })
@@ -73,19 +75,19 @@ exports.addProduct = hoc(async (req,res,next) => {
 
 exports.updateProduct = hoc(async(req , res,next) => {
     try {
-        let {cartId,updatedDetails} = {...req.body};
-        let sellerCart = await SellerCart.findById(cartId);
+        let {id,updatedDetails} = {...req.body};
+        let sellerCart = await SellerCart.findById(id);
         let amount = 0;
-        if(updatedDetails.price && updatedDetails.discount){
-            amount = updatedCart.price - updatedCart.discount;
-        }else if(updatedDetails.price){
-            amount = updatedDetails.price - sellerCart.discount;
+        if(updatedDetails.mrp && updatedDetails.discount){
+            amount = updatedCart.mrp - updatedCart.discount;
+        }else if(updatedDetails.mrp){
+            amount = updatedDetails.mrp - sellerCart.discount;
         }else if(updatedDetails.discount){
-            amount = sellerCart.price - updatedDetails.discount;
+            amount = sellerCart.mrp - updatedDetails.discount;
         }else{
             amount = sellerCart.amount;
         }
-        let updatedCart = await SellerCart.updateOne({_id : cartId, sellerId : req.seller._id},{
+        let updatedCart = await SellerCart.updateOne({_id : id, sellerId : req.seller._id},{
             $set : {...updatedDetails,amount}
         });
         res.status(200).json({
@@ -101,8 +103,9 @@ exports.updateProduct = hoc(async(req , res,next) => {
 
 exports.deleteProduct = hoc(async(req , res,next) => {
     try {
-        let {cartId} = {...req.body};
-        await SellerCart.deleteOne({_id : cartId});
+        let { id } = { ...req.body };
+        console.log(id);
+        await SellerCart.deleteOne({_id : id,sellerId : req.seller._id});
         res.status(200).json({
             message : 'SUCCESS'
         })

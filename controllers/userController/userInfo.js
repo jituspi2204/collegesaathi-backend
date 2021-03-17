@@ -11,33 +11,9 @@ const Stripe = require('stripe');
 const stripe = Stripe('sk_test_51IONG6EjWr7qmS87BXlKPLdgrI6U6zs0uTcSrVYqcZhZPYX38ZPz4oDknlWoEu1OsoibFjpxEGqci9k0U1CYZOhR00TdU2J65s');
 
 exports.info = hoc(async (req, res,next) => {
-    let items = await SellerCart.find({})
-    .populate({path : 'sellerId', select : ['shopName','address']})
-    .populate({path : 'productId'})
-    .limit(4);
-    let deals = [{
-        title : "Deals for Today",
-        products : items,
-        image : 'deals-today.jpg'
-    },{
-        title : "Discount for You",
-        products : items,
-        image : 'deals-discount.jpg'
-    }]
-    let list = [{
-        title :"More To Explore",
-        subTitle :"Based on Yours Interest",
-        products : items
-    },{
-        title :"Top Selections",
-        subTitle :"Recommended Products ",
-        products : items
-    }]
     res.status(200).json({
         message : 'SUCCESS',
         user : req.user,
-        deals,
-        list
     })
 })
 
@@ -260,21 +236,3 @@ exports.dislikeReview = hoc(async (req, res,next) => {
     }
 })
 
-exports.savedCards = hoc(async(req,res) => {
-    let tokens = req.user.savedCards.map(value => {
-        return stripe.tokens.retrieve(value);
-    })
-   try {
-        let cards = await Promise.all(tokens);
-        res.status(200).json({
-            status : "SUCCESS",
-            cards
-        })
-   } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            message : "SERVER_ERROR"
-        })
-   }
-
-})
