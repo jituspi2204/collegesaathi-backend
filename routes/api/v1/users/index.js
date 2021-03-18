@@ -83,13 +83,13 @@ router.get(
     userController.userInfo.getNotifications
 );
 
-router.post(
-    '/search/history',
+router.get(
+    '/search/history/add',
     authController.verifyUserMiddleware,
     userController.userInfo.addHistory
 );
-router.delete(
-    '/search/history',
+router.get(
+    '/search/history/delete',
     authController.verifyUserMiddleware,
     userController.userInfo.deleteHistory
 );

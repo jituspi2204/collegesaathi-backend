@@ -7,7 +7,7 @@ const searchSchema = Schema({
         type : Schema.Types.ObjectId,
         required : true
     },
-    title : {
+    name : {
         type : String,
         required : true
     },
@@ -15,11 +15,6 @@ const searchSchema = Schema({
     category : {
         type : String,
         required : true
-    },
-    productId : {
-        type: mongoose.Schema.Types.ObjectId,
-		ref: 'Product',
-		required: true
     },
     sellerCartId :{
         type: mongoose.Schema.Types.ObjectId,

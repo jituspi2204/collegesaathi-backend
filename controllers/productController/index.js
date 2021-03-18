@@ -40,17 +40,15 @@ exports.getSellerProductById = hoc(async (req,res,next) => {
         let {id,sellerCartId} = {...req.query};
         let product = await SellerCart.findById(sellerCartId)
         .populate({path : 'sellerId', select : ['shopName','address']})
-        .populate({path : 'productId'});
-        await Search.create({
-            name : product.name,
-            price : product.price,
-            sellerCartId : product._id,
-            sellerId : product.sellerId,
-            productId: product.productId._id,
-            image : product.productId.image,
-            userId : id,
-            category : product.category
-        })
+        // await Search.create({
+        //     name : product.name,
+        //     price : product.price,
+        //     sellerCartId : sellerCartId,
+        //     sellerId : product.sellerId,
+        //     image : product.images,
+        //     userId : id,
+        //     category : product.category
+        // })
         res.status(200).json({
             message : 'SUCCESS',
             product
