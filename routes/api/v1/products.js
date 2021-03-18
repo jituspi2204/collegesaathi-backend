@@ -10,7 +10,7 @@ router.get('/search-barcode', productController.getProductByBarcode);
 router.get('/add-to-cart', addProduct.temp);
 router.get('/seller-products',productController.sellerProducts);
 router.get('/seller-cart', productController.sellerCart);
-router.post('/seller-cart/category', productController.sellerCart);
+router.post('/seller-cart/category', productController.getProductByCategory);
 router.get('/seller-cart/id',productController.getSellerProductById);
 router.get('/reviews',productController.getReviews);
 router.get('/recommendations',productController.userRecommendations);
