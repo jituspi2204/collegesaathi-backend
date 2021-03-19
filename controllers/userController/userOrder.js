@@ -114,6 +114,22 @@ exports.getOrders = hoc(async (req, res, next) => {
     }
 });
 
+exports.getOrderProducts = hoc(async (req, res, next) => {
+    try {
+        let { orderId } = { ...req.query };
+        let orderProducts = await OrderProduct.find({ orderId });
+        res.status(200).json({
+            message: 'SUCCESS',
+            orderProducts,
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: 'SERVER_ERROR',
+        });
+    }
+});
+
 exports.placeOrder = hoc(async (req, res, next) => {
     try {
         let { method, sellerCartId, quantity, address, name } = {
@@ -555,7 +571,7 @@ exports.userPayment = hoc(async (req, res) => {
             await Orders.updateMany(
                 { orderId },
                 {
-                    $set: { transactionId: razorpay_payment_id, status: 'Pending' },
+                    $set: { transactionId: razorpay_payment_id, status: 'Pending' ,paymentStatus : true},
                 }
             );
             // let billData = [];

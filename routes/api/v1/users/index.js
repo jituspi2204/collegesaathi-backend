@@ -38,6 +38,7 @@ router.post(
 );
 
 router.get('/order', authController.verifyUserMiddleware, userController.userOrder.getOrders);
+router.get('/order/products', authController.verifyUserMiddleware, userController.userOrder.getOrderProducts);
 router.post('/order', authController.verifyUserMiddleware, userController.userOrder.placeOrder);
 router.post(
     '/order/by-cart',
