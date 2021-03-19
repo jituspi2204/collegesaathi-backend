@@ -38,7 +38,11 @@ router.post(
 );
 
 router.get('/order', authController.verifyUserMiddleware, userController.userOrder.getOrders);
-router.get('/order/products', authController.verifyUserMiddleware, userController.userOrder.getOrderProducts);
+router.get(
+    '/order/products',
+    authController.verifyUserMiddleware,
+    userController.userOrder.getOrderProducts
+);
 router.post('/order', authController.verifyUserMiddleware, userController.userOrder.placeOrder);
 router.post(
     '/order/by-cart',
@@ -58,9 +62,16 @@ router.post(
 
 router.get('/review', authController.verifyUserMiddleware, userController.userInfo.getReviews);
 router.post('/review', authController.verifyUserMiddleware, userController.userOrder.reviewProduct);
-router.post('/review/like', authController.verifyUserMiddleware, userController.userInfo.likeReview);
-router.post('/review/dislike', authController.verifyUserMiddleware, userController.userInfo.dislikeReview);
-
+router.post(
+    '/review/like',
+    authController.verifyUserMiddleware,
+    userController.userInfo.likeReview
+);
+router.post(
+    '/review/dislike',
+    authController.verifyUserMiddleware,
+    userController.userInfo.dislikeReview
+);
 
 router.post(
     '/update/add-address',
@@ -93,6 +104,19 @@ router.get(
     '/search/history/delete',
     authController.verifyUserMiddleware,
     userController.userInfo.deleteHistory
+);
+
+
+router.post(
+    '/review/add',
+    authController.verifyUserMiddleware,
+    userController.userOrder.reviewProduct
+);
+router.get('/review/like', authController.verifyUserMiddleware, userController.userInfo.likeReview);
+router.get(
+    '/review/dislike',
+    authController.verifyUserMiddleware,
+    userController.userInfo.dislikeReview
 );
 
 module.exports = router;

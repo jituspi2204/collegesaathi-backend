@@ -207,7 +207,7 @@ exports.placeOrder = hoc(async (req, res, next) => {
 
         let productOrder = await OrderProduct.create({
             name: sellerCart.name,
-            image: sellerCart.image,
+            image: sellerCart.images[0],
             quantity: quantity,
             mrp: sellerCart.mrp,
             discount: sellerCart.discount,
