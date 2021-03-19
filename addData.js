@@ -39,7 +39,7 @@ const data = [
         name: 'Fresho Carrot - Ooty, 500 g  ',
         category: 'Fruits & Vegetables',
         mrp: '26',
-        image: ['5.jpg', '6.jpg', '7.jpg', '8.jpg'],
+        images: ['5.jpg', '6.jpg', '7.jpg', '8.jpg'],
         description:
             'A popular sweet-tasting root vegetable, Carrots are narrow and cone shaped. They have thick, fleshy, deeply colored root, which grows underground, and feathery green leaves that emerge above the ground. While these greens are fresh tasting and slightly bitter, the carrot roots are crunchy textured with a sweet and minty aromatic taste. Fresho brings you the flavour and richness of the finest bright orange, crispy and juicy carrots.',
         barcode: '2',
@@ -69,7 +69,7 @@ const data = [
         name: 'Fresho Cabbage, 1 pc (approx. 500 g to 800 g) ',
         category: 'Fruits & Vegetables',
         mrp: '38',
-        image: ['9.jpg', '10.jpg', '11.jpg', '12.jpg', '13.jpg', '14.jpg', '15.jpg', '16.jpg'],
+        images: ['9.jpg', '10.jpg', '11.jpg', '12.jpg', '13.jpg', '14.jpg', '15.jpg', '16.jpg'],
         description:
             'With a texture of crispness and juiciness the moment you take the first bite, cabbages are sweet and grassy flavoured with dense and smooth leafy layers. ',
         barcode: '3',
@@ -99,55 +99,76 @@ const data = [
         name: 'Fresho Potato, 1 kg  ',
         category: 'Fruits & Vegetables',
         mrp: '56',
-        image: ['17.jpg', '18.jpg', '19.jpg', '20.jpg', '21.jpg', '22.jpg'],
-        description: {
-            details:
-                '            Fresho Potatoes are nutrient-dense, non-fattening and have reasonable amount of calories. Include them in your regular meals so that the body receives a good supply of carbohydrates, dietary fibers and essential minerals such as copper, magnesium, and iron. In India, potatoes are probably the second-most consumed vegetables after onions.',
-            manufacturer: 'Fresho',
-            barcode: '',
-            weight: '',
-            exp_date: '',
-            mfg_date: '',
-            calories: '',
-        },
+        images: ['17.jpg', '18.jpg', '19.jpg', '20.jpg', '21.jpg', '22.jpg'],
+        description:
+            'Fresho Potatoes are nutrient-dense, non-fattening and have reasonable amount of calories. Include them in your regular meals so that the body receives a good supply of carbohydrates, dietary fibers and essential minerals such as copper, magnesium, and iron. In India, potatoes are probably the second-most consumed vegetables after onions.',
+        barcode: '4',
     },
     {
         name: 'Fresho Cauliflower, 1 pc (approx. 400 to 600 g) ',
         category: 'Fruits & Vegetables',
         mrp: '65',
-        image: ['23.jpg', '24.jpg', '25.jpg', '26.jpg', '27.jpg', '28.jpg', '29.jpg', '30.jpg'],
-        description: {
-            details:
-                '            Cauliflower is made up of tightly bound clusters of soft, crumbly, sweet cauliflower florets that form a dense head. Resembling a classic tree, the florets are attached to a central edible white trunk which is firm and tender. <strong><a href="https://www.bigbasket.com/cookbook/recipes/2144/cauliflower-cheese-pancakes/">https://www.bigbasket.com/cookbook/recipes/2144/cauliflower-cheese-pancakes/</a> </strong>',
-            manufacturer: 'Fresho',
-            barcode: '',
-            weight: '',
-            exp_date: '',
-            mfg_date: '',
-            calories: '',
+        images: ['23.jpg', '24.jpg', '25.jpg', '26.jpg', '27.jpg', '28.jpg', '29.jpg', '30.jpg'],
+        description:
+            'Cauliflower is made up of tightly bound clusters of soft, crumbly, sweet cauliflower florets that form a dense head. Resembling a classic tree, the florets are attached to a central edible white trunk which is firm and tender. <strong><a href="https://www.bigbasket.com/cookbook/recipes/2144/cauliflower-cheese-pancakes/">https://www.bigbasket.com/cookbook/recipes/2144/cauliflower-cheese-pancakes/</a> </strong>',
+        barcode: '5',
+        details: {
+            manufacturer: 'Fresho Ltd',
+            brand: 'Fresho',
+            batch: 'AD3434ZD',
+            weight: '500g to 800g',
+            quantity: 1,
+            unit: 'piece',
+            nutritional_information: {
+                'Vitamin A': '1%',
+                'Vitamin C': '7%',
+                Calcium: '0%',
+                Iron: '0%',
+                'Vitamin D': '0%',
+                'Vitamin B-6': '0%',
+                Cobalamin: '0%',
+                Magnesium: '1%',
+                Protein: '0.3 g',
+                Sodium: '1 mg',
+                Potassium: '107 mg',
+            },
         },
     },
     {
         name: 'Fresho Banana - Yelakki, 500 g  ',
         category: 'Fruits & Vegetables',
         mrp: '104',
-        image: ['31.jpg', '32.jpg', '33.jpg', '34.jpg', '35.jpg', '36.jpg', '37.jpg', '38.jpg'],
-        description: {
-            details:
-                '            Fresh, tiny small sized, directly procured from the farm, this variety is called Yelakki in Bangalore and Elaichi in Mumbai. Despite its small size, they are naturally flavoured, aromatic and sweeter compared to regular bananas. Yelakki bananas are around 3- 4 inches long, and contain a thinner skin and better shelf life than Robusta bananas. <br> Do not forget to check our delicious fruit recipe - <strong><a href="https://www.bigbasket.com/cookbook/recipes/573/banana-pancake/">https://www.bigbasket.com/cookbook/recipes/573/banana-pancake/</a> </strong>',
-            manufacturer: 'Fresho',
-            barcode: '',
-            weight: '',
-            exp_date: '',
-            mfg_date: '',
-            calories: '',
+        images: ['31.jpg', '32.jpg', '33.jpg', '34.jpg', '35.jpg', '36.jpg', '37.jpg', '38.jpg'],
+        description:
+            'Fresh, tiny small sized, directly procured from the farm, this variety is called Yelakki in Bangalore and Elaichi in Mumbai. Despite its small size, they are naturally flavoured, aromatic and sweeter compared to regular bananas. Yelakki bananas are around 3- 4 inches long, and contain a thinner skin and better shelf life than Robusta bananas. <br> Do not forget to check our delicious fruit recipe - <strong><a href="https://www.bigbasket.com/cookbook/recipes/573/banana-pancake/">https://www.bigbasket.com/cookbook/recipes/573/banana-pancake/</a> </strong>',
+        barcode: '6',
+        details: {
+            manufacturer: 'Fresho Ltd',
+            brand: 'Fresho',
+            batch: 'AD3434ZD',
+            weight: '500g to 800g',
+            quantity: 1,
+            unit: 'piece',
+            nutritional_information: {
+                'Vitamin A': '1%',
+                'Vitamin C': '7%',
+                Calcium: '0%',
+                Iron: '0%',
+                'Vitamin D': '0%',
+                'Vitamin B-6': '0%',
+                Cobalamin: '0%',
+                Magnesium: '1%',
+                Protein: '0.3 g',
+                Sodium: '1 mg',
+                Potassium: '107 mg',
+            },
         },
     },
     {
         name: 'bb Popular Sugar, 5 kg  ',
         category: 'Foodgrains , Oil & Masla',
         mrp: '300',
-        image: [
+        images: [
             '39.jpg',
             '40.jpg',
             '41.jpg',
@@ -163,22 +184,36 @@ const data = [
             '51.jpg',
             '52.jpg',
         ],
-        description: {
-            details:
-                '            <p>Sugar is the generalized name for sweet. Sugar is made from Sugarcane, the grains are light cream coloured. This is made from high-class sugarcane and is purified under a firm process is to produce organic manure, organic sugar cane like dung or compost is used.</p>',
-            manufacturer: 'bb Popular',
-            barcode: '',
-            weight: '',
-            exp_date: '',
-            mfg_date: '',
-            calories: '',
+        description:
+            'Sugar is the generalized name for sweet. Sugar is made from Sugarcane, the grains are light cream coloured. This is made from high-class sugarcane and is purified under a firm process is to produce organic manure, organic sugar cane like dung or compost is used.</p>',
+        barcode: '30',
+        details: {
+            manufacturer: 'Fresho Ltd',
+            brand: 'Fresho',
+            batch: 'AD3434ZD',
+            weight: '500g to 800g',
+            quantity: 1,
+            unit: 'piece',
+            nutritional_information: {
+                'Vitamin A': '1%',
+                'Vitamin C': '7%',
+                Calcium: '0%',
+                Iron: '0%',
+                'Vitamin D': '0%',
+                'Vitamin B-6': '0%',
+                Cobalamin: '0%',
+                Magnesium: '1%',
+                Protein: '0.3 g',
+                Sodium: '1 mg',
+                Potassium: '107 mg',
+            },
         },
     },
     {
         name: 'BORGES Olive Oil - Extra Light, 2x2 L Multipack ',
         category: 'Foodgrains , Oil & Masla',
-        mrp: '4700',
-        image: [
+        mrp: '470',
+        images: [
             '53.jpg',
             '54.jpg',
             '55.jpg',
@@ -192,22 +227,36 @@ const data = [
             '63.jpg',
             '64.jpg',
         ],
-        description: {
-            details:
-                '            <p>Borges Light Flavour Olive Oil has a very soft taste allowing the flavours of other ingredients to come during. It is perfect for frying and baking and respected by cooks who desire the healthy benefits of olive oil but not a different olive taste.</p>',
-            manufacturer: 'BORGES',
-            barcode: '',
-            weight: '',
-            exp_date: '',
-            mfg_date: '',
-            calories: '',
+        description:
+            'Borges Light Flavour Olive Oil has a very soft taste allowing the flavours of other ingredients to come during. It is perfect for frying and baking and respected by cooks who desire the healthy benefits of olive oil but not a different olive taste.</p>',
+        barcode: '31',
+        details: {
+            manufacturer: 'Fresho Ltd',
+            brand: 'Fresho',
+            batch: 'AD3434ZD',
+            weight: '500g to 800g',
+            quantity: 1,
+            unit: 'piece',
+            nutritional_information: {
+                'Vitamin A': '1%',
+                'Vitamin C': '7%',
+                Calcium: '0%',
+                Iron: '0%',
+                'Vitamin D': '0%',
+                'Vitamin B-6': '0%',
+                Cobalamin: '0%',
+                Magnesium: '1%',
+                Protein: '0.3 g',
+                Sodium: '1 mg',
+                Potassium: '107 mg',
+            },
         },
     },
     {
         name: 'Aashirvaad Atta - Whole Wheat, 10 kg Pouch ',
         category: 'Foodgrains , Oil & Masla',
         mrp: '340',
-        image: [
+        images: [
             '65.jpg',
             '66.jpg',
             '67.jpg',
@@ -225,21 +274,35 @@ const data = [
             '79.jpg',
             '80.jpg',
         ],
-        description: {
-            details: '',
-            manufacturer: 'Aashirvaad',
-            barcode: '',
-            weight: '',
-            exp_date: '',
-            mfg_date: '',
-            calories: '',
+        description: '',
+        barcode: '32',
+        details: {
+            manufacturer: 'Fresho Ltd',
+            brand: 'Fresho',
+            batch: 'AD3434ZD',
+            weight: '500g to 800g',
+            quantity: 1,
+            unit: 'piece',
+            nutritional_information: {
+                'Vitamin A': '1%',
+                'Vitamin C': '7%',
+                Calcium: '0%',
+                Iron: '0%',
+                'Vitamin D': '0%',
+                'Vitamin B-6': '0%',
+                Cobalamin: '0%',
+                Magnesium: '1%',
+                Protein: '0.3 g',
+                Sodium: '1 mg',
+                Potassium: '107 mg',
+            },
         },
     },
     {
         name: 'Fortune  Sunflower Refined Oil, 1 L Pouch ',
         category: 'Foodgrains , Oil & Masla',
         mrp: '115',
-        image: [
+        images: [
             '81.jpg',
             '82.jpg',
             '83.jpg',
@@ -255,22 +318,36 @@ const data = [
             '93.jpg',
             '94.jpg',
         ],
-        description: {
-            details:
-                '            Fortune Sunflower Oil is a light, healthy and nutritious cooking oil. Being rich in vitamins and consisting mainly of polyunsaturated fatty acids, it makes food easy to digest.',
-            manufacturer: 'Fortune ',
-            barcode: '',
-            weight: '',
-            exp_date: '',
-            mfg_date: '',
-            calories: '',
+        description:
+            'Fortune Sunflower Oil is a light, healthy and nutritious cooking oil. Being rich in vitamins and consisting mainly of polyunsaturated fatty acids, it makes food easy to digest.',
+        barcode: '35',
+        details: {
+            manufacturer: 'Fresho Ltd',
+            brand: 'Fresho',
+            batch: 'AD3434ZD',
+            weight: '500g to 800g',
+            quantity: 1,
+            unit: 'piece',
+            nutritional_information: {
+                'Vitamin A': '1%',
+                'Vitamin C': '7%',
+                Calcium: '0%',
+                Iron: '0%',
+                'Vitamin D': '0%',
+                'Vitamin B-6': '0%',
+                Cobalamin: '0%',
+                Magnesium: '1%',
+                Protein: '0.3 g',
+                Sodium: '1 mg',
+                Potassium: '107 mg',
+            },
         },
     },
     {
         name: 'bb Popular Almond/Badam - Californian, Giri, 500 g Pouch ',
         category: 'Foodgrains , Oil & Masla',
         mrp: '550',
-        image: [
+        images: [
             '95.jpg',
             '96.jpg',
             '97.jpg',
@@ -301,7 +378,7 @@ const data = [
         name: 'Tata Salt Iodized, 1 kg Pouch ',
         category: 'Foodgrains , Oil & Masla',
         mrp: '19',
-        image: [
+        images: [
             '109.jpg',
             '110.jpg',
             '111.jpg',
@@ -328,7 +405,7 @@ const data = [
         name: 'Nandini GoodLife Toned Milk, 500 ml Pouch ',
         category: 'Bakery, Cakes & Dairy',
         mrp: '25',
-        image: [
+        images: [
             '119.jpg',
             '120.jpg',
             '121.jpg',
@@ -355,7 +432,7 @@ const data = [
         name: 'Amul Butter - Pasteurised, 500 g Carton ',
         category: 'Bakery, Cakes & Dairy',
         mrp: '225',
-        image: ['129.jpg', '130.jpg'],
+        images: ['129.jpg', '130.jpg'],
         description: {
             details: '            Amul is synonymous with Butter in India.<br>\r',
             manufacturer: 'Amul',
@@ -370,7 +447,7 @@ const data = [
         name: 'Nandini GoodLife Toned Milk, 1 L Carton ',
         category: 'Bakery, Cakes & Dairy',
         mrp: '53',
-        image: [
+        images: [
             '131.jpg',
             '132.jpg',
             '133.jpg',
@@ -401,7 +478,7 @@ const data = [
         name: 'Amul Malai Paneer, 200 g Pouch ',
         category: 'Bakery, Cakes & Dairy',
         mrp: '66',
-        image: [
+        images: [
             '145.jpg',
             '146.jpg',
             '147.jpg',
@@ -427,7 +504,7 @@ const data = [
         name: 'Fresho Sandwich Bread - Safe, Preservative Free, 200 g  ',
         category: 'Bakery, Cakes & Dairy',
         mrp: '29',
-        image: ['155.jpg', '156.jpg', '157.jpg', '158.jpg'],
+        images: ['155.jpg', '156.jpg', '157.jpg', '158.jpg'],
         description: {
             details:
                 "            Fresho bread is one of life's greatest pleasures. Our breads are made using the finest ingredients. We make this bread extra special, so we hope you will enjoy eating it as much as we enjoyed baking it. Soft and delicious bread, perfect for all types of sandwiches!",
@@ -443,7 +520,7 @@ const data = [
         name: 'Red Label Tea - Natural Care, 1 kg  ',
         category: 'Beverages',
         mrp: '480',
-        image: [
+        images: [
             '800.jpg',
             '801.jpg',
             '802.jpg',
@@ -470,7 +547,7 @@ const data = [
         name: 'Kinley Sparkling Water - Club Soda, 750 ml PET Bottle ',
         category: 'Beverages',
         mrp: '50',
-        image: [
+        images: [
             '810.jpg',
             '811.jpg',
             '812.jpg',
@@ -499,7 +576,7 @@ const data = [
         name: 'Taj Mahal Tea, 1 kg Carton ',
         category: 'Beverages',
         mrp: '445',
-        image: [
+        images: [
             '822.jpg',
             '823.jpg',
             '824.jpg',
@@ -528,7 +605,7 @@ const data = [
         name: 'Tata Tea Gold Tea, 1 Kg  ',
         category: 'Beverages',
         mrp: '420',
-        image: [
+        images: [
             '834.jpg',
             '835.jpg',
             '836.jpg',
@@ -556,7 +633,7 @@ const data = [
         name: 'MAGGI  2-Minute Instant Noodles - Masala, 560 g Pouch ',
         category: 'Snacks',
         mrp: '86',
-        image: [
+        images: [
             '844.jpg',
             '845.jpg',
             '846.jpg',
@@ -587,7 +664,7 @@ const data = [
         name: 'Cadbury Oreo Biscuit - Vanilla Creme, 3x120 g Multipack ',
         category: 'Snacks',
         mrp: '87',
-        image: ['858.jpg', '859.jpg'],
+        images: ['858.jpg', '859.jpg'],
         description: {
             details:
                 '            Oreo sandwich creme biscuit brings together the rich, smooth taste of Vanilla creme filling with the bold taste of two crunchy Chocolate wafers. Take a delicious break with an Oreo cookie, the perfect anytime snack.',
@@ -603,7 +680,7 @@ const data = [
         name: 'Parle Gluco Biscuits - Parle-G, 800 g Pouch ',
         category: 'Snacks',
         mrp: '60',
-        image: [
+        images: [
             '860.jpg',
             '861.jpg',
             '862.jpg',
@@ -632,7 +709,7 @@ const data = [
         name: 'Britannia Biscuits - Little Hearts, 6x34.5 g Multi Pack ',
         category: 'Snacks',
         mrp: '60',
-        image: [
+        images: [
             '872.jpg',
             '873.jpg',
             '874.jpg',
@@ -661,7 +738,7 @@ const data = [
         name: 'Quaker Oats, 1.5 kg Pouch ',
         category: 'Snacks',
         mrp: '229',
-        image: [
+        images: [
             '884.jpg',
             '885.jpg',
             '886.jpg',
@@ -692,7 +769,7 @@ const data = [
         name: 'Lays Potato Chips - Calm Cream &amp; Onion Flavour, 30 g Pouch ',
         category: 'Snacks',
         mrp: '10',
-        image: [
+        images: [
             '898.jpg',
             '899.jpg',
             '900.jpg',
@@ -722,7 +799,7 @@ const data = [
         category:
             'https://www.bigbasket.com/pd/266639/close-up-everfresh-anti-germ-gel-toothpaste-red-hot-150-g/?nc=cl-bh-pl&t_pg=Beauty-Hygiene&t_p=beauty-hygiene&t_s=cl-bh-pl&t_pos=16&t_ch=desktop',
         mrp: '450',
-        image: [
+        images: [
             '910.jpg',
             '911.jpg',
             '912.jpg',
@@ -752,7 +829,7 @@ const data = [
         category:
             'https://www.bigbasket.com/pd/266639/close-up-everfresh-anti-germ-gel-toothpaste-red-hot-150-g/?nc=cl-bh-pl&t_pg=Beauty-Hygiene&t_p=beauty-hygiene&t_s=cl-bh-pl&t_pos=16&t_ch=desktop',
         mrp: '855',
-        image: ['922.jpg', '923.jpg'],
+        images: ['922.jpg', '923.jpg'],
         description: {
             details:
                 "            <p>With daily exposure to environmental triggers, skin's natural moisture barrier can break down, allowing for water to escape the skin. The healing micro-droplets of Vaseline&reg; Jelly in our lotion for dry skin locks in moisture to allow the skin's natural barrier to recovering. Smooth, glowing skin can be yours with Vaseline Intensive Care Cocoa Glow Body Lotion. Your skin won't feel oily after using this body moisturizer &ndash; the fast-absorbing formula moisturises the skin but leaves it feeling soft and glowing, without feeling greasy. Vaseline Intensive Care Cocoa Glow Body Lotion helps keep your skin looking healthy and Glowing. Our rich formula combines 100% pure cocoa and shea butter, giving your skin a natural glow. Deep Moisturising Daily Body Lotion Vaseline Cocoa Glow goes beyond basic moisturization. Our Intensive Care range works to helps heal* dry skin deep down**. Vaseline Intensive Care Cocoa Glow Lotion contains micro-droplets of Vaseline&reg; Jelly that lock in moisture. Our moisturising lotion restores the essential moisture your skin needs with a blend of nourishing ingredients and gives skin a natural, healthy glow. Vaseline Intensive Care Cocoa Glow Body Lotion is also infused with cocoa butter and has a pleasant, subtle fragrance. Does the Vaseline smart pump unlock with just a 90? turn. With quick-lock technology, the pump locks in the raised position after a quarter turn, for easier use and no mess.</p>",
@@ -769,7 +846,7 @@ const data = [
         category:
             'https://www.bigbasket.com/pd/266639/close-up-everfresh-anti-germ-gel-toothpaste-red-hot-150-g/?nc=cl-bh-pl&t_pg=Beauty-Hygiene&t_p=beauty-hygiene&t_s=cl-bh-pl&t_pos=16&t_ch=desktop',
         mrp: '110',
-        image: ['924.jpg', '925.jpg', '926.jpg', '927.jpg'],
+        images: ['924.jpg', '925.jpg', '926.jpg', '927.jpg'],
         description: {
             details:
                 '            Santoor Classic Handwash is enriched with the natural goodness of Sandalwood and Tulsi that offers a unique dual benefit of tough on germs and soft on hands. It will clean your hands without the feeling of dryness and the mild scent will leave your hands fragrant.',
@@ -786,7 +863,7 @@ const data = [
         category:
             'https://www.bigbasket.com/pd/266639/close-up-everfresh-anti-germ-gel-toothpaste-red-hot-150-g/?nc=cl-bh-pl&t_pg=Beauty-Hygiene&t_p=beauty-hygiene&t_s=cl-bh-pl&t_pos=16&t_ch=desktop',
         mrp: '197',
-        image: [
+        images: [
             '928.jpg',
             '929.jpg',
             '930.jpg',
@@ -820,7 +897,7 @@ const data = [
         category:
             'https://www.bigbasket.com/pd/266639/close-up-everfresh-anti-germ-gel-toothpaste-red-hot-150-g/?nc=cl-bh-pl&t_pg=Beauty-Hygiene&t_p=beauty-hygiene&t_s=cl-bh-pl&t_pos=16&t_ch=desktop',
         mrp: '84',
-        image: [
+        images: [
             '944.jpg',
             '945.jpg',
             '946.jpg',
@@ -850,7 +927,7 @@ const data = [
 //                 ...data[i]
 //             },
 //             mrp : data[i].mrp,
-//             image : ['product1.jpg','product2.jpg','product3.jpg'],
+//             images : ['product1.jpg','product2.jpg','product3.jpg'],
 
 //         }
 //         let pd = await Product.create({...newData});
@@ -860,7 +937,7 @@ const data = [
 // };
 
 exports.addData = async (req, res) => {
-    for (let i = 0; i < 3; i++) {
+    for (let i = 1; i < 9; i++) {
         let pd = await Products.create({ ...data[i] });
         console.log(i + ' - ' + pd._id);
     }
@@ -879,15 +956,24 @@ exports.temp = async (req, res) => {
 
 exports.addToCart = async (req, res) => {
     let products = await Products.find({});
-    for (let i = 0; i < 1; i++) {
+    for (let i = 0; i < 9; i++) {
         let pp = Math.floor(Math.random() * 150);
         let pd = await SellerCart.create({
             quantity: 40,
-            price: pp < 150 ? 110 : pp,
+            mrp: pp < 150 ? 110 : pp,
             discount: Math.floor(Math.random() * 20),
-            sellerId: i % 2 === 0 ? '600d617cf6feba208128891b' : '600ec314e383050015f71cee',
+            sellerId: '6050587b93263535fb8c5e5b',
             name: products[i].name,
-            productId: products[i]._id,
+            images: products[i].images,
+            productRating: {
+                rating: 0,
+                count: 0,
+            },
+            category: products[i].category,
+            barcode: products[i].barcode,
+            description: products[i].description,
+            details: products[i].details,
+            moreDetails : {},
         });
         console.log(i + ' - ' + pd._id);
     }

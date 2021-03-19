@@ -31,7 +31,7 @@ const sellerCartSchema = Schema({
     description: {
         type: String,
     },
-    catergory: {
+    category: {
         type: String,
         default: 'Other',
         enum: [
@@ -101,6 +101,16 @@ const sellerCartSchema = Schema({
         features: {},
     },
     moreDetails: {},
+    productRating: {
+        rating: {
+            type: Number,
+            default : 0,
+        },
+        count: {
+            type: Number, 
+            default : 0,
+        }
+    },
     createdAt: {
         type: mongoose.Schema.Types.Date,
         default: new Date(Date.now()),

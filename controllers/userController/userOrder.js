@@ -247,7 +247,7 @@ exports.placeOrder = hoc(async (req, res, next) => {
             orderId: orderId,
             id: order._id,
             receipt,
-            order: [order],
+            order: order,
         });
     } catch (error) {
         console.log(error);
@@ -396,7 +396,7 @@ exports.placeOrderByCart = hoc(async (req, res, next) => {
             orderId: orderId,
             id: order._id,
             receipt,
-            order: [order],
+            order: order,
         });
     } catch (error) {
         console.log(error);
@@ -558,16 +558,16 @@ exports.userPayment = hoc(async (req, res) => {
                     $set: { transactionId: razorpay_payment_id, status: 'Pending' },
                 }
             );
-            let billData = [];
-            billData.push(order);
-            await new createBill(gnData(billData)).generateBill();
-            await new email(
-                {
-                    name: req.user.name,
-                    email: req.user.email,
-                },
-                `https://quiet-scrubland-22380.herokuapp.com/bills/${orderId}.pdf`
-            ).orderedEmail();
+            // let billData = [];
+            // billData.push(order);
+            // await new createBill(gnData(billData)).generateBill();
+            // await new email(
+            //     {
+            //         name: req.user.name,
+            //         email: req.user.email,
+            //     },
+            //     `https://quiet-scrubland-22380.herokuapp.com/bills/${orderId}.pdf`
+            // ).orderedEmail();
             res.status(200).send({
                 order: [{ ...order }],
                 message: 'SUCCESS',
