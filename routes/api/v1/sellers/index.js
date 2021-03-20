@@ -8,8 +8,6 @@ router.get('/', authMiddlerware.verifySellerMiddleware, seller.sellerInfo.info);
 router.post('/register', seller.sellerAuth.register);
 router.post('/login', seller.sellerAuth.login);
 
-
-
 router.get('/cart', authMiddlerware.verifySellerMiddleware, seller.sellerCart.getProduct);
 router.delete('/cart', authMiddlerware.verifySellerMiddleware, seller.sellerCart.deleteProduct);
 router.post(
@@ -23,7 +21,6 @@ router.post(
     seller.sellerCart.updateProduct
 );
 
-
 router.post(
     '/update/location',
     authMiddlerware.verifySellerMiddleware,
@@ -35,5 +32,10 @@ router.post(
     seller.sellerInfo.updateSellerDetails
 );
 
-
+router.get('/order', authMiddlerware.verifySellerMiddleware, seller.sellerOrder.getAllOrders);
+router.post(
+    '/order/packed',
+    authMiddlerware.verifySellerMiddleware,
+    seller.sellerOrder.updateOrder
+);
 module.exports = router;

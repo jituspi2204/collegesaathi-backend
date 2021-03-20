@@ -31,6 +31,7 @@ const orderSchema = Schema({
         type: String,
     },
     tracking: [],
+    coordinates: [],
     reviewId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Review',
