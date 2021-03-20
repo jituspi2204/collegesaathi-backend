@@ -21,6 +21,11 @@ router.get(
     transporterController.transpoterOrders.getAllOrders
 );
 router.get(
+    '/orders/details',
+    authController.verifyTransporterMiddleware,
+    transporterController.transpoterOrders.getOrdersByOrderId
+);
+router.get(
     '/orders/products',
     authController.verifyTransporterMiddleware,
     transporterController.transpoterOrders.getOrderProducts

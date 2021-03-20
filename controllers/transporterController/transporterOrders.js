@@ -20,6 +20,20 @@ exports.getAllOrders = hoc(async (req, res,next) => {
         })
     }
 })
+exports.getOrdersByOrderId = hoc(async (req, res, next) => {
+    try {
+        let { orderId } = { ...req.query };
+        let order = await Order.findOne({ transporterId: req.user._id,orderId});
+        res.status(200).json({
+            message: 'SUCCESS',
+            order,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'SERVER_ERROR',
+        });
+    }
+});
 
 exports.getOrderProducts = hoc(async(req ,res) => {
     try {
