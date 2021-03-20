@@ -218,6 +218,7 @@ exports.placeOrder = hoc(async (req, res, next) => {
             sellerCartId: sellerCart._id,
             shopName: sellerCart.sellerId.shopName,
             sellerAddress: sellerCart.sellerId.address,
+            transporterId: transporters[transporter]._id,
             sellerPhoneNumber: sellerCart.sellerId.phoneNumber,
         });
         let products = [];
@@ -368,10 +369,11 @@ exports.placeOrderByCart = hoc(async (req, res, next) => {
                 amount: (userCart[i].mrp - userCart[i].discount) * userCart[i].quantity,
                 orderId,
                 tracking,
-                sellerCartId : userCart[i].sellerCartId,
+                sellerCartId: userCart[i].sellerCartId,
                 sellerId: userCart[i].sellerId._id,
                 shopName: userCart[i].sellerId.shopName,
                 sellerAddress: userCart[i].sellerId.address,
+                transporterId: transporters[transporter]._id,
                 sellerPhoneNumber: userCart[i].sellerId.phoneNumber,
             });
             productOrder.push(temp);

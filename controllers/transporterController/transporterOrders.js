@@ -4,12 +4,12 @@ const firebaseAdmin = require('../utils/admin');
 const Transporter = require('../../models/transporterModel');
 const Order = require('../../models/orderModel');
 const User = require('../../models/userModel');
+const OrderProduct = require('../../models/orderProductsModel');
 
 exports.getAllOrders = hoc(async (req, res,next) => {
 
     try {
         let orders = await Order.find({transporterId : req.user._id}).sort({createdAt : 1})
-        .populate({path : 'productId',select : ['image']});
         res.status(200).json({
             message : 'SUCCESS',
             orders
@@ -21,15 +21,13 @@ exports.getAllOrders = hoc(async (req, res,next) => {
     }
 })
 
-exports.getOrderById = hoc(async(req ,res) => {
+exports.getOrderProducts = hoc(async(req ,res) => {
     try {
-        let {id} = {...req.query};
-        let order = await Order.findOne({transporterId : req.user._id,orderId : id})
-        .populate({path : 'productId'})
-        .populate({path : 'reviewId'});
+        let {orderId} = {...req.query};
+        let orders = await OrderProduct.find({transporterId : req.user._id,orderId : orderId})
         res.status(200).json({
             message : "SUCCESS",
-            order
+            orders
         })
     } catch (error) {
         console.log(error);
@@ -40,9 +38,9 @@ exports.getOrderById = hoc(async(req ,res) => {
 })
 exports.updateOrder = hoc(async(req ,res) => {
     try {
-        let {address,orderId,status,pin,id} = {...req.body};
+        let {address,orderId,status,pin,id,amount} = {...req.body};
         if(status === 'Shipped'){
-            await Order.updateOne({transporterId : req.user._id, _id : orderId,status : 'Packed'},{
+            await OrderProduct.updateOne({transporterId : req.user._id, _id : id,status : 'Packed'},{
                 $addToSet : {tracking : {
                     time : new Date(Date.now()).toLocaleTimeString(),
                     date : new Date(Date.now()).toDateString(),
@@ -57,10 +55,21 @@ exports.updateOrder = hoc(async(req ,res) => {
 
         }else if(status === 'Delivered'){
             let order = await Order.findById(orderId);
-            let user = await User.findById(order.userId).select('ordersList tokens');
-            let index = user.ordersList.indexOf(id);
-            if(pin === user.tokens[index]){
-                let order = await Order.updateOne({transporterId : req.user._id, _id : orderId,status : 'Shipped'},{
+            if (amount !== order.amount) {
+                 return res.status(401).json({
+                     message: 'INVALID_AMOUNT',
+                 });
+            }
+            let user = await User.findById(order.userId).select('ordersList');
+            let index = -1;
+            for (let i = 0; i < user.ordersList.length; i++){
+                if (user.ordersList[i].orderId === orderId) {
+                    index = i;
+                    return;
+                }
+            }
+            if(index !== -1 && pin === user.ordersList[index]){
+                let order = await OrderProduct.updateOne({transporterId : req.user._id, _id : id,status : 'Shipped'},{
                     $addToSet : {tracking : {
                         time : new Date(Date.now()).toLocaleTimeString(),
                         date : new Date(Date.now()).toDateString(),

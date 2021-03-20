@@ -31,6 +31,11 @@ const orderSchema = Schema({
         type: String,
     },
     tracking: [],
+    transporterId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'transporter',
+        required: true,
+    },
     status: {
         type: String,
         default: 'Pending',
