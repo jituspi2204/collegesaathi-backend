@@ -31,6 +31,11 @@ const orderSchema = Schema({
         type: String,
     },
     tracking: [],
+    status: {
+        type: String,
+        default: 'Cancelled',
+        enum: ['Pending', 'Delivered', 'Cancelled', 'Shipped', 'Packed', 'Out for Delivery'],
+    },
     coordinates: [],
     reviewId: {
         type: mongoose.Schema.Types.ObjectId,
@@ -47,7 +52,7 @@ const orderSchema = Schema({
     sellerAddress: {},
     sellerCartId: {
         type: Schema.Types.ObjectId,
-        ref : 'sellercart'
+        ref: 'sellercart',
     },
     sellerPhoneNumber: {
         type: String,
