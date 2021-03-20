@@ -21,9 +21,9 @@ router.get(
     transporterController.transpoterOrders.getAllOrders
 );
 router.get(
-    '/orders/id/',
+    '/orders/products',
     authController.verifyTransporterMiddleware,
-    transporterController.transpoterOrders.getOrderById
+    transporterController.transpoterOrders.getOrderProducts
 );
 router.post(
     '/orders/update',
