@@ -44,6 +44,10 @@ const orderSchema = Schema({
         required: true,
     },
     sellerAddress: {},
+    sellerCartId: {
+        type: Schema.Types.ObjectId,
+        ref : 'sellercart'
+    },
     sellerPhoneNumber: {
         type: String,
         required: true,
