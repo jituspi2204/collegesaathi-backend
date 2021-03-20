@@ -499,7 +499,7 @@ exports.reviewProduct = hoc(async (req, res, next) => {
     try {
         let { sellerId, sellerCartId, orderId, rating, message } = { ...req.body };
         rating = parseFloat(rating);
-        let order = await Orders.findById(orderId);
+        let order = await OrderProduct.findById(orderId);
         let oldReview = await Review.findOne({ orderId });
         if (oldReview) {
             await Review.findByIdAndUpdate(oldReview._id, {
