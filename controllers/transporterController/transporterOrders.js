@@ -74,10 +74,10 @@ exports.updateOrder = hoc(async(req ,res) => {
             for (let i = 0; i < user.ordersList.length; i++){
                 if (user.ordersList[i].orderId === orderId) {
                     index = i;
-                    return;
+                    break;
                 }
             }
-            if(index !== -1 && pin === user.ordersList[index]){
+            if(index !== -1 && pin === user.ordersList[index].pin){
                 let order = await OrderProduct.updateOne({transporterId : req.user._id, _id : id,status : 'Shipped'},{
                     $addToSet : {tracking : {
                         time : new Date(Date.now()).toLocaleTimeString(),
@@ -89,7 +89,6 @@ exports.updateOrder = hoc(async(req ,res) => {
                 });
                 res.status(200).json({
                     message : "SUCCESS",
-                    order
                 })
             }else{
                 res.status(404).json({
