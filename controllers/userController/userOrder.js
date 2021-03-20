@@ -117,7 +117,7 @@ exports.getOrders = hoc(async (req, res, next) => {
 exports.getOrderProducts = hoc(async (req, res, next) => {
     try {
         let { orderId } = { ...req.query };
-        let orderProducts = await OrderProduct.find({ orderId });
+        let orderProducts = await OrderProduct.find({ orderId }).populate('reviewId');
         res.status(200).json({
             message: 'SUCCESS',
             orderProducts,
@@ -517,7 +517,7 @@ exports.reviewProduct = hoc(async (req, res, next) => {
                 sellerCartId,
                 orderId,
             });
-            await Orders.findByIdAndUpdate(orderId, {
+            await OrderProduct.findByIdAndUpdate(orderId, {
                 $set: { reviewId: review._id },
             });
             await Seller.findByIdAndUpdate(sellerId, {
