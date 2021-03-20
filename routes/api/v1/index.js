@@ -4,7 +4,7 @@ var router = express.Router();
 var users = require('./users');
 var sellers = require('./sellers');
 var products = require('./products');
-var transporter = require('./transporter');
+var transporter = require('./transporters');
 
 var {arr} = require('../../../io')
 /* GET users listing. */
