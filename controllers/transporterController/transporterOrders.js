@@ -69,11 +69,6 @@ exports.updateOrder = hoc(async(req ,res) => {
 
         }else if(status === 'Delivered'){
             let order = await Order.findOne({orderId});
-            if (amount !== order.amount) {
-                 return res.status(401).json({
-                     message: 'INVALID_AMOUNT',
-                 });
-            }
             let user = await User.findById(order.userId).select('ordersList');
             let index = -1;
             for (let i = 0; i < user.ordersList.length; i++){
