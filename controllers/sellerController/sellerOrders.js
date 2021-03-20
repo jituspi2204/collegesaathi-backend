@@ -74,7 +74,7 @@ exports.getAllOrders = hoc(async (req, res) => {
     try {
         let { address, orderId, status } = { ...req.body };
         // if(status === 'Shipped' || status === 'Packed'){
-        let orders = await Order.find({ sellerId: req.seller._id })
+        let orders = await OrderProduct.find({ sellerId: req.seller._id })
             .populate({ path: 'productId' })
             .populate({ path: 'reviewId' })
             .sort({ createdAt: 1 });
@@ -88,14 +88,31 @@ exports.getAllOrders = hoc(async (req, res) => {
             message: 'SERVER_ERROR',
         });
     }
+    
 });
+
+ exports.getOrderDetials = hoc(async (req, res) => {
+     try {
+         let { orderId } = { ...req.query };
+         // if(status === 'Shipped' || status === 'Packed'){
+         let orderDetails = await Order.find({ orderId });
+         res.status(200).json({
+             message: 'SUCCESS',
+             orderDetails,
+         });
+     } catch (error) {
+         console.log(error);
+         res.status(500).json({
+             message: 'SERVER_ERROR',
+         });
+     }
+ });
 
 exports.getOrderById = hoc(async (req, res) => {
     try {
         let { id } = { ...req.query };
         // if(status === 'Shipped' || status === 'Packed'){
-        let order = await Order.findOne({ sellerId: req.seller._id, _id: id })
-            .populate({ path: 'productId' })
+        let order = await OrderProduct.findOne({ sellerId: req.seller._id, _id: id })
             .populate({ path: 'reviewId' });
         res.status(200).json({
             message: 'SUCCESS',

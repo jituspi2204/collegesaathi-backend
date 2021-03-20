@@ -33,8 +33,14 @@ router.post(
 );
 
 router.get('/order', authMiddlerware.verifySellerMiddleware, seller.sellerOrder.getAllOrders);
+router.get('/order/id', authMiddlerware.verifySellerMiddleware, seller.sellerOrder.getOrderById);
+router.get(
+    '/order/details',
+    authMiddlerware.verifySellerMiddleware,
+    seller.sellerOrder.getOrderDetials
+);
 router.post(
-    '/order/packed',
+    '/order/update-status',
     authMiddlerware.verifySellerMiddleware,
     seller.sellerOrder.updateOrder
 );
