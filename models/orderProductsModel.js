@@ -33,7 +33,7 @@ const orderSchema = Schema({
     tracking: [],
     status: {
         type: String,
-        default: 'Cancelled',
+        default: 'Pending',
         enum: ['Pending', 'Delivered', 'Cancelled', 'Shipped', 'Packed', 'Out for Delivery'],
     },
     coordinates: [],
