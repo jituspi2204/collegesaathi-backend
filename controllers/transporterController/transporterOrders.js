@@ -68,7 +68,7 @@ exports.updateOrder = hoc(async(req ,res) => {
             })
 
         }else if(status === 'Delivered'){
-            let order = await Order.findById(orderId);
+            let order = await Order.findOne({orderId});
             if (amount !== order.amount) {
                  return res.status(401).json({
                      message: 'INVALID_AMOUNT',
