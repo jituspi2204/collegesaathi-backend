@@ -3,6 +3,7 @@ const Products = require('./models/productModel');
 const expree = require('express');
 const { sellerProducts } = require('./controllers/productController');
 const SellerCart = require('./models/sellerCartModel');
+const { date } = require('faker');
 
 const data = [
     {
@@ -937,8 +938,36 @@ const data = [
 // };
 
 exports.addData = async (req, res) => {
-    for (let i = 1; i < 9; i++) {
-        let pd = await Products.create({ ...data[i] });
+    for (let i = 10; i < data.length; i++) {
+        let pd = await Products.create({
+            name: data[i].name,
+            category: 'Fruits & Vegetables',
+            mrp: parseFloat(data[i].mrp),
+            images: data[i].images,
+            description: data[i].description.details,
+            barcode: 81000 + i + '',
+            details: {
+                manufacturer: data[i].description.manufacturer,
+                brand: data[i].description.manufacturer,
+                batch: 'AD3431DD',
+                weight: 550,
+                quantity: 4,
+                unit: 'piece',
+                nutritional_information: {
+                    'Vitamin A': '1%',
+                    'Vitamin C': '7%',
+                    Calcium: '0%',
+                    Iron: '0%',
+                    'Vitamin D': '0%',
+                    'Vitamin B-6': '0%',
+                    Cobalamin: '0%',
+                    Magnesium: '1%',
+                    Protein: '0.3 g',
+                    Sodium: '1 mg',
+                    Potassium: '107 mg',
+                },
+            },
+        });
         console.log(i + ' - ' + pd._id);
     }
     res.send('Done');
@@ -956,13 +985,13 @@ exports.temp = async (req, res) => {
 
 exports.addToCart = async (req, res) => {
     let products = await Products.find({});
-    for (let i = 0; i < 9; i++) {
+    for (let i = 10; i < products.length; i++) {
         let pp = Math.floor(Math.random() * 150);
         let pd = await SellerCart.create({
             quantity: 40,
             mrp: pp < 150 ? 110 : pp,
             discount: Math.floor(Math.random() * 20),
-            sellerId: '6050587b93263535fb8c5e5b',
+            sellerId: i % 2 === 0 ? '605ecb5af76447001554ab9c' : '6050587b93263535fb8c5e5b',
             name: products[i].name,
             images: products[i].images,
             productRating: {
@@ -973,7 +1002,7 @@ exports.addToCart = async (req, res) => {
             barcode: products[i].barcode,
             description: products[i].description,
             details: products[i].details,
-            moreDetails : {},
+            moreDetails: {},
         });
         console.log(i + ' - ' + pd._id);
     }
