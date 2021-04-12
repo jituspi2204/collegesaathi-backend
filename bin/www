@@ -3,12 +3,14 @@
 /**
  * Module dependencies.
  */
-
-var {arr} = require('../io')
+// var pdfparse = require('pdf-parse');
+// const fs = require('fs');
+// let dataBuffer = fs.readFileSync('./cse2.pdf');
+var { arr } = require('../io');
 var app = require('../app');
 var debug = require('debug')('quasars-backend:server');
 var http = require('http');
-
+const Student = require('../models/studentModel');
 /**
  * Get port from environment and store in Express.
  */
@@ -16,31 +18,46 @@ var http = require('http');
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
 
+const getPoint = {
+    O: 10,
+    'A+': 9,
+    A: 8,
+    'B+': 7,
+    B: 6,
+    C: 5,
+    P: 4,
+    F: 0,
+    '': 0,
+    null: 0,
+    undefined: 0,
+};
 /**
  * Create HTTP server.
  */
 
 var server = http.createServer(app);
 var socketio = require('socket.io');
+const Subject = require('../models/subjectsModel');
+const Semester = require('../models/semesterModel');
 var io = socketio(server);
 
 io.on('connection', (socket) => {
-  console.log("New User connected", socket.id);
-  socket.emit('join-room',"delivery");
-  socket.on('join',(room) => {
-    console.log("Room Joined",room);
-    socket.join(room);
-  })
-  socket.emit('getLocation' , "Provide your location");
-  socket.on('location' , (coords) =>{
-    try {
-      arr.push(coords);
-      console.log(coords);
-    } catch (error) {
-      console.log(error);
-    }
-  })
-})
+    console.log('New User connected', socket.id);
+    socket.emit('join-room', 'delivery');
+    socket.on('join', (room) => {
+        console.log('Room Joined', room);
+        socket.join(room);
+    });
+    socket.emit('getLocation', 'Provide your location');
+    socket.on('location', (coords) => {
+        try {
+            arr.push(coords);
+            console.log(coords);
+        } catch (error) {
+            console.log(error);
+        }
+    });
+});
 
 app.set('socketio', io);
 /**
@@ -56,19 +73,19 @@ server.on('listening', onListening);
  */
 
 function normalizePort(val) {
-  var port = parseInt(val, 10);
+    var port = parseInt(val, 10);
 
-  if (isNaN(port)) {
-    // named pipe
-    return val;
-  }
+    if (isNaN(port)) {
+        // named pipe
+        return val;
+    }
 
-  if (port >= 0) {
-    // port number
-    return port;
-  }
+    if (port >= 0) {
+        // port number
+        return port;
+    }
 
-  return false;
+    return false;
 }
 
 /**
@@ -76,37 +93,313 @@ function normalizePort(val) {
  */
 
 function onError(error) {
-  if (error.syscall !== 'listen') {
-    throw error;
-  }
+    if (error.syscall !== 'listen') {
+        throw error;
+    }
 
-  var bind = typeof port === 'string'
-    ? 'Pipe ' + port
-    : 'Port ' + port;
+    var bind = typeof port === 'string' ? 'Pipe ' + port : 'Port ' + port;
 
-  // handle specific listen errors with friendly messages
-  switch (error.code) {
-    case 'EACCES':
-      console.error(bind + ' requires elevated privileges');
-      process.exit(1);
-      break;
-    case 'EADDRINUSE':
-      console.error(bind + ' is already in use');
-      process.exit(1);
-      break;
-    default:
-      throw error;
-  }
+    // handle specific listen errors with friendly messages
+    switch (error.code) {
+        case 'EACCES':
+            console.error(bind + ' requires elevated privileges');
+            process.exit(1);
+            break;
+        case 'EADDRINUSE':
+            console.error(bind + ' is already in use');
+            process.exit(1);
+            break;
+        default:
+            throw error;
+    }
 }
 
 /**
  * Event listener for HTTP server "listening" event.
  */
 
+let loadStudents = async (s) => {
+    var vd = /^\d{11}/;
+    pdfparse(dataBuffer).then(async (data) => {
+        let result = {};
+        let smap = {};
+        let dd = data.text.split('\n');
+        for (let i = 0; i < dd.length; i++) {
+            let pcd = /^\d{6}$/;
+            let pcd2 = /^\d{5}$/;
+            if (pcd.test(dd[i]) || pcd2.test(dd[i])) {
+                smap[dd[i]] = { id: dd[i + 1], name: dd[i + 2], key: dd[i] };
+            }
+        }
+        let batch = 0;
+        for (let i = 0; i < dd.length; i++) {
+            let batchRegx = /Batch:/;
+            if (batchRegx.test(dd[i])) {
+                let newBatch = parseInt(dd[i].split('Batch:')[1]);
+                if (batch !== newBatch) {
+                    batch = newBatch;
+                }
+            }
+            if (vd.test(dd[i])) {
+                let keyid = dd[i];
+                let id = keyid.split('ID')[0];
+                let eno = id.substring(0, 11);
+                let name = id.substring(11, id.length - 1);
+                let nsum = 0;
+                let dsum = 0;
+                result[eno] = {
+                    eno,
+                    name,
+                    batch,
+                    obtained: 0,
+                    total: 0,
+                    percentage: 0,
+                    subjects: {},
+                    sgpa: 0,
+                };
+                i++;
+                let pcd = /^\d{6}[(]/;
+                let pcd2 = /^\d{5}[(]/;
+                while (pcd.test(dd[i]) || pcd2.test(dd[i])) {
+                    let sid = dd[i].split('(')[0];
+                    let credit = parseInt(dd[i].split('(')[1].split(')')[0]);
+                    let grade = 'F';
+                    if (dd[i + 2] && dd[i + 2].split('(')[1]) {
+                        grade = dd[i + 2].split('(')[1].split(')')[0];
+                    }
+                    result[eno]['subjects'][sid] = {
+                        internal: !parseFloat(dd[i + 1].split('  ')[0])
+                            ? 0
+                            : parseFloat(dd[i + 1].split('  ')[0]),
+                        external: !parseFloat(dd[i + 1].split('  ')[1])
+                            ? 0
+                            : parseFloat(dd[i + 1].split('  ')[1]),
+                        credit: credit,
+                        grade,
+                        batch,
+                        point: getPoint[grade],
+                        total: dd[i + 2],
+                    };
+                    nsum += credit * getPoint[grade];
+                    dsum += credit;
+                    result[eno].obtained += !parseFloat(
+                        result[eno]['subjects'][sid].total.split('(')[0]
+                    )
+                        ? 0
+                        : parseFloat(result[eno]['subjects'][sid].total.split('(')[0]);
+                    result[eno].total += 100;
+                    i = i + 3;
+                }
+                result[eno].sgpa = (nsum / dsum).toFixed(3);
+                result[eno].percentage = ((result[eno].obtained / result[eno].total) * 100).toFixed(
+                    6
+                );
+                result[eno].credit = dd[i];
+            }
+        }
+
+        for (let j = 0; j < Object.values(smap).length; j++) {
+            let subject = await Subject.findOne({ key: Object.values(smap)[j].key });
+            if (!subject) {
+                let sub = await Subject.create({
+                    ...Object.values(smap)[j],
+                    semester: s,
+                });
+                console.log(j, ' -> subject  ', sub._id);
+            } else {
+                console.log(j, ' already ');
+            }
+        }
+        console.log(Object.values(result)[118]);
+        for (let j = 0; j < Object.values(result).length; j++) {
+            let student = await Student.findOne({ rollno: Object.values(result)[j].eno });
+
+            if (student && student._id) {
+                let sem = await Semester.findOne({ semester: s, rollno: student.rollno });
+                if (sem) {
+                    await Semester.findByIdAndUpdate(sem._id, {
+                        $set: {
+                            ...Object.values(result)[j].subjects,
+                        },
+                    });
+                    console.log(j, '---> Subject updatedd');
+                } else {
+                    await Semester.create({
+                        credit: Object.values(result)[j].credit,
+                        obtained:
+                            Object.values(result)[j].obtained === NaN
+                                ? 0
+                                : Object.values(result)[j].obtained,
+                        total: Object.values(result)[j].total,
+                        sgpa:
+                            Object.values(result)[j].sgpa === NaN
+                                ? 0
+                                : Object.values(result)[j].sgpa,
+                        studentId: student._id,
+                        semester: s,
+                        rollno: Object.values(result)[j].eno,
+                        batch: Object.values(result)[j].batch,
+                        ...Object.values(result)[j].subjects,
+                    });
+                    console.log(j, ' --> created ======> ');
+                }
+            } else {
+                let ns = await Student.create({
+                    name: Object.values(result)[j].name,
+                    rollno: Object.values(result)[j].eno,
+                });
+
+                await Semester.create({
+                    credit: Object.values(result)[j].credit,
+                    percentage: Object.values(result)[j].percentage,
+                    obtained: Object.values(result)[j].obtained,
+                    total: Object.values(result)[j].total,
+                    sgpa: Object.values(result)[j].sgpa,
+                    studentId: ns._id,
+                    semester: s,
+                    rollno: Object.values(result)[j].eno,
+                    ...Object.values(result)[j].subjects,
+                });
+                console.log(j, ' semester -> ');
+            }
+        }
+        console.log('compeleted', smap);
+        // console.log('user', result['02515002719']);
+    });
+};
+
+const updateBatch = async () => {
+    var vd = /^\d{11}/;
+    pdfparse(dataBuffer).then(async (data) => {
+        let result = {};
+        let smap = {};
+        let ttt = [];
+        let dd = data.text.split('\n');
+
+        let batch = 0;
+        for (let i = 0; i < dd.length; i++) {
+            let batchRegx = /Batch:/;
+            if (batchRegx.test(dd[i])) {
+                let newBatch = parseInt(dd[i].split('Batch:')[1]);
+                if (batch !== newBatch) {
+                    batch = newBatch;
+                }
+            }
+            if (vd.test(dd[i])) {
+                let keyid = dd[i];
+                let id = keyid.split('ID')[0];
+                let eno = id.substring(0, 11);
+                result[eno] = {
+                    eno,
+                    batch,
+                };
+            }
+        }
+
+        let temp = Object.values(result);
+        for (let i = 0; i < temp.length; i++) {
+            await Student.findOneAndUpdate(
+                { rollno: temp[i].eno },
+                {
+                    $set: {
+                        batch: temp[i].batch,
+                    },
+                }
+            );
+            await Semester.updateMany(
+                { rollno: temp[i].eno },
+                {
+                    $set: {
+                        batch: temp[i].batch,
+                    },
+                }
+            );
+            console.log(i, '->  student updated', temp[i].batch);
+        }
+
+        console.log('compeleted', smap);
+        // console.log('user', result['02515002719']);
+        // res.status(200).json({
+        //     data: result,
+        // });
+    });
+};
+
+const updateSemester = async () => {
+    let tempSet = new Set();
+    let semesters = await Semester.find();
+    let students = {};
+    for (let i = 0; i < semesters.length; i++) {
+        let cs = semesters[i]['_doc'];
+        let total = 0;
+        let obtained = 0;
+        let key = Object.keys(cs);
+        let value = Object.values(cs);
+        let pcd = /^\d{6}$/;
+        let pcd2 = /^\d{5}$/;
+        let td = 0;
+        let tn = 0;
+        if (!tempSet.has(cs.rollno)) {
+            students[cs.rollno] = {
+                total: 0,
+                obtained: 0,
+                tn: 0,
+                td: 0,
+                rollno: cs.rollno,
+            };
+            tempSet.add(cs.rollno);
+        }
+        for (let j = 0; j < key.length; j++) {
+            if (pcd.test(key[j]) || pcd2.test(key[j])) {
+                let inn = value[j].internal ? value[j].internal : 0;
+                let exx = value[j].external ? value[j].external : 0;
+                let tt = parseFloat(value[j].total.split('(')[0]);
+                tt = tt ? tt : 0;
+                obtained += tt >= inn + exx ? tt : inn + exx;
+                total += 100;
+                td += value[j].credit;
+                tn += value[j].credit * value[j].point;
+            }
+        }
+        students[cs.rollno].total += total;
+        students[cs.rollno].obtained += obtained;
+        students[cs.rollno].tn += tn;
+        students[cs.rollno].td += td;
+
+        await Semester.findByIdAndUpdate(cs._id, {
+            $set: {
+                percentage: ((obtained / total) * 100).toFixed(6),
+                sgpa: (tn / td).toFixed(3),
+                total,
+                obtained,
+                credit: td,
+            },
+        });
+        console.log(i, total, obtained, 'Updated');
+    }
+
+    let temp = Object.values(students);
+    for (let i = 0; i < temp.length; i++) {
+        await Student.findOneAndUpdate(
+            { rollno: temp[i].rollno },
+            {
+                $set: {
+                    total: temp[i].total,
+                    obtained: temp[i].obtained,
+                    cgpa: (temp[i].tn / temp[i].td).toFixed(3),
+                    percentage: ((temp[i].obtained / temp[i].total) * 100).toFixed(6),
+                },
+            }
+        );
+
+        console.log(i, temp[i].total, temp[i].obtained, 'Updated');
+    }
+};
+
 function onListening() {
-  var addr = server.address();
-  var bind = typeof addr === 'string'
-    ? 'pipe ' + addr
-    : 'port ' + addr.port;
-  debug('Listening on ' + bind);
+    var addr = server.address();
+    var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
+    debug('Listening on ' + bind);
+    // updateSemester();
+    // updateBatch();
 }

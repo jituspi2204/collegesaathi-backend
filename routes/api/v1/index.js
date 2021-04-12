@@ -5,6 +5,7 @@ var users = require('./users');
 var sellers = require('./sellers');
 var products = require('./products');
 var transporter = require('./transporters');
+var student = require('./student')
 
 var {arr} = require('../../../io')
 /* GET users listing. */
@@ -42,10 +43,11 @@ router.get('/calc', (req,res) => {
         console.log(error);
     }
 })
-router.use('/users',users);
-router.use('/sellers',sellers);
-router.use('/products' ,products);
-router.use('/transporters' ,transporter);
+// router.use('/users',users);
+// router.use('/sellers',sellers);
+// router.use('/products' ,products);
+// router.use('/transporters', transporter);
+router.use('/student', student)
 
 
 module.exports = router;

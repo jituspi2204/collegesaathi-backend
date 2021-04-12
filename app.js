@@ -7,7 +7,7 @@ var addData = require('./addData');
 var indexRouter = require('./routes/index');
 var apiRouter = require('./routes/api');
 const cors = require('cors');
-const fs = require('fs');
+
 
 var dotenv = require('dotenv');
 dotenv.config({ path: './config.env' });
@@ -28,12 +28,27 @@ mongoose
     });
 
 //firebase admin
-
+const Subject = require('./models/subjectsModel');
 var admin = require('firebase-admin');
 var serviceAccount = require('./serviceAccountKey.json');
+const Student = require('./models/studentModel');
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
 });
+
+const getPoint = {
+    O: 10,
+    'A+': 9,
+    A: 8,
+    'B+': 7,
+    B: 6,
+    C: 5,
+    P: 4,
+    F: 0,
+    '': 0,
+    null: 0,
+    undefined: 0,
+};
 
 var app = express();
 
@@ -49,7 +64,6 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', indexRouter);
 app.use('/api', apiRouter);
-app.use('/addData', addData.addToCart);
 
 
 // catch 404 and forward to error handler
