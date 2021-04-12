@@ -5,7 +5,6 @@ const Semester = require('../../models/semesterModel');
 const College = require('../../models/collegeModel');
 const firebaseAdmin = require('../utils/admin');
 
-
 const programCode = {
     '027': 'BTech - Computer Science and Engineering',
 };
@@ -25,9 +24,36 @@ exports.getUser = hoc(async (req, res, next) => {
     }
 });
 
+exports.login = hoc(async (req, res, next) => {
+    try {
+        const { phoneNumber, rollno, uid } = req.body;
+        let user = await Student.findOne({ rollno });
+        let isVerified = await firebaseAdmin.checkUser(phoneNumber, uid);
+        if (user.phoneNumber === phoneNumber && isVerified) {
+            let semesters = await Semester.find({ rollno: user.rollno });
+            res.status(200).json({
+                message: 'SUCCESS',
+                id: user._id,
+                phoneNumber: user.phoneNumber,
+                rollno: user.rollno,
+                semesters,
+                user
+            });
+        } else {
+            res.status(401).json({
+                message: 'INVALID_DETAILS',
+            });
+        }
+    } catch (error) {
+        res.status(500).json({
+            message: 'SERVER_ERROR',
+        });
+    }
+});
+
 exports.register = hoc(async (req, res, next) => {
     try {
-        const { phoneNumber, rollno ,uid} = req.body;
+        const { phoneNumber, rollno, uid } = req.body;
         let user = await Student.findOne({ rollno });
         let isVerified = await firebaseAdmin.checkUser(phoneNumber, uid);
         if (user.phoneNumber === '+910000000000' && isVerified) {
@@ -111,25 +137,28 @@ exports.getMarks = hoc(async (req, res, next) => {
     }
 });
 
-
 exports.collegeRank = hoc(async (req, res, next) => {
     try {
         const { collegeId, batch, semester } = req.query;
         let rgx = new RegExp(`[0-9]{3}${collegeId}[0-9]{5}$`, 'ig');
         let students = [];
         if (semester) {
-             students = await Semester.find({ rollno: { $in: [rgx] }, batch ,semester}).sort({
-                 percentage: -1,
-             }).populate('studentId');
+            students = await Semester.find({ rollno: { $in: [rgx] }, batch, semester })
+                .select(['name', 'percentage', 'sgpa', 'rollno'])
+                .sort({
+                    percentage: -1,sgpa : -1
+                });
         } else {
-            students = await Student.find({ rollno: { $in: [rgx] }, batch }).sort({
-                percentage: -1,
-            }).populate('studentId');
+            students = await Student.find({ rollno: { $in: [rgx] }, batch })
+                .select(['name', 'college', 'percentage', 'cgpa', 'rollno'])
+                .sort({
+                    percentage: -1,cgpa : -1
+                });
         }
-         res.status(200).json({
-             message: 'SUCCESS',
-             students,
-         });
+        res.status(200).json({
+            message: 'SUCCESS',
+            students,
+        });
     } catch (error) {
         res.status(500).json({
             message: 'SERVER_ERROR',
@@ -137,23 +166,25 @@ exports.collegeRank = hoc(async (req, res, next) => {
     }
 });
 
-
 exports.universityRank = hoc(async (req, res, next) => {
     try {
         const { batch, semester } = req.query;
         let students = [];
         if (semester) {
             students = await Semester.find({ batch, semester })
+                .select(['name', 'percentage', 'sgpa', 'rollno'])
                 .sort({
                     percentage: -1,
-                })
-                .populate('studentId');
+                    sgpa: -1,
+                });
+                
         } else {
             students = await Student.find({ batch })
+                .select(['name', 'college', 'percentage', 'cgpa', 'rollno'])
                 .sort({
                     percentage: -1,
-                })
-                .populate('studentId');
+                    cgpa: -1,
+                });
         }
         res.status(200).json({
             message: 'SUCCESS',

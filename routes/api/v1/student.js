@@ -6,6 +6,7 @@ const router = express.Router();
 
 router.get('/', student.details);
 router.post('/verify', student.getUser);
+router.post('/login', student.login);
 router.post('/register', student.register);
 router.get('/semester', student.getMarksBySemester);
 router.get('/semesters', student.getMarks);

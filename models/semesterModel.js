@@ -29,6 +29,10 @@ const userSchema = Schema({
         type: String,
         default: '00000000000',
     },
+    name: {
+        type: String,
+        default : ''
+    },
     batch: {
         type: Number,
         default : 0

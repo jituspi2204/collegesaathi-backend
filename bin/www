@@ -396,10 +396,25 @@ const updateSemester = async () => {
     }
 };
 
+const temp = async () => {
+  let students = await Student.find({});
+  for (let i = 0; i < students.length; i++){
+    await Semester.updateMany({ rollno: students[i].rollno }, {
+      $set: {
+          name : students[i].name
+        }
+    })
+    console.log(i, '---> updated', students[i].name);
+  }
+
+}
+
+
 function onListening() {
     var addr = server.address();
     var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
     debug('Listening on ' + bind);
     // updateSemester();
     // updateBatch();
+//   temp();
 }
