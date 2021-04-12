@@ -26,17 +26,15 @@ exports.getUser = hoc(async (req, res, next) => {
 
 exports.login = hoc(async (req, res, next) => {
     try {
-        const { phoneNumber, rollno, uid } = req.body;
-        let user = await Student.findOne({ rollno });
+        const { phoneNumber, uid } = req.body;
+        let user = await Student.findOne({ phoneNumber });
         let isVerified = await firebaseAdmin.checkUser(phoneNumber, uid);
         if (user.phoneNumber === phoneNumber && isVerified) {
-            let semesters = await Semester.find({ rollno: user.rollno });
             res.status(200).json({
                 message: 'SUCCESS',
                 id: user._id,
                 phoneNumber: user.phoneNumber,
                 rollno: user.rollno,
-                semesters,
                 user
             });
         } else {
@@ -53,8 +51,8 @@ exports.login = hoc(async (req, res, next) => {
 
 exports.register = hoc(async (req, res, next) => {
     try {
-        const { phoneNumber, rollno, uid } = req.body;
-        let user = await Student.findOne({ rollno });
+        const { phoneNumber, uid } = req.body;
+        let user = await Student.findOne({ phoneNumber });
         let isVerified = await firebaseAdmin.checkUser(phoneNumber, uid);
         if (user.phoneNumber === '+910000000000' && isVerified) {
             let college = await College.find();
@@ -76,6 +74,14 @@ exports.register = hoc(async (req, res, next) => {
             res.status(200).json({
                 message: 'SUCCESS',
                 id: user._id,
+                phoneNumber,
+                rollno: user.rollno,
+                user: {
+                    ...user,
+                    course: pc,
+                    college: userCollege.name,
+                    phoneNumber,
+                },
             });
         } else {
             res.status(401).json({
