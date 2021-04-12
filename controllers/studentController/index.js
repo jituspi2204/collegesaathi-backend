@@ -56,8 +56,8 @@ exports.login = hoc(async (req, res, next) => {
 
 exports.register = hoc(async (req, res, next) => {
     try {
-        const { phoneNumber, uid } = req.body;
-        let user = await Student.findOne({ phoneNumber });
+        const { phoneNumber, uid ,rollno} = req.body;
+        let user = await Student.findOne({ rollno });
         let isVerified = await firebaseAdmin.checkUser(phoneNumber, uid);
         if (user.phoneNumber === '+910000000000' && isVerified) {
             let college = await College.find();
