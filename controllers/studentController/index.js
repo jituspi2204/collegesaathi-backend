@@ -11,12 +11,17 @@ const programCode = {
 
 exports.getUser = hoc(async (req, res, next) => {
     try {
-        const { phoneNumber, rollno } = req.body;
-        let user = await Student.findOne({ phoneNumber, rollno });
-        res.status(200).json({
-            message: 'SUCCESS',
-            user,
-        });
+        const { phoneNumber} = req.body;
+        let user = await Student.findOne({ phoneNumber });
+        if (user) {
+            res.status(200).json({
+                message: 'SUCCESS',
+            });
+        } else {
+            res.status(404).json({
+                message: 'SUCCESS',
+            });
+        }
     } catch (error) {
         res.status(500).json({
             message: 'SERVER_ERROR',
