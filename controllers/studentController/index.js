@@ -5,6 +5,7 @@ const Semester = require('../../models/semesterModel');
 const College = require('../../models/collegeModel');
 const Subject = require('../../models/subjectsModel');
 const firebaseAdmin = require('../utils/admin');
+const File = require('../../models/fileModel');
 
 const programCode = {
     '027': 'BTech - Computer Science and Engineering',
@@ -222,6 +223,46 @@ exports.universityRank = hoc(async (req, res, next) => {
         res.status(200).json({
             message: 'SUCCESS',
             students,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'SERVER_ERROR',
+        });
+    }
+});
+
+
+exports.uploadFile = hoc(async (req, res, next) => {
+    try {
+        const { name, semester, subject, type, description, userId,url } = req.body;
+        let file = await File.create({
+            name,
+            semester,
+            subject,
+            type,
+            description,
+            userId,
+            url
+        });
+        res.status(200).json({
+            message: 'SUCCESS',
+            file
+        });
+
+    } catch (error) {
+        res.status(500).json({
+            message: 'SERVER_ERROR',
+        });
+    }
+});
+
+exports.getFiles = hoc(async (req, res, next) => {
+    try {
+        const { semester, subject, type} = req.body;
+        let files = await File.find({semester, subject,type});
+        res.status(200).json({
+            message: 'SUCCESS',
+            files,
         });
     } catch (error) {
         res.status(500).json({
