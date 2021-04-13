@@ -50,4 +50,5 @@ router.get('/calc', (req,res) => {
 router.use('/student', student)
 
 
+
 module.exports = router;

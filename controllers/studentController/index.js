@@ -3,11 +3,32 @@ const hoc = require('../utils/hoc');
 const Student = require('../../models/studentModel');
 const Semester = require('../../models/semesterModel');
 const College = require('../../models/collegeModel');
+const Subject = require('../../models/subjectsModel');
 const firebaseAdmin = require('../utils/admin');
 
 const programCode = {
     '027': 'BTech - Computer Science and Engineering',
 };
+
+exports.utils = hoc(async (req, res, next) => {
+    try {
+        let colleges = await College.find().sort({name : 1});
+        let subjects = await Subject.find().sort({id : 1});
+        res.status(200).json({
+            message: 'SUCCESS',
+            colleges,
+            subjects
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'SERVER_ERROR',
+        });
+    }
+});
+
+
+
+
 
 exports.getUser = hoc(async (req, res, next) => {
     try {

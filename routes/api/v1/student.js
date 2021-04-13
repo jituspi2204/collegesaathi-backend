@@ -12,7 +12,7 @@ router.get('/semester', student.getMarksBySemester);
 router.get('/semesters', student.getMarks);
 router.get('/college-rank', student.collegeRank);
 router.get('/university-rank', student.universityRank);
-
+router.get('/utils' ,student.utils )
 
 module.exports = router;
 
