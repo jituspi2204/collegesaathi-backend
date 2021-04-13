@@ -174,7 +174,7 @@ exports.collegeRank = hoc(async (req, res, next) => {
         const { collegeId, batch, semester } = req.query;
         let rgx = new RegExp(`[0-9]{3}${collegeId}[0-9]{5}$`, 'ig');
         let students = [];
-        if (semester) {
+        if (semester > 0) {
             students = await Semester.find({ rollno: { $in: [rgx] }, batch, semester })
                 .select(['name', 'percentage', 'sgpa', 'rollno'])
                 .sort({
@@ -184,7 +184,7 @@ exports.collegeRank = hoc(async (req, res, next) => {
             students = await Student.find({ rollno: { $in: [rgx] }, batch })
                 .select(['name', 'college', 'percentage', 'cgpa', 'rollno'])
                 .sort({
-                    percentage: -1,cgpa : -1
+                    percentage: -1,cgpa : -1,
                 });
         }
         res.status(200).json({
@@ -192,6 +192,7 @@ exports.collegeRank = hoc(async (req, res, next) => {
             students,
         });
     } catch (error) {
+        console.log(error);
         res.status(500).json({
             message: 'SERVER_ERROR',
         });
@@ -202,7 +203,7 @@ exports.universityRank = hoc(async (req, res, next) => {
     try {
         const { batch, semester } = req.query;
         let students = [];
-        if (semester) {
+        if (semester > 0) {
             students = await Semester.find({ batch, semester })
                 .select(['name', 'percentage', 'sgpa', 'rollno'])
                 .sort({
