@@ -26,19 +26,22 @@ const userSchema = Schema({
     type: {
         type: String,
         default: 'notes',
-        enum : ['notes', 'labfiles', 'papers']
+        enum: ['notes', 'labfiles', 'papers'],
     },
     description: {
         type: String,
-        default : ''
+        default: '',
     },
-    views: [],
+    views: {
+        type: Number,
+        default: 0,
+    },
     like: [],
     dislike: [],
     url: {
         type: String,
-        default : ''
-    }
+        default: '',
+    },
 });
 
 const File = mongoose.model('file', userSchema);

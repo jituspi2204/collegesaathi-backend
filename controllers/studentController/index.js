@@ -13,12 +13,12 @@ const programCode = {
 
 exports.utils = hoc(async (req, res, next) => {
     try {
-        let colleges = await College.find().sort({name : 1});
-        let subjects = await Subject.find().sort({id : 1});
+        let colleges = await College.find().sort({ name: 1 });
+        let subjects = await Subject.find().sort({ id: 1 });
         res.status(200).json({
             message: 'SUCCESS',
             colleges,
-            subjects
+            subjects,
         });
     } catch (error) {
         res.status(500).json({
@@ -27,13 +27,9 @@ exports.utils = hoc(async (req, res, next) => {
     }
 });
 
-
-
-
-
 exports.getUser = hoc(async (req, res, next) => {
     try {
-        const { phoneNumber} = req.body;
+        const { phoneNumber } = req.body;
         let user = await Student.findOne({ phoneNumber });
         if (user) {
             res.status(200).json({
@@ -62,7 +58,7 @@ exports.login = hoc(async (req, res, next) => {
                 id: user._id,
                 phoneNumber: user.phoneNumber,
                 rollno: user.rollno,
-                user
+                user,
             });
         } else {
             res.status(401).json({
@@ -78,7 +74,7 @@ exports.login = hoc(async (req, res, next) => {
 
 exports.register = hoc(async (req, res, next) => {
     try {
-        const { phoneNumber, uid ,rollno} = req.body;
+        const { phoneNumber, uid, rollno } = req.body;
         let user = await Student.findOne({ rollno });
         let isVerified = await firebaseAdmin.checkUser(phoneNumber, uid);
         if (user.phoneNumber === '+910000000000' && isVerified) {
@@ -179,13 +175,15 @@ exports.collegeRank = hoc(async (req, res, next) => {
             students = await Semester.find({ rollno: { $in: [rgx] }, batch, semester })
                 .select(['name', 'percentage', 'sgpa', 'rollno'])
                 .sort({
-                    percentage: -1,sgpa : -1
+                    percentage: -1,
+                    sgpa: -1,
                 });
         } else {
             students = await Student.find({ rollno: { $in: [rgx] }, batch })
                 .select(['name', 'college', 'percentage', 'cgpa', 'rollno'])
                 .sort({
-                    percentage: -1,cgpa : -1,
+                    percentage: -1,
+                    cgpa: -1,
                 });
         }
         res.status(200).json({
@@ -211,7 +209,6 @@ exports.universityRank = hoc(async (req, res, next) => {
                     percentage: -1,
                     sgpa: -1,
                 });
-                
         } else {
             students = await Student.find({ batch })
                 .select(['name', 'college', 'percentage', 'cgpa', 'rollno'])
@@ -231,10 +228,9 @@ exports.universityRank = hoc(async (req, res, next) => {
     }
 });
 
-
 exports.uploadFile = hoc(async (req, res, next) => {
     try {
-        const { name, semester, subject, type, description, userId,url } = req.body;
+        const { name, semester, subject, type, description, userId, url } = req.body;
         let file = await File.create({
             name,
             semester,
@@ -242,13 +238,12 @@ exports.uploadFile = hoc(async (req, res, next) => {
             type,
             description,
             userId,
-            url
+            url,
         });
         res.status(200).json({
             message: 'SUCCESS',
-            file
+            file,
         });
-
     } catch (error) {
         res.status(500).json({
             message: 'SERVER_ERROR',
@@ -258,8 +253,14 @@ exports.uploadFile = hoc(async (req, res, next) => {
 
 exports.getFiles = hoc(async (req, res, next) => {
     try {
-        const { semester, subject, type} = req.query;
-        let files = await File.find({semester, subject,type});
+        const { semester, subject, type } = req.query;
+        let files = await File.find({ semester, subject, type });
+        await File.updateMany(
+            { semester, subject, type },
+            {
+                $inc: { views: 1 },
+            }
+        );
         res.status(200).json({
             message: 'SUCCESS',
             files,
