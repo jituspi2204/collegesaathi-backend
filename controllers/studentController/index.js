@@ -258,7 +258,7 @@ exports.uploadFile = hoc(async (req, res, next) => {
 
 exports.getFiles = hoc(async (req, res, next) => {
     try {
-        const { semester, subject, type} = req.body;
+        const { semester, subject, type} = req.query;
         let files = await File.find({semester, subject,type});
         res.status(200).json({
             message: 'SUCCESS',
