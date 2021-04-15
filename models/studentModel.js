@@ -45,6 +45,11 @@ const userSchema = Schema({
     reads: [],
     subjectReads: [],
     notifications: [],
+    currentSemester: {
+        type: Number, 
+        enum : [1,2,4,5,3,6,7,8],
+        default : 1
+    },
     semesters: {
         1: { type: Schema.Types.ObjectId },
         2: { type: Schema.Types.ObjectId },

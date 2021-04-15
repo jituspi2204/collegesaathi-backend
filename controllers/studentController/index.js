@@ -326,3 +326,23 @@ exports.dislikeFile = hoc(async (req, res, next) => {
         });
     }
 });
+
+exports.updateCurSem = hoc(async (req, res, next) => {
+    try {
+        const { semester } = req.query;
+        await Student.findByIdAndUpdate(req.user._id, {
+            $set: {
+                currentSemester : semester
+            }
+        })
+        let user = await Student.findById(req.user._id)
+        res.status(200).json({
+            message: 'SUCCESS',
+            user
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'SERVER_ERROR',
+        });
+    }
+});
