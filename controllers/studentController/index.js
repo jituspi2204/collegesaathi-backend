@@ -7,6 +7,7 @@ const Subject = require('../../models/subjectsModel');
 const firebaseAdmin = require('../utils/admin');
 const jwtUtils = require('../utils/jwtUtils');
 const File = require('../../models/fileModel');
+const Notification = require('../../models/notificationsModel');
 
 const programCode = {
     '027': 'BTech - Computer Science and Engineering',
@@ -51,7 +52,7 @@ exports.getUser = hoc(async (req, res, next) => {
 exports.login = hoc(async (req, res, next) => {
     try {
         const { phoneNumber, uid } = req.body;
-        let user = await Student.findOne({ phoneNumber });
+        let user = await Student.findOne({ phoneNumber }).populate('notification');
         let isVerified = await firebaseAdmin.checkUser(phoneNumber, uid);
         if (user.phoneNumber === phoneNumber && isVerified) {
             let token = await jwtUtils.createToken({ phoneNumber, _id: user._id });
@@ -241,6 +242,19 @@ exports.uploadFile = hoc(async (req, res, next) => {
             userId : req.user._id,
             url,
         });
+         let nt = await Notification.create({
+             title: description,
+             message: `New ${type} of semester ${semester}, subject code ${subject} has been uploaded, check it now`,
+             by: req.user.name,
+         });
+        await Student.updateMany(
+            { currentSemester: semester },
+            {
+                $addToSet: {
+                    notifications : nt._id,
+                },
+            }
+        );
         res.status(200).json({
             message: 'SUCCESS',
             file,
@@ -346,3 +360,22 @@ exports.updateCurSem = hoc(async (req, res, next) => {
         });
     }
 });
+
+
+exports.reqForUpload= hoc(async (req, res, next) => {
+    try {
+        await Notification.create({
+            title: "ADMIN",
+            message: "request for upload",
+            by : req.user.rollno,
+        });
+        res.status(200).json({
+            message: 'SUCCESS',
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'SERVER_ERROR',
+        });
+    }
+});
+

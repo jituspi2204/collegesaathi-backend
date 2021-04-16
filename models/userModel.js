@@ -28,6 +28,7 @@ const userSchema = Schema({
         validate: [(value) => phoneNumberValidator.test(value), 'INVALID_PHONE_NUMBER'],
         unique: true,
     },
+
     address: [
         {
             address: {

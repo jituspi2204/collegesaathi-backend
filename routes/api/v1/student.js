@@ -20,6 +20,7 @@ router.get('/files/like', studentAuth.verifyStudentMiddleware, student.likeFile)
 router.get('/files/dislike', studentAuth.verifyStudentMiddleware, student.dislikeFile);
 router.post('/files', studentAuth.verifyStudentMiddleware, student.uploadFile);
 router.get('/update/current-semester', studentAuth.verifyStudentMiddleware, student.updateCurSem);
+router.get('/request/upload', studentAuth.verifyStudentMiddleware, student.reqForUpload);
 
 
 

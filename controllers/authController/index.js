@@ -76,7 +76,7 @@ exports.verifyStudentMiddleware = hoc(async (req, res, next) => {
     try {
         let payload = await jwtUtils.verifyToken(token);
         if (payload) {
-            let user = await Student.findById(payload._id);
+            let user = await Student.findById(payload._id).populate('notification');
             req.user = user;
             next();
         } else {
