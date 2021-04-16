@@ -85,6 +85,7 @@ exports.verifyStudentMiddleware = hoc(async (req, res, next) => {
             });
         }
     } catch (error) {
+        console.log(error);
         res.status(401).json({
             message: 'UNAUTHORIZED_USER',
         });

@@ -364,10 +364,15 @@ exports.updateCurSem = hoc(async (req, res, next) => {
 
 exports.reqForUpload= hoc(async (req, res, next) => {
     try {
-        await Notification.create({
+        let nt = await Notification.create({
             title: "ADMIN",
-            message: "request for upload",
+            message: "You have requested for the permission to upload file, we will notify you soon.",
             by : req.user.rollno,
+        });
+        await Student.findByIdAndUpdate(req.user._id, {
+            $addToSet: {
+                notifications: nt._id,
+            },
         });
         res.status(200).json({
             message: 'SUCCESS',
