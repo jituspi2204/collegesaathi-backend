@@ -52,7 +52,7 @@ exports.getUser = hoc(async (req, res, next) => {
 exports.login = hoc(async (req, res, next) => {
     try {
         const { phoneNumber, uid } = req.body;
-        let user = await Student.findOne({ phoneNumber }).populate('notification');
+        let user = await Student.findOne({ phoneNumber }).populate('notifications');
         let isVerified = await firebaseAdmin.checkUser(phoneNumber, uid);
         if (user.phoneNumber === phoneNumber && isVerified) {
             let token = await jwtUtils.createToken({ phoneNumber, _id: user._id });
