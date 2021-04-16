@@ -92,11 +92,19 @@ exports.register = hoc(async (req, res, next) => {
                     break;
                 }
             }
+            let nt = await Notification.create({
+                title: 'ADMIN',
+                message:
+                    'Thanks for connecting with us , we are happy to see you here ' + user.name,
+                by: '@collegeSAATHI',
+                time : new Date(Date.now())
+            });
             // console.log(userCollege);
             await Student.findByIdAndUpdate(user._id, {
                 course: pc,
                 college: userCollege.name,
                 phoneNumber,
+                $addToSet : {notifications : nt._id}
             });
             let token = await jwtUtils.createToken({ phoneNumber, _id: user._id });
             res.status(200).json({

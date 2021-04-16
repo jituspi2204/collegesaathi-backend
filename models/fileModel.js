@@ -26,7 +26,7 @@ const userSchema = Schema({
     type: {
         type: String,
         default: 'notes',
-        enum: ['notes', 'labfiles', 'papers'],
+        enum: ['notes', 'labfiles', 'papers','assignments'],
     },
     description: {
         type: String,
