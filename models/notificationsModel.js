@@ -31,6 +31,7 @@ const notificationsSchema = Schema({
         type: mongoose.Schema.Types.Date,
         default: new Date(Date.now()),
     },
+
 });
 
 const Notification = mongoose.model('notification', notificationsSchema);

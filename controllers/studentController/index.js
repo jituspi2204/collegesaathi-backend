@@ -240,7 +240,7 @@ exports.universityRank = hoc(async (req, res, next) => {
 
 exports.uploadFile = hoc(async (req, res, next) => {
     try {
-        const { name, semester, subject, type, description, url } = req.body;
+        const { name, semester, subject, type, description, url,unit} = req.body;
         let file = await File.create({
             name,
             semester,
@@ -249,10 +249,11 @@ exports.uploadFile = hoc(async (req, res, next) => {
             description,
             userId : req.user._id,
             url,
+            unit
         });
          let nt = await Notification.create({
              title: description,
-             message: `New ${type} of semester ${semester}, subject code ${subject} has been uploaded, check it now`,
+             message: `New ${type} of semester ${semester}, subject code ${subject}, unit ${unit} has been uploaded, check it now`,
              by: req.user.name,
          });
         await Student.updateMany(

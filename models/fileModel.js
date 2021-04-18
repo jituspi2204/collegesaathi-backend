@@ -36,6 +36,11 @@ const userSchema = Schema({
         type: Number,
         default: 0,
     },
+    unit : {
+        type: String,
+        default: '1',
+        enum : ['1', '2','3','4','misc']
+    },
     like: [],
     dislike: [],
     url: {
