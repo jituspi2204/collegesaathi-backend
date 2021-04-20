@@ -97,14 +97,14 @@ exports.register = hoc(async (req, res, next) => {
                 message:
                     'Thanks for connecting with us , we are happy to see you here ' + user.name,
                 by: '@collegeSAATHI',
-                time : new Date(Date.now())
+                time: new Date(Date.now()),
             });
             // console.log(userCollege);
             await Student.findByIdAndUpdate(user._id, {
                 course: pc,
                 college: userCollege.name,
                 phoneNumber,
-                $addToSet : {notifications : nt._id}
+                $addToSet: { notifications: nt._id },
             });
             let token = await jwtUtils.createToken({ phoneNumber, _id: user._id });
             res.status(200).json({
@@ -240,27 +240,27 @@ exports.universityRank = hoc(async (req, res, next) => {
 
 exports.uploadFile = hoc(async (req, res, next) => {
     try {
-        const { name, semester, subject, type, description, url,unit} = req.body;
+        const { name, semester, subject, type, description, url, unit } = req.body;
         let file = await File.create({
             name,
             semester,
             subject,
             type,
             description,
-            userId : req.user._id,
+            userId: req.user._id,
             url,
-            unit
+            unit,
         });
-         let nt = await Notification.create({
-             title: description,
-             message: `New ${type} of semester ${semester}, subject code ${subject}, unit ${unit} has been uploaded, check it now`,
-             by: req.user.name,
-         });
+        let nt = await Notification.create({
+            title: description,
+            message: `New ${type} of semester ${semester}, subject code ${subject}, unit ${unit} has been uploaded, check it now`,
+            by: req.user.name,
+        });
         await Student.updateMany(
             { currentSemester: semester },
             {
                 $addToSet: {
-                    notifications : nt._id,
+                    notifications: nt._id,
                 },
             }
         );
@@ -277,9 +277,9 @@ exports.uploadFile = hoc(async (req, res, next) => {
 
 exports.getFiles = hoc(async (req, res, next) => {
     try {
-        const { semester, subject, type,unit } = req.query;
+        const { semester, subject, type, unit } = req.query;
         console.log(req.user);
-        let files = await File.find({ semester, subject, type ,unit});
+        let files = await File.find({ semester, subject, type, unit });
         res.status(200).json({
             message: 'SUCCESS',
             files,
@@ -296,12 +296,12 @@ exports.downloadFile = hoc(async (req, res, next) => {
         const { id, details, filename } = req.body;
         let reads = {
             ...details,
-            filename
-        }
+            filename,
+        };
         await Student.findByIdAndUpdate(req.user._id, {
             $addToSet: {
-                reads: reads
-            }
+                reads: reads,
+            },
         });
         await File.findByIdAndUpdate(id, {
             $inc: { views: 1 },
@@ -335,7 +335,7 @@ exports.likeFile = hoc(async (req, res, next) => {
 
 exports.dislikeFile = hoc(async (req, res, next) => {
     try {
-        const { id} = req.query;
+        const { id } = req.query;
         await File.findByIdAndUpdate(id, {
             $addToSet: { dislike: req.user._id },
             $pull: { like: req.user._id },
@@ -355,13 +355,13 @@ exports.updateCurSem = hoc(async (req, res, next) => {
         const { semester } = req.query;
         await Student.findByIdAndUpdate(req.user._id, {
             $set: {
-                currentSemester : semester
-            }
-        })
-        let user = await Student.findById(req.user._id)
+                currentSemester: semester,
+            },
+        });
+        let user = await Student.findById(req.user._id).populate('notifications');
         res.status(200).json({
             message: 'SUCCESS',
-            user
+            user,
         });
     } catch (error) {
         res.status(500).json({
@@ -370,13 +370,13 @@ exports.updateCurSem = hoc(async (req, res, next) => {
     }
 });
 
-
-exports.reqForUpload= hoc(async (req, res, next) => {
+exports.reqForUpload = hoc(async (req, res, next) => {
     try {
         let nt = await Notification.create({
-            title: "ADMIN",
-            message: "You have requested for the permission to upload file, we will notify you soon.",
-            by : req.user.rollno,
+            title: 'ADMIN',
+            message:
+                'You have requested for the permission to upload file, we will notify you soon.',
+            by: req.user.rollno,
         });
         await Student.findByIdAndUpdate(req.user._id, {
             $addToSet: {
@@ -395,12 +395,12 @@ exports.reqForUpload= hoc(async (req, res, next) => {
 
 exports.createNotification = hoc(async (req, res, next) => {
     try {
-        let { title,message,by,url,type} = req.body;
+        let { title, message, by, url, type } = req.body;
         let nt = await Notification.create({
             title,
             message,
             by,
-            url
+            url,
         });
         await Student.updateMany(
             {},
@@ -412,7 +412,7 @@ exports.createNotification = hoc(async (req, res, next) => {
         );
         res.status(200).json({
             message: 'SUCCESS',
-            nt
+            nt,
         });
     } catch (error) {
         res.status(500).json({
