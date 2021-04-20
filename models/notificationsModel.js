@@ -23,6 +23,10 @@ const notificationsSchema = Schema({
         type: String,
         required: true,
     },
+    url : {
+        type: String,
+        default : '',
+    },
     createdAt: {
         type: mongoose.Schema.Types.Date,
         default: new Date(Date.now()),

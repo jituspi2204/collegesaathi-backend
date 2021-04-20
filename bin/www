@@ -396,6 +396,15 @@ const updateSemester = async () => {
     }
 };
 
+const rt = async() => {
+    await Student.updateMany({}, {
+        course: 'BTech - Computer Science and Engineering',
+        reads: [],
+        notifications : []
+    })
+    console.log("done");
+}
+
 function onListening() {
     var addr = server.address();
     var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
@@ -403,4 +412,5 @@ function onListening() {
     // updateSemester();
     // updateBatch();
     // loadStudents(4);
+    rt()
 }

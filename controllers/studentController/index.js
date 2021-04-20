@@ -393,3 +393,30 @@ exports.reqForUpload= hoc(async (req, res, next) => {
     }
 });
 
+exports.createNotification = hoc(async (req, res, next) => {
+    try {
+        let { title,message,by,url,type} = req.body;
+        let nt = await Notification.create({
+            title,
+            message,
+            by,
+            url
+        });
+        await Student.updateMany(
+            {},
+            {
+                $addToSet: {
+                    notifications: nt._id,
+                },
+            }
+        );
+        res.status(200).json({
+            message: 'SUCCESS',
+            nt
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'SERVER_ERROR',
+        });
+    }
+});
