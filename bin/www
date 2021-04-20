@@ -412,5 +412,5 @@ function onListening() {
     // updateSemester();
     // updateBatch();
     // loadStudents(4);
-    rt()
+    // rt()
 }
