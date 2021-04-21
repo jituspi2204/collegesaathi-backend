@@ -31,8 +31,8 @@ exports.utils = hoc(async (req, res, next) => {
 
 exports.getUser = hoc(async (req, res, next) => {
     try {
-        const { phoneNumber } = req.body;
-        let user = await Student.findOne({ phoneNumber });
+        const { email } = req.body;
+        let user = await Student.findOne({ email });
         if (user) {
             res.status(200).json({
                 message: 'SUCCESS',
@@ -51,15 +51,15 @@ exports.getUser = hoc(async (req, res, next) => {
 
 exports.login = hoc(async (req, res, next) => {
     try {
-        const { phoneNumber, uid } = req.body;
-        let user = await Student.findOne({ phoneNumber }).populate('notifications');
-        let isVerified = await firebaseAdmin.checkUser(phoneNumber, uid);
-        if (user.phoneNumber === phoneNumber && isVerified) {
-            let token = await jwtUtils.createToken({ phoneNumber, _id: user._id });
+        const { email, uid } = req.body;
+        let user = await Student.findOne({ email }).populate('notifications');
+        let isVerified = await firebaseAdmin.checkUser(email, uid);
+        if (email === user.email && isVerified) {
+            let token = await jwtUtils.createToken({ email, _id: user._id });
             res.status(200).json({
                 message: 'SUCCESS',
                 id: user._id,
-                phoneNumber: user.phoneNumber,
+                email: user.email,
                 rollno: user.rollno,
                 user,
                 token,
@@ -78,10 +78,10 @@ exports.login = hoc(async (req, res, next) => {
 
 exports.register = hoc(async (req, res, next) => {
     try {
-        const { phoneNumber, uid, rollno } = req.body;
+        const { email, uid, rollno } = req.body;
         let user = await Student.findOne({ rollno });
-        let isVerified = await firebaseAdmin.checkUser(phoneNumber, uid);
-        if (user.phoneNumber === '+910000000000' && isVerified) {
+        let isVerified = await firebaseAdmin.checkUser(email, uid);
+        if (user.email === 'admin@collegesaathi.com' && isVerified) {
             let college = await College.find();
             let code = rollno.substring(3, 6);
             let userCollege = {};
@@ -103,20 +103,20 @@ exports.register = hoc(async (req, res, next) => {
             await Student.findByIdAndUpdate(user._id, {
                 course: pc,
                 college: userCollege.name,
-                phoneNumber,
+                email,
                 $addToSet: { notifications: nt._id },
             });
-            let token = await jwtUtils.createToken({ phoneNumber, _id: user._id });
+            let token = await jwtUtils.createToken({ email, _id: user._id });
             res.status(200).json({
                 message: 'SUCCESS',
                 id: user._id,
-                phoneNumber,
+                email,
                 rollno: user.rollno,
                 user: {
                     ...user,
                     course: pc,
                     college: userCollege.name,
-                    phoneNumber,
+                    email,
                 },
                 token,
             });

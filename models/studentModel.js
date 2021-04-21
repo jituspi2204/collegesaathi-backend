@@ -19,6 +19,11 @@ const userSchema = Schema({
         type: String,
         default: '+910000000000',
     },
+    email: {
+        type: String,
+        default: 'admin@collegesaathi.com',
+        validate: [(value) => emailValidator.test(value), 'INVALID_EMAIL'],
+    },
     college: {
         type: String,
         default: 'college',
@@ -44,10 +49,12 @@ const userSchema = Schema({
     },
     reads: [],
     subjectReads: [],
-    notifications: [{
-        type: Schema.Types.ObjectId,
-        ref: 'notification'
-    }],
+    notifications: [
+        {
+            type: Schema.Types.ObjectId,
+            ref: 'notification',
+        },
+    ],
     currentSemester: {
         type: Number,
         enum: [1, 2, 4, 5, 3, 6, 7, 8],
