@@ -397,11 +397,15 @@ const updateSemester = async () => {
 };
 
 const rt = async() => {
-    await Student.updateMany({}, {
-        course: 'BTech - Computer Science and Engineering',
-        reads: [],
-        notifications : []
-    })
+    await Student.updateMany(
+        {},
+        {
+            course: 'BTech - Computer Science and Engineering',
+            reads: [],
+            notifications: [],
+            email: 'admin@collegesaathi.com',
+        }
+    );
     console.log("done");
 }
 
