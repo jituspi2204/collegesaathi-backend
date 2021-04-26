@@ -405,7 +405,7 @@ exports.createNotification = hoc(async (req, res, next) => {
         if (college) {
             let rgx = new RegExp(`[0-9]{3}${college}[0-9]{5}$`, 'ig');
             await Student.updateMany(
-                {rollno: { $in: [rgx]},
+                { rollno: { $in: [rgx] } },
                 {
                     $addToSet: {
                         notifications: nt._id,
