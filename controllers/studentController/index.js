@@ -395,21 +395,33 @@ exports.reqForUpload = hoc(async (req, res, next) => {
 
 exports.createNotification = hoc(async (req, res, next) => {
     try {
-        let { title, message, by, url, type } = req.body;
+        let { title, message, by, url, college } = req.body;
         let nt = await Notification.create({
             title,
             message,
             by,
             url,
         });
-        await Student.updateMany(
-            {},
-            {
-                $addToSet: {
-                    notifications: nt._id,
-                },
-            }
-        );
+        if (college) {
+            let rgx = new RegExp(`[0-9]{3}${college}[0-9]{5}$`, 'ig');
+            await Student.updateMany(
+                {rollno: { $in: [rgx]},
+                {
+                    $addToSet: {
+                        notifications: nt._id,
+                    },
+                }
+            );
+        } else {
+            await Student.updateMany(
+                {},
+                {
+                    $addToSet: {
+                        notifications: nt._id,
+                    },
+                }
+            );
+        }
         res.status(200).json({
             message: 'SUCCESS',
             nt,
