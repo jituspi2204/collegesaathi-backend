@@ -316,6 +316,25 @@ exports.downloadFile = hoc(async (req, res, next) => {
     }
 });
 
+exports.deleteMyFile = hoc(async (req, res, next) => {
+    try {
+        const { filename } = req.body;
+        await Student.findByIdAndUpdate(req.user._id, {
+            $pull: { 'reads': { filename } },
+        });
+        let user = await Student.findById(req.user._id);
+        res.status(200).json({
+            message: 'SUCCESS',
+            user,
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: 'SERVER_ERROR',
+        });
+    }
+});
+
 exports.likeFile = hoc(async (req, res, next) => {
     try {
         const { id } = req.query;

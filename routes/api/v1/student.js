@@ -5,7 +5,7 @@ const router = express.Router();
 const studentAuth = require('../../../controllers/authController');
 
 router.get('/', studentAuth.verifyStudentMiddleware, student.details);
-
+router.post('/delete-reads', studentAuth.verifyStudentMiddleware, student.deleteMyFile);
 router.post('/verify', student.getUser);
 router.post('/login', student.login);
 router.post('/register', student.register);
