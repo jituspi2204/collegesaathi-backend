@@ -322,7 +322,7 @@ exports.deleteMyFile = hoc(async (req, res, next) => {
         await Student.findByIdAndUpdate(req.user._id, {
             $pull: { 'reads': { filename } },
         });
-        let user = await Student.findById(req.user._id);
+        let user = await Student.findById(req.user._id).populate('notifications');
         res.status(200).json({
             message: 'SUCCESS',
             user,
