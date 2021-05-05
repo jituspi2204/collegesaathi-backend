@@ -11,6 +11,7 @@ const Notification = require('../../models/notificationsModel');
 
 const programCode = {
     '027': 'BTech - Computer Science and Engineering',
+    '031' : 'BTech - Information Technology'
 };
 
 exports.utils = hoc(async (req, res, next) => {
@@ -278,12 +279,19 @@ exports.uploadFile = hoc(async (req, res, next) => {
 exports.getFiles = hoc(async (req, res, next) => {
     try {
         const { semester, subject, type, unit } = req.query;
-        console.log(req.user);
-        let files = await File.find({ semester, subject, type, unit });
-        res.status(200).json({
-            message: 'SUCCESS',
-            files,
-        });
+        if (semester && subject && type && unit) {
+            let files = await File.find({ semester, subject, type, unit });
+            res.status(200).json({
+                message: 'SUCCESS',
+                files,
+            });
+        } else {
+             let files = await File.find({ semester, subject, unit });
+             res.status(200).json({
+                 message: 'SUCCESS',
+                 files,
+             });
+        }
     } catch (error) {
         res.status(500).json({
             message: 'SERVER_ERROR',
@@ -375,6 +383,27 @@ exports.updateCurSem = hoc(async (req, res, next) => {
         await Student.findByIdAndUpdate(req.user._id, {
             $set: {
                 currentSemester: semester,
+            },
+        });
+        
+        let user = await Student.findById(req.user._id).populate('notifications');
+        res.status(200).json({
+            message: 'SUCCESS',
+            user,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'SERVER_ERROR',
+        });
+    }
+});
+
+exports.updateCurSubjects = hoc(async (req, res, next) => {
+    try {
+        const { subjects } = req.body;
+        await Student.findByIdAndUpdate(req.user._id, {
+            $set: {
+                subjects
             },
         });
         let user = await Student.findById(req.user._id).populate('notifications');

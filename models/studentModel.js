@@ -64,6 +64,7 @@ const userSchema = Schema({
         type: Boolean,
         default: false,
     },
+    mySubjects : [],
     semesters: {
         1: { type: Schema.Types.ObjectId },
         2: { type: Schema.Types.ObjectId },

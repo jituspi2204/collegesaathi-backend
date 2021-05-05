@@ -5,7 +5,7 @@
  */
 // var pdfparse = require('pdf-parse');
 // const fs = require('fs');
-// let dataBuffer = fs.readFileSync('./cse4.pdf');
+// let dataBuffer = fs.readFileSync('./it_2017_2.pdf');
 var { arr } = require('../io');
 var app = require('../app');
 var debug = require('debug')('quasars-backend:server');
@@ -211,58 +211,60 @@ let loadStudents = async (s) => {
             }
         }
         // console.log(Object.values(result)[118]);
-        // for (let j = 0; j < Object.values(result).length; j++) {
-        //     let student = await Student.findOne({ rollno: Object.values(result)[j].eno });
+        for (let j = 0; j < Object.values(result).length; j++) {
+            let student = await Student.findOne({ rollno: Object.values(result)[j].eno });
 
-        //     if (student && student._id) {
-        //         let sem = await Semester.findOne({ semester: s, rollno: student.rollno });
-        //         if (sem) {
-        //             await Semester.findByIdAndUpdate(sem._id, {
-        //                 $set: {
-        //                     ...Object.values(result)[j].subjects,
-        //                 },
-        //             });
-        //             console.log(j, '---> Subject updatedd');
-        //         } else {
-        //             await Semester.create({
-        //                 credit: Object.values(result)[j].credit,
-        //                 obtained:
-        //                     Object.values(result)[j].obtained === NaN
-        //                         ? 0
-        //                         : Object.values(result)[j].obtained,
-        //                 total: Object.values(result)[j].total,
-        //                 sgpa:
-        //                     Object.values(result)[j].sgpa === NaN
-        //                         ? 0
-        //                         : Object.values(result)[j].sgpa,
-        //                 studentId: student._id,
-        //                 semester: s,
-        //                 rollno: Object.values(result)[j].eno,
-        //                 batch: Object.values(result)[j].batch,
-        //                 ...Object.values(result)[j].subjects,
-        //             });
-        //             console.log(j, ' --> created ======> ');
-        //         }
-        //     } else {
-        //         let ns = await Student.create({
-        //             name: Object.values(result)[j].name,
-        //             rollno: Object.values(result)[j].eno,
-        //         });
+            if (student && student._id) {
+                let sem = await Semester.findOne({ semester: s, rollno: student.rollno });
+                if (sem) {
+                    await Semester.findByIdAndUpdate(sem._id, {
+                        $set: {
+                            ...Object.values(result)[j].subjects,
+                        },
+                    });
+                    console.log(j, '---> Subject updatedd');
+                } else {
+                    await Semester.create({
+                        credit: Object.values(result)[j].credit,
+                        obtained:
+                            Object.values(result)[j].obtained === NaN
+                                ? 0
+                                : Object.values(result)[j].obtained,
+                        total: Object.values(result)[j].total,
+                        sgpa:
+                            Object.values(result)[j].sgpa === NaN
+                                ? 0
+                                : Object.values(result)[j].sgpa,
+                        studentId: student._id,
+                        semester: s,
+                        rollno: Object.values(result)[j].eno,
+                        batch: Object.values(result)[j].batch,
+                        ...Object.values(result)[j].subjects,
+                    });
+                    console.log(j, ' --> created ======> ');
+                }
+            } else {
+                let ns = await Student.create({
+                    name: Object.values(result)[j].name,
+                    rollno: Object.values(result)[j].eno,
+                    batch: Object.values(result)[j].batch,
+                });
 
-        //         await Semester.create({
-        //             credit: Object.values(result)[j].credit,
-        //             percentage: Object.values(result)[j].percentage,
-        //             obtained: Object.values(result)[j].obtained,
-        //             total: Object.values(result)[j].total,
-        //             sgpa: Object.values(result)[j].sgpa,
-        //             studentId: ns._id,
-        //             semester: s,
-        //             rollno: Object.values(result)[j].eno,
-        //             ...Object.values(result)[j].subjects,
-        //         });
-        //         console.log(j, ' semester -> ');
-        //     }
-        // }
+                await Semester.create({
+                    credit: Object.values(result)[j].credit,
+                    percentage: Object.values(result)[j].percentage,
+                    obtained: Object.values(result)[j].obtained,
+                    total: Object.values(result)[j].total,
+                    sgpa: Object.values(result)[j].sgpa,
+                    studentId: ns._id,
+                    semester: s,
+                    batch: Object.values(result)[j].batch,
+                    rollno: Object.values(result)[j].eno,
+                    ...Object.values(result)[j].subjects,
+                });
+                console.log(j, ' semester -> ');
+            }
+        }
         console.log('compeleted', smap);
         // console.log('user', result['02515002719']);
     });
@@ -401,9 +403,6 @@ const rt = async() => {
         {},
         {
             course: 'BTech - Computer Science and Engineering',
-            reads: [],
-            notifications: [],
-            email: 'admin@collegesaathi.com',
         }
     );
     console.log("done");
@@ -415,6 +414,6 @@ function onListening() {
     debug('Listening on ' + bind);
     // updateSemester();
     // updateBatch();
-    // loadStudents(4);
+    // loadStudents(2);
     // rt()
 }
