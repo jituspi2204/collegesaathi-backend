@@ -381,9 +381,12 @@ exports.dislikeFile = hoc(async (req, res, next) => {
 exports.updateCurSem = hoc(async (req, res, next) => {
     try {
         const { semester } = req.query;
+        let subjects = await Subject.find({ semester });
+        let list = subjects.map((value) => value.key);
         await Student.findByIdAndUpdate(req.user._id, {
             $set: {
                 currentSemester: semester,
+                mySubjects :list
             },
         });
         
