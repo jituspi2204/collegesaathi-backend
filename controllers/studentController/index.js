@@ -179,8 +179,8 @@ exports.getMarks = hoc(async (req, res, next) => {
 
 exports.collegeRank = hoc(async (req, res, next) => {
     try {
-        const { collegeId, batch, semester } = req.query;
-        let rgx = new RegExp(`[0-9]{3}${collegeId}[0-9]{5}$`, 'ig');
+        const { collegeId, batch, semester ,course} = req.query;
+        let rgx = new RegExp(`[0-9]{3}${collegeId}${course}[0-9]{2}$`, 'ig');
         let students = [];
         if (semester > 0) {
             students = await Semester.find({ rollno: { $in: [rgx] }, batch, semester })
@@ -211,17 +211,18 @@ exports.collegeRank = hoc(async (req, res, next) => {
 
 exports.universityRank = hoc(async (req, res, next) => {
     try {
-        const { batch, semester } = req.query;
+        const { batch, semester,course } = req.query;
+        let rgx = new RegExp(`[0-9]{6}${course}[0-9]{2}$`, 'ig');
         let students = [];
         if (semester > 0) {
-            students = await Semester.find({ batch, semester })
+            students = await Semester.find({ batch, semester, rollno: { $in: [rgx] } })
                 .select(['name', 'percentage', 'sgpa', 'rollno'])
                 .sort({
                     percentage: -1,
                     sgpa: -1,
                 });
         } else {
-            students = await Student.find({ batch })
+            students = await Student.find({ batch, rollno: { $in: [rgx] } })
                 .select(['name', 'college', 'percentage', 'cgpa', 'rollno'])
                 .sort({
                     percentage: -1,
@@ -403,7 +404,7 @@ exports.updateCurSubjects = hoc(async (req, res, next) => {
         const { subjects } = req.body;
         await Student.findByIdAndUpdate(req.user._id, {
             $set: {
-                subjects
+                mySubjects : subjects
             },
         });
         let user = await Student.findById(req.user._id).populate('notifications');
