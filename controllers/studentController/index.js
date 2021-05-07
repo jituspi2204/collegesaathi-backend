@@ -14,6 +14,68 @@ const programCode = {
     '031' : 'BTech - Information Technology'
 };
 
+
+
+const updateMarks = async (rollno) => {
+    let tempSet = new Set();
+    let semesters = await Semester.find({ rollno });
+    let students = {};
+    for (let i = 0; i < semesters.length; i++) {
+        let cs = semesters[i]['_doc'];
+        let total = 0;
+        let obtained = 0;
+        let key = Object.keys(cs);
+        let value = Object.values(cs);
+        let pcd = /^\d{6}$/;
+        let pcd2 = /^\d{5}$/;
+        let td = 0;
+        let tn = 0;
+        if (!tempSet.has(cs.rollno)) {
+            students[cs.rollno] = {
+                total: 0,
+                obtained: 0,
+                tn: 0,
+                td: 0,
+                rollno: cs.rollno,
+            };
+            tempSet.add(cs.rollno);
+        }
+        for (let j = 0; j < key.length; j++) {
+            if (pcd.test(key[j]) || pcd2.test(key[j])) {
+                let inn = value[j].internal ? value[j].internal : 0;
+                let exx = value[j].external ? value[j].external : 0;
+                let tt = parseFloat(value[j].total.split('(')[0]);
+                tt = tt ? tt : 0;
+                obtained += tt >= inn + exx ? tt : inn + exx;
+                total += 100;
+                td += value[j].credit;
+                tn += value[j].credit * value[j].point;
+            }
+        }
+        students[cs.rollno].total += total;
+        students[cs.rollno].obtained += obtained;
+        students[cs.rollno].tn += tn;
+        students[cs.rollno].td += td;
+
+    }
+
+    let temp = Object.values(students);
+    for (let i = 0; i < temp.length; i++) {
+        await Student.findOneAndUpdate(
+            { rollno: temp[i].rollno },
+            {
+                $set: {
+                    total: temp[i].total,
+                    obtained: temp[i].obtained,
+                    cgpa: (temp[i].tn / temp[i].td).toFixed(3),
+                    percentage: ((temp[i].obtained / temp[i].total) * 100).toFixed(6),
+                },
+            }
+        );
+        // console.log(i, temp[i].total, temp[i].obtained, 'Updated');
+    }
+};
+
 exports.utils = hoc(async (req, res, next) => {
     try {
         let colleges = await College.find().sort({ name: 1 });
@@ -79,7 +141,7 @@ exports.login = hoc(async (req, res, next) => {
 
 exports.register = hoc(async (req, res, next) => {
     try {
-        const { email, uid, rollno } = req.body;
+        const { email, uid, rollno ,oldRollno} = req.body;
         let user = await Student.findOne({ rollno });
         let isVerified = await firebaseAdmin.checkUser(email, uid);
         if (user.email === 'admin@collegesaathi.com' && isVerified) {
@@ -107,6 +169,13 @@ exports.register = hoc(async (req, res, next) => {
                 email,
                 $addToSet: { notifications: nt._id },
             });
+            if (oldRollno) {
+                // await Student.deleteOne({ rollno: oldRollno });
+                await Semester.updateMany({ rollno: oldRollno }, {
+                    $set : {rollno ,studentId : user._id}
+                })
+                await updateMarks(rollno);
+            }
             let token = await jwtUtils.createToken({ email, _id: user._id });
             res.status(200).json({
                 message: 'SUCCESS',

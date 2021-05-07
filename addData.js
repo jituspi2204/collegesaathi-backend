@@ -1012,3 +1012,25 @@ exports.addToCart = async (req, res) => {
 // if(process.argv[2] === '--add'){
 //     addData();
 // }
+
+let datas = {
+    _id: { $oid: '60903402a87c4c3a1cca0e11' },
+    name: 'CHETAN SHARMA',
+    rollno: '41515003117',
+    phoneNumber: '+910000000000',
+    email: 'admin@collegesaathi.com',
+    college: 'college',
+    course: 'course',
+    branch: 'branch',
+    total: { $numberInt: '2500' },
+    obtained: { $numberInt: '2139' },
+    cgpa: { $numberDouble: '8.963' },
+    percentage: { $numberDouble: '85.56' },
+    batch: { $numberInt: '2017' },
+    reads: [],
+    subjectReads: [],
+    notifications: [],
+    currentSemester: { $numberInt: '1' },
+    allowed: false,
+    __v: { $numberInt: '0' },
+};
