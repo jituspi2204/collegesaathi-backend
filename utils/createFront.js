@@ -146,6 +146,7 @@ class CreatePDf {
             //     align: 'center',
             // })
             .end();
+        return  `bills/${this.data.semester}/paper_${this.data.year}_${this.data.subjectName}_${this.data.cat}.pdf`;
     }
 
     generateFile() {
