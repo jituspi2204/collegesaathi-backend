@@ -8,13 +8,13 @@ const firebaseAdmin = require('../utils/admin');
 const jwtUtils = require('../utils/jwtUtils');
 const File = require('../../models/fileModel');
 const Notification = require('../../models/notificationsModel');
-
+const PDFMerger = require('pdf-merger-js');
+const cover = require('../../utils/createFront');
+var merger = new PDFMerger();
 const programCode = {
     '027': 'BTech - Computer Science and Engineering',
-    '031' : 'BTech - Information Technology'
+    '031': 'BTech - Information Technology',
 };
-
-
 
 const updateMarks = async (rollno) => {
     let tempSet = new Set();
@@ -56,7 +56,6 @@ const updateMarks = async (rollno) => {
         students[cs.rollno].obtained += obtained;
         students[cs.rollno].tn += tn;
         students[cs.rollno].td += td;
-
     }
 
     let temp = Object.values(students);
@@ -141,7 +140,7 @@ exports.login = hoc(async (req, res, next) => {
 
 exports.register = hoc(async (req, res, next) => {
     try {
-        const { email, uid, rollno ,oldRollno} = req.body;
+        const { email, uid, rollno, oldRollno } = req.body;
         let user = await Student.findOne({ rollno });
         let isVerified = await firebaseAdmin.checkUser(email, uid);
         if (user.email === 'admin@collegesaathi.com' && isVerified) {
@@ -171,9 +170,12 @@ exports.register = hoc(async (req, res, next) => {
             });
             if (oldRollno) {
                 // await Student.deleteOne({ rollno: oldRollno });
-                await Semester.updateMany({ rollno: oldRollno }, {
-                    $set : {rollno ,studentId : user._id}
-                })
+                await Semester.updateMany(
+                    { rollno: oldRollno },
+                    {
+                        $set: { rollno, studentId: user._id },
+                    }
+                );
                 await updateMarks(rollno);
             }
             let token = await jwtUtils.createToken({ email, _id: user._id });
@@ -248,7 +250,7 @@ exports.getMarks = hoc(async (req, res, next) => {
 
 exports.collegeRank = hoc(async (req, res, next) => {
     try {
-        const { collegeId, batch, semester ,course} = req.query;
+        const { collegeId, batch, semester, course } = req.query;
         let rgx = new RegExp(`[0-9]{3}${collegeId}${course}[0-9]{2}$`, 'ig');
         let students = [];
         if (semester > 0) {
@@ -280,7 +282,7 @@ exports.collegeRank = hoc(async (req, res, next) => {
 
 exports.universityRank = hoc(async (req, res, next) => {
     try {
-        const { batch, semester,course } = req.query;
+        const { batch, semester, course } = req.query;
         let rgx = new RegExp(`[0-9]{6}${course}[0-9]{2}$`, 'ig');
         let students = [];
         if (semester > 0) {
@@ -356,11 +358,11 @@ exports.getFiles = hoc(async (req, res, next) => {
                 files,
             });
         } else {
-             let files = await File.find({ semester, subject, unit });
-             res.status(200).json({
-                 message: 'SUCCESS',
-                 files,
-             });
+            let files = await File.find({ semester, subject, unit });
+            res.status(200).json({
+                message: 'SUCCESS',
+                files,
+            });
         }
     } catch (error) {
         res.status(500).json({
@@ -398,7 +400,7 @@ exports.deleteMyFile = hoc(async (req, res, next) => {
     try {
         const { filename } = req.body;
         await Student.findByIdAndUpdate(req.user._id, {
-            $pull: { 'reads': { filename } },
+            $pull: { reads: { filename } },
         });
         let user = await Student.findById(req.user._id).populate('notifications');
         res.status(200).json({
@@ -455,10 +457,10 @@ exports.updateCurSem = hoc(async (req, res, next) => {
         await Student.findByIdAndUpdate(req.user._id, {
             $set: {
                 currentSemester: semester,
-                mySubjects :list
+                mySubjects: list,
             },
         });
-        
+
         let user = await Student.findById(req.user._id).populate('notifications');
         res.status(200).json({
             message: 'SUCCESS',
@@ -476,7 +478,7 @@ exports.updateCurSubjects = hoc(async (req, res, next) => {
         const { subjects } = req.body;
         await Student.findByIdAndUpdate(req.user._id, {
             $set: {
-                mySubjects : subjects
+                mySubjects: subjects,
             },
         });
         let user = await Student.findById(req.user._id).populate('notifications');
@@ -548,6 +550,58 @@ exports.createNotification = hoc(async (req, res, next) => {
             nt,
         });
     } catch (error) {
+        res.status(500).json({
+            message: 'SERVER_ERROR',
+        });
+    }
+});
+
+exports.createCover = hoc(async (req, res, next) => {
+    try {
+        const {
+            type,
+            semester,
+            subject,
+            subjectName,
+            syllabus1,
+            syllabus2,
+            syllabus3,
+            syllabus4,
+            syllabus,
+            unit,
+            cat,
+            year,
+            description,
+        } = req.body;
+        let pdf = new cover({
+            type,
+            semester,
+            subject,
+            subjectName,
+            unit,
+            description,
+            year,
+            cat,
+            syllabus1,
+            syllabus2,
+            syllabus3,
+            syllabus4,
+            syllabus,
+        });
+
+        // console.log(req.body);
+        let url = 'https://quiet-scrubland-22380.herokuapp.com/';
+        if (type == 'notes') {
+            url += pdf.generateNotes();
+        } else if (type == 'papers') {
+            url += pdf.generatePaper();
+        }
+        res.status(200).json({
+            message: 'SUCCESS',
+            url
+        });
+    } catch (error) {
+        console.log(error);
         res.status(500).json({
             message: 'SERVER_ERROR',
         });

@@ -3,7 +3,7 @@ var express = require('express');
 const student = require('../../../controllers/studentController');
 const router = express.Router();
 const studentAuth = require('../../../controllers/authController');
-
+const utils = require('../../../createFrontPage');
 router.get('/', studentAuth.verifyStudentMiddleware, student.details);
 router.post('/delete-reads', studentAuth.verifyStudentMiddleware, student.deleteMyFile);
 router.post('/verify', student.getUser);
@@ -23,7 +23,7 @@ router.get('/update/current-semester', studentAuth.verifyStudentMiddleware, stud
 router.post('/update/subjects', studentAuth.verifyStudentMiddleware, student.updateCurSubjects);
 router.get('/request/upload', studentAuth.verifyStudentMiddleware, student.reqForUpload);
 router.post('/notification/add', studentAuth.verifyStudentMiddleware, student.createNotification);
-
+router.post('/utils/get-cover' ,student.createCover)
 
 
 
