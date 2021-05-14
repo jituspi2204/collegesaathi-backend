@@ -14,6 +14,7 @@
     "debug": "~2.6.9",
     "dotenv": "^8.2.0",
     "downloadjs": "^1.4.7",
+    "easy-pdf-merge": "^0.2.6",
     "express": "~4.16.1",
     "faker": "^5.1.0",
     "firebase-admin": "^9.4.2",

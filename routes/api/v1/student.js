@@ -23,7 +23,9 @@ router.get('/update/current-semester', studentAuth.verifyStudentMiddleware, stud
 router.post('/update/subjects', studentAuth.verifyStudentMiddleware, student.updateCurSubjects);
 router.get('/request/upload', studentAuth.verifyStudentMiddleware, student.reqForUpload);
 router.post('/notification/add', studentAuth.verifyStudentMiddleware, student.createNotification);
-router.post('/utils/get-cover' ,student.createCover)
+router.post('/notification/delete', studentAuth.verifyStudentMiddleware, student.deleteNotification);
+
+router.post('/utils/get-cover',student.createCover)
 
 
 

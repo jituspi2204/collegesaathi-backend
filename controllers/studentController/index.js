@@ -8,9 +8,10 @@ const firebaseAdmin = require('../utils/admin');
 const jwtUtils = require('../utils/jwtUtils');
 const File = require('../../models/fileModel');
 const Notification = require('../../models/notificationsModel');
-const PDFMerger = require('pdf-merger-js');
+const PDFMerger = require('easy-pdf-merge');
 const cover = require('../../utils/createFront');
-var merger = new PDFMerger();
+const User = require('../../models/userModel');
+// var merger = new PDFMerger();
 const programCode = {
     '027': 'BTech - Computer Science and Engineering',
     '031': 'BTech - Information Technology',
@@ -350,20 +351,12 @@ exports.uploadFile = hoc(async (req, res, next) => {
 
 exports.getFiles = hoc(async (req, res, next) => {
     try {
-        const { semester, subject, type, unit } = req.query;
-        if (semester && subject && type && unit) {
-            let files = await File.find({ semester, subject, type, unit });
-            res.status(200).json({
-                message: 'SUCCESS',
-                files,
-            });
-        } else {
-            let files = await File.find({ semester, subject, unit });
-            res.status(200).json({
-                message: 'SUCCESS',
-                files,
-            });
-        }
+        const { semester, subject,} = req.query;
+        let files = await File.find({ semester, subject});
+        res.status(200).json({
+            message: 'SUCCESS',
+            files,
+        });
     } catch (error) {
         res.status(500).json({
             message: 'SERVER_ERROR',
@@ -556,6 +549,25 @@ exports.createNotification = hoc(async (req, res, next) => {
     }
 });
 
+exports.deleteNotification = hoc(async (req, res, next) => {
+    try {
+        await User.findByIdAndUpdate(req.user._id, {
+            $set: {
+                notifications : []
+            }
+        })
+        let user = await User.findById(req.user._id);
+        res.status(200).json({
+            message: 'SUCCESS',
+            user : user
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: 'SERVER_ERROR',
+        });
+    }
+});
+
 exports.createCover = hoc(async (req, res, next) => {
     try {
         const {
@@ -571,6 +583,7 @@ exports.createCover = hoc(async (req, res, next) => {
             unit,
             cat,
             year,
+            filename,
             description,
         } = req.body;
         let pdf = new cover({
@@ -589,16 +602,35 @@ exports.createCover = hoc(async (req, res, next) => {
             syllabus,
         });
 
-        // console.log(req.body);
         let url = 'https://quiet-scrubland-22380.herokuapp.com/';
         if (type == 'notes') {
             url += pdf.generateNotes();
         } else if (type == 'papers') {
             url += pdf.generatePaper();
         }
+
+        // merger.add('public/bills/' + semester + "/" + filename);
+        // merger.add('public/bills/' + req.file.filename);
+        // merger.save(req.file.path)
+        // PDFMerger(
+        //     ['public/bills/' + semester + '/' + filename, req.file.path],
+        //     'public/bills/' + filename,
+        //     function (err) {
+        //         if (err) {
+        //             console.log(err);
+        //             res.status(500).json({
+        //                 message: 'SERVER_ERROR',
+        //             });
+        //         }
+        //         res.status(200).json({
+        //             message: 'SUCCESS',
+        //         });
+        //     }
+        // );
+
         res.status(200).json({
             message: 'SUCCESS',
-            url
+            url,
         });
     } catch (error) {
         console.log(error);
