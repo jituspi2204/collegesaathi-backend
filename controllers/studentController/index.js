@@ -180,18 +180,19 @@ exports.register = hoc(async (req, res, next) => {
                 await updateMarks(rollno);
             }
             let token = await jwtUtils.createToken({ email, _id: user._id });
+            let userDetails = {
+                ...user,
+            };
+            userDetails.course = pc;
+            userDetails.email = email;
+            userDetails.college = userCollege.name;
             res.status(200).json({
                 message: 'SUCCESS',
                 id: user._id,
                 email,
-                rollno: user.rollno,
-                user: {
-                    ...user,
-                    course: pc,
-                    college: userCollege.name,
-                    email,
-                },
+                rollno: user.rollno
                 token,
+                user : userDetails
             });
         } else {
             res.status(401).json({
