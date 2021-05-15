@@ -190,7 +190,7 @@ exports.register = hoc(async (req, res, next) => {
                 message: 'SUCCESS',
                 id: user._id,
                 email,
-                rollno: user.rollno
+                rollno: user.rollno,
                 token,
                 user : userDetails
             });
