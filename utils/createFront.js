@@ -63,7 +63,7 @@ class CreatePDf {
                 align: 'center',
             })
             .end();
-            return `bills/${this.data.semester}/${this.data.type}_${this.data.subjectName}_${this.data.unit}.pdf`;
+        return `bills/${this.data.semester}/${this.data.type}_${this.data.subjectName}_${this.data.unit}.pdf`;
     }
 
     generatePaper() {
@@ -146,56 +146,59 @@ class CreatePDf {
             //     align: 'center',
             // })
             .end();
-        return  `bills/${this.data.semester}/paper_${this.data.year}_${this.data.subjectName}_${this.data.cat}.pdf`;
+        return `bills/${this.data.semester}/paper_${this.data.year}_${this.data.subjectName}_${this.data.cat}.pdf`;
     }
 
     generateFile() {
-        let amount = 0;
-        let discount = 0;
-        let price = 0;
-        let qty = 0;
-        let bamount = 0;
-        let bprice = 0;
-        let bdiscount = 0;
-        let bqty = 0;
-        this.doc.pipe(fs.createWriteStream(`public/bills/notes.pdf`));
-        this.doc
-            .rect(0, 0, 700, 50)
-            .fill('#000')
-            .roundedRect(480, 7.5, 120, 35, 4)
-            .fill('#ffc404')
-            .image('public/bills/assets/logo.png', 230, 10, { width: 200 })
-            .image('public/bills/assets/ic.png', 180, 0, { width: 50 })
-            .image('public/bills/assets/bg_4.png', 0, 100, { width: 620 })
-            .opacity(1)
-            .fill('#000')
-            .fontSize(18)
-            .text('Notes', 490, 15, {
-                width: 100,
-                align: 'center',
-            })
-            .fontSize(21)
-            .text(this.data.subject + '-' + this.data.subjectName, 20, 80, {
-                width: 580,
-                align: 'center',
-            })
-            .fontSize(18)
-            .text('Semester - ' + this.data.semester, 20, 110, { width: 580, align: 'center' })
-            .text('UNIT - ' + this.data.unit + '   Syllabus', 20, 530, {
-                width: 580,
-            })
-            .moveTo(10, 600)
-            .lineJoin('round')
-            .roundedRect(20, 550, 570, 150, 10)
-            .stroke()
-            .fontSize(12)
-            .text(this.data.syllabus, 25, 570, { width: 560, align: 'justify' })
-            .text('To Download App  -   https://collegesaathi-india.web.app', 20, 705, {
-                width: 580,
-                align: 'center',
-            })
-            .end();
-        return `bills/${this.data.semester}/paper_${this.data.year}_${this.data.subjectName}_${this.data.cat}.pdf`;
+          let amount = 0;
+          let discount = 0;
+          let price = 0;
+          let qty = 0;
+          let bamount = 0;
+          let bprice = 0;
+          let bdiscount = 0;
+          let bqty = 0;
+          this.doc.pipe(
+              fs.createWriteStream(
+                  `public/bills/${this.data.semester}/labfiles_${this.data.subjectName}_${this.data.description}.pdf`
+              )
+          );
+
+          this.doc
+              .rect(0, 0, 700, 50)
+              .fill('#000')
+              .roundedRect(480, 7.5, 120, 35, 4)
+              .fill('#ffc404')
+              .image('public/bills/assets/logo.png', 230, 10, { width: 200 })
+              .image('public/bills/assets/ic.png', 180, 0, { width: 50 })
+              .image('public/bills/assets/bg_1.png', 0, 100, { width: 620 })
+              .opacity(1)
+              .fill('#000')
+              .fontSize(18)
+              .text('Lab Files', 490, 15, {
+                  width: 100,
+                  align: 'center',
+              })
+              .fontSize(16)
+              .text(this.data.subject + '-' + this.data.subjectName, 20, 80, {
+                  width: 580,
+                  align: 'center',
+              })
+              .fontSize(16)
+              .text('Semester - ' + this.data.semester, 20, 110, { width: 580, align: 'center' })
+              .fontSize(16)
+              .text(this.data.description, 20, 640, {
+                  width: 580,
+                  align: 'center',
+              })
+              .fontSize(12)
+              .text('To Download App  -   https://collegesaathi-india.web.app', 20, 705, {
+                  width: 580,
+                  align: 'center',
+              })
+             
+              .end();
+          return `bills/${this.data.semester}/labfiles_${this.data.subjectName}_${this.data.description}.pdf`;
     }
 }
 

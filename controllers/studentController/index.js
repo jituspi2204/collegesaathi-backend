@@ -551,15 +551,15 @@ exports.createNotification = hoc(async (req, res, next) => {
 
 exports.deleteNotification = hoc(async (req, res, next) => {
     try {
-        await User.findByIdAndUpdate(req.user._id, {
+        await Student.findByIdAndUpdate(req.user._id, {
             $set: {
                 notifications : []
             }
         })
-        let user = await User.findById(req.user._id);
+        let user = await Student.findById(req.user._id);
         res.status(200).json({
             message: 'SUCCESS',
-            user : user
+            user
         });
     } catch (error) {
         res.status(500).json({
@@ -607,6 +607,8 @@ exports.createCover = hoc(async (req, res, next) => {
             url += pdf.generateNotes();
         } else if (type == 'papers') {
             url += pdf.generatePaper();
+        } else if (type === 'labfiles') {
+            url += pdf.generateFile();
         }
 
         // merger.add('public/bills/' + semester + "/" + filename);
