@@ -26,6 +26,7 @@ router.post('/notification/add', studentAuth.verifyStudentMiddleware, student.cr
 router.post('/notification/delete', studentAuth.verifyStudentMiddleware, student.deleteNotification);
 
 router.post('/utils/get-cover',student.createCover)
+// router.post('/utils/cover', utils.uploadUserFile, student.createCover);
 
 
 

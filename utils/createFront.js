@@ -19,7 +19,7 @@ class CreatePDf {
         let bqty = 0;
         this.doc.pipe(
             fs.createWriteStream(
-                `public/bills/${this.data.semester}/${this.data.type}_${this.data.subjectName}_${this.data.unit}.pdf`
+                `public/bills/${this.data.semester}_${this.data.type}_${this.data.subjectName}_${this.data.unit}.pdf`
             )
         );
         this.doc
@@ -63,7 +63,7 @@ class CreatePDf {
                 align: 'center',
             })
             .end();
-        return `bills/${this.data.semester}/${this.data.type}_${this.data.subjectName}_${this.data.unit}.pdf`;
+        return `bills/${this.data.semester}_${this.data.type}_${this.data.subjectName}_${this.data.unit}.pdf`;
     }
 
     generatePaper() {
@@ -77,7 +77,7 @@ class CreatePDf {
         let bqty = 0;
         this.doc.pipe(
             fs.createWriteStream(
-                `public/bills/${this.data.semester}/paper_${this.data.year}_${this.data.subjectName}_${this.data.cat}.pdf`
+                `public/bills/${this.data.semester}_paper_${this.data.year}_${this.data.subjectName}_${this.data.cat}.pdf`
             )
         );
 
@@ -146,7 +146,7 @@ class CreatePDf {
             //     align: 'center',
             // })
             .end();
-        return `bills/${this.data.semester}/paper_${this.data.year}_${this.data.subjectName}_${this.data.cat}.pdf`;
+        return `bills/${this.data.semester}_paper_${this.data.year}_${this.data.subjectName}_${this.data.cat}.pdf`;
     }
 
     generateFile() {
@@ -160,7 +160,7 @@ class CreatePDf {
           let bqty = 0;
           this.doc.pipe(
               fs.createWriteStream(
-                  `public/bills/${this.data.semester}/labfiles_${this.data.subjectName}_${this.data.description}.pdf`
+                  `public/bills/${this.data.semester}_labfiles_${this.data.subjectName}_${this.data.description}.pdf`
               )
           );
 
@@ -196,9 +196,8 @@ class CreatePDf {
                   width: 580,
                   align: 'center',
               })
-             
               .end();
-          return `bills/${this.data.semester}/labfiles_${this.data.subjectName}_${this.data.description}.pdf`;
+          return `bills/${this.data.semester}_labfiles_${this.data.subjectName}_${this.data.description}.pdf`;
     }
 }
 

@@ -31,14 +31,14 @@ exports.uploadUserFile = upload.single('notes');
 
 // new pdf({
 //     type: 'notes',
-//     semester: 2,
-//     subject: 'ETMA-202',
-//     subjectName: 'Microprocessors and Microcontrollers',
-//     unit: 1,
-//     description: 'Unit 2 Notes',
+//     semester: 8,
+//     subject: 'ETIT-402',
+//     subjectName: 'Mobile Computing',
+//     unit: 4,
+//     description: 'Unit 4 Notes',
 //     year: '2017',
 //     cat: 'First Term',
-//     syllabus1: `8086 Microprocessor: 8086 Architecture, difference between 8085 and 8086 architecture, generation of physicaladdress, PIN diagram of 8086, Minimum Mode and Maximum mode, Bus cycle, Memory Organization, MemoryInterfacing, Addressing Modes, Assembler Directives, Instruction set of 8086, Assembly Language Programming,Hardware and Software Interrupts.`,
+//     syllabus: `Support for Mobility: Data bases, data hoarding, Data dissemination, UA Prof and Caching, Service discovery,Data management issues, data replication for mobile computers, adaptive clustering for mobile wireless networks,Mobile devices and File systems, Data Synchronization, Sync ML.Introduction to Wireless Devices and Operating systems: Palm OS, Windows CE, Symbion OS, Android, MobileAgents. Introduction to Mobile application languages and tool kits.`,
 //     syllabus2: `Mobile Physical Layer: Review of generation of mobile services, overview of wireless telephony, cellular concept, GSM: air-interface, channel structure, location management: HLR-VLR, hierarchical, handoffs, channel allocation in cellular systems, CDMA, GPRS.
 // Mobile Computing Architecture: Issues in mobile computing, three tier architecture for mobile computing, design considerations, Mobile file systems, Mobile databases. WAP: Architecture, protocol stack, Data gram protocol, Wireless transport layer security, Wireless transaction protocol, wireless session protocol, application environment, and applications.`,
 //     syllabus3: `Mobile Physical Layer: Review of generation of mobile services, overview of wireless telephony, cellular concept, GSM: air-interface, channel structure, location management: HLR-VLR, hierarchical, handoffs, channel allocation in cellular systems, CDMA, GPRS.
