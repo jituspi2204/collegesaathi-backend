@@ -15,6 +15,8 @@ const User = require('../../models/userModel');
 const programCode = {
     '027': 'BTech - Computer Science and Engineering',
     '031': 'BTech - Information Technology',
+    '028': 'BTech - Electronics and Communications Engineering',
+    '049': 'BTech - Electrical & Electronics Engineering',
 };
 
 const updateMarks = async (rollno) => {
@@ -144,72 +146,70 @@ exports.register = hoc(async (req, res, next) => {
         const { email, uid, rollno, oldRollno } = req.body;
         let user = await Student.findOne({ rollno });
         if (user) {
-             let isVerified = await firebaseAdmin.checkUser(email, uid);
-             if (user.email === 'admin@collegesaathi.com' && isVerified) {
-                 let college = await College.find();
-                 let code = rollno.substring(3, 6);
-                 let userCollege = {};
-                 let pc = programCode[rollno.substring(6, 9)];
-                 for (let i = 0; i < college.length; i++) {
-                     if (code == college[i].id) {
-                         userCollege = college[i];
-                         break;
-                     }
-                 }
-                 let nt = await Notification.create({
-                     title: 'ADMIN',
-                     message:
-                         'Thanks for connecting with us , we are happy to see you here ' +
-                         user.name,
-                     by: '@collegeSAATHI',
-                     time: new Date(Date.now()),
-                 });
-                 // console.log(userCollege);
-                 await Student.findByIdAndUpdate(user._id, {
-                     course: pc,
-                     college: userCollege.name,
-                     email,
-                     $addToSet: { notifications: nt._id },
-                 });
-                 if (oldRollno) {
-                     // await Student.deleteOne({ rollno: oldRollno });
-                     let oldUser = await Student.findOne({ rollno: oldRollno });
-                     if (oldUser && user.name === oldUser.name) {
-                         await Semester.updateMany(
-                             { rollno: oldRollno },
-                             {
-                                 $set: { rollno, studentId: user._id },
-                             }
-                         );
-                         await updateMarks(rollno);
-                     }
-                 }
-                 let token = await jwtUtils.createToken({ email, _id: user._id });
-                 let userDetails = {
-                     ...user,
-                 };
-                 userDetails.course = pc;
-                 userDetails.email = email;
-                 userDetails.college = userCollege.name;
-                 res.status(200).json({
-                     message: 'SUCCESS',
-                     id: user._id,
-                     email,
-                     rollno: user.rollno,
-                     token,
-                     user: userDetails,
-                 });
-             } else {
-                 res.status(401).json({
-                     message: 'ALREADY_REGISTERED',
-                 });
-             }
+            let isVerified = await firebaseAdmin.checkUser(email, uid);
+            if (user.email === 'admin@collegesaathi.com' && isVerified) {
+                let college = await College.find();
+                let code = rollno.substring(3, 6);
+                let userCollege = {};
+                let pc = programCode[rollno.substring(6, 9)];
+                for (let i = 0; i < college.length; i++) {
+                    if (code == college[i].id) {
+                        userCollege = college[i];
+                        break;
+                    }
+                }
+                let nt = await Notification.create({
+                    title: 'ADMIN',
+                    message:
+                        'Thanks for connecting with us , we are happy to see you here ' + user.name,
+                    by: '@collegeSAATHI',
+                    time: new Date(Date.now()),
+                });
+                // console.log(userCollege);
+                await Student.findByIdAndUpdate(user._id, {
+                    course: pc,
+                    college: userCollege.name,
+                    email,
+                    $addToSet: { notifications: nt._id },
+                });
+                if (oldRollno) {
+                    // await Student.deleteOne({ rollno: oldRollno });
+                    let oldUser = await Student.findOne({ rollno: oldRollno });
+                    if (oldUser && user.name === oldUser.name) {
+                        await Semester.updateMany(
+                            { rollno: oldRollno },
+                            {
+                                $set: { rollno, studentId: user._id },
+                            }
+                        );
+                        await updateMarks(rollno);
+                    }
+                }
+                let token = await jwtUtils.createToken({ email, _id: user._id });
+                let userDetails = {
+                    ...user,
+                };
+                userDetails.course = pc;
+                userDetails.email = email;
+                userDetails.college = userCollege.name;
+                res.status(200).json({
+                    message: 'SUCCESS',
+                    id: user._id,
+                    email,
+                    rollno: user.rollno,
+                    token,
+                    user: userDetails,
+                });
+            } else {
+                res.status(401).json({
+                    message: 'ALREADY_REGISTERED',
+                });
+            }
         } else {
-             res.status(404).json({
-                 message: 'STUDENT_NOT_FOUND',
-             });
+            res.status(404).json({
+                message: 'STUDENT_NOT_FOUND',
+            });
         }
-       
     } catch (error) {
         res.status(500).json({
             message: 'SERVER_ERROR',
@@ -363,8 +363,8 @@ exports.uploadFile = hoc(async (req, res, next) => {
 
 exports.getFiles = hoc(async (req, res, next) => {
     try {
-        const { semester, subject,} = req.query;
-        let files = await File.find({ semester, subject}).sort({unit : 1});
+        const { semester, subject } = req.query;
+        let files = await File.find({ semester, subject }).sort({ unit: 1 });
         res.status(200).json({
             message: 'SUCCESS',
             files,
@@ -565,13 +565,13 @@ exports.deleteNotification = hoc(async (req, res, next) => {
     try {
         await Student.findByIdAndUpdate(req.user._id, {
             $set: {
-                notifications : []
-            }
-        })
+                notifications: [],
+            },
+        });
         let user = await Student.findById(req.user._id);
         res.status(200).json({
             message: 'SUCCESS',
-            user
+            user,
         });
     } catch (error) {
         res.status(500).json({
@@ -579,7 +579,6 @@ exports.deleteNotification = hoc(async (req, res, next) => {
         });
     }
 });
-
 
 exports.createCover = hoc(async (req, res, next) => {
     try {

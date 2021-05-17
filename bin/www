@@ -2,10 +2,10 @@
 
 /**
  * Module dependencies.
- */
+//  */
 // var pdfparse = require('pdf-parse');
 // const fs = require('fs');
-// let dataBuffer = fs.readFileSync('./it_2017_2.pdf');
+// let dataBuffer = fs.readFileSync('./ece_2017_1.pdf');
 var { arr } = require('../io');
 var app = require('../app');
 var debug = require('debug')('quasars-backend:server');
@@ -39,6 +39,7 @@ var server = http.createServer(app);
 var socketio = require('socket.io');
 const Subject = require('../models/subjectsModel');
 const Semester = require('../models/semesterModel');
+const College = require('../models/collegeModel');
 var io = socketio(server);
 
 io.on('connection', (socket) => {
@@ -398,16 +399,49 @@ const updateSemester = async () => {
     }
 };
 
-const rt = async() => {
+const rt = async () => {
     await Student.updateMany(
         {},
         {
             course: 'BTech - Computer Science and Engineering',
         }
     );
-    console.log("done");
-}
+    console.log('done');
+};
 
+const createCollege = async () => {
+    pdfparse(dataBuffer).then(async (data) => {
+        let dd = data.text.split('\n');
+        let rst = [];
+        let map = {};
+        let pcd = /Institution Code:/;
+        for (let i = 0; i < dd.length; i++) {
+            if (pcd.test(dd[i])) {
+                let temp = dd[i].split('Institution Code:')[1];
+                let str = temp.split('Institution: ');
+                let id = parseInt(str[0].split('"'));
+                let name = str[1] + dd[i + 1] + dd[i + 2];
+                map[id] = {
+                    address: 'address',
+                    id,
+                    name,
+                };
+            }
+        }
+        let resultMap = Object.values(map);
+        for (let i = 0; i < resultMap.length; i++) {
+            let college = await College.find({ id: resultMap[i].id });
+            if (!college) {
+                await College.create({
+                    ...resultMap[i]
+                })
+                console.log("Created", resultMap[i].name);
+            } else {
+                console.log("Already");
+            }
+        }
+    });
+};
 function onListening() {
     var addr = server.address();
     var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
@@ -416,4 +450,5 @@ function onListening() {
     // updateBatch();
     // loadStudents(2);
     // rt()
+    // createCollege();
 }

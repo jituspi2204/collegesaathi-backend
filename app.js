@@ -6,9 +6,13 @@ var logger = require('morgan');
 var addData = require('./addData');
 var indexRouter = require('./routes/index');
 var apiRouter = require('./routes/api');
+const rateLimit = require('express-rate-limit');
+const limiter = rateLimit({
+    max: 500,
+    windowMs: 1000 * 60 * 60,
+    message: 'try after 1 hour',
+});
 const cors = require('cors');
-
-
 var dotenv = require('dotenv');
 dotenv.config({ path: './config.env' });
 var mongoose = require('mongoose');
@@ -55,6 +59,7 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+app.use('/', limiter);
 app.use(cors());
 app.use(logger('dev'));
 app.use(express.json());
