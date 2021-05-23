@@ -5,7 +5,7 @@
 //  */
 // var pdfparse = require('pdf-parse');
 // const fs = require('fs');
-// let dataBuffer = fs.readFileSync('./ece_2017_1.pdf');
+// let dataBuffer = fs.readFileSync('./ece_2021.pdf');
 var { arr } = require('../io');
 var app = require('../app');
 var debug = require('debug')('quasars-backend:server');
@@ -119,24 +119,43 @@ function onError(error) {
  * Event listener for HTTP server "listening" event.
  */
 
-let loadStudents = async (s) => {
+let loadStudents = async () => {
     var vd = /^\d{11}/;
     pdfparse(dataBuffer).then(async (data) => {
         let result = {};
+        let ddd = [];
         let smap = {};
         let dd = data.text.split('\n');
+        let batch = 0;
+        let s = 0;
         for (let i = 0; i < dd.length; i++) {
             let pcd = /^\d{6}$/;
             let pcd2 = /^\d{5}$/;
+            let batchRegx = /Batch:/;
+            if (batchRegx.test(dd[i])) {
+                let newBatch = parseInt(dd[i].split('Batch:')[1]);
+                let newSem = parseInt(dd[i].split('Batch:')[0].split('Sem./Year:')[1]);
+                if (s !== newSem) {
+                    s = newSem;
+                }
+                if (batch !== newBatch) {
+                    batch = newBatch;
+                }
+            }
             if (pcd.test(dd[i]) || pcd2.test(dd[i])) {
-                smap[dd[i]] = { id: dd[i + 1], name: dd[i + 2], key: dd[i] };
+                smap[dd[i]] = { id: dd[i + 1], name: dd[i + 2], key: dd[i], semester: s };
             }
         }
-        let batch = 0;
+        batch = 0;
+        s = 0;
         for (let i = 0; i < dd.length; i++) {
             let batchRegx = /Batch:/;
             if (batchRegx.test(dd[i])) {
                 let newBatch = parseInt(dd[i].split('Batch:')[1]);
+                let newSem = parseInt(dd[i].split('Batch:')[0].split('Sem./Year:')[1]);
+                if (s !== newSem) {
+                    s = newSem;
+                }
                 if (batch !== newBatch) {
                     batch = newBatch;
                 }
@@ -157,6 +176,7 @@ let loadStudents = async (s) => {
                     percentage: 0,
                     subjects: {},
                     sgpa: 0,
+                    semester: s,
                 };
                 i++;
                 let pcd = /^\d{6}[(]/;
@@ -204,7 +224,6 @@ let loadStudents = async (s) => {
             if (!subject) {
                 let sub = await Subject.create({
                     ...Object.values(smap)[j],
-                    semester: s,
                 });
                 console.log(j, ' -> subject  ', sub._id);
             } else {
@@ -216,7 +235,10 @@ let loadStudents = async (s) => {
             let student = await Student.findOne({ rollno: Object.values(result)[j].eno });
 
             if (student && student._id) {
-                let sem = await Semester.findOne({ semester: s, rollno: student.rollno });
+                let sem = await Semester.findOne({
+                    semester: Object.values(result)[j].semester,
+                    rollno: student.rollno,
+                });
                 if (sem) {
                     await Semester.findByIdAndUpdate(sem._id, {
                         $set: {
@@ -237,7 +259,7 @@ let loadStudents = async (s) => {
                                 ? 0
                                 : Object.values(result)[j].sgpa,
                         studentId: student._id,
-                        semester: s,
+                        semester: Object.values(result)[j].semester,
                         rollno: Object.values(result)[j].eno,
                         batch: Object.values(result)[j].batch,
                         ...Object.values(result)[j].subjects,
@@ -258,7 +280,7 @@ let loadStudents = async (s) => {
                     total: Object.values(result)[j].total,
                     sgpa: Object.values(result)[j].sgpa,
                     studentId: ns._id,
-                    semester: s,
+                    semester: Object.values(result)[j].semester,
                     batch: Object.values(result)[j].batch,
                     rollno: Object.values(result)[j].eno,
                     ...Object.values(result)[j].subjects,
@@ -433,11 +455,11 @@ const createCollege = async () => {
             let college = await College.find({ id: resultMap[i].id });
             if (!college) {
                 await College.create({
-                    ...resultMap[i]
-                })
-                console.log("Created", resultMap[i].name);
+                    ...resultMap[i],
+                });
+                console.log('Created', resultMap[i].name);
             } else {
-                console.log("Already");
+                console.log('Already');
             }
         }
     });
@@ -448,7 +470,7 @@ function onListening() {
     debug('Listening on ' + bind);
     // updateSemester();
     // updateBatch();
-    // loadStudents(2);
+    // loadStudents();
     // rt()
     // createCollege();
 }

@@ -25,7 +25,9 @@ router.get('/request/upload', studentAuth.verifyStudentMiddleware, student.reqFo
 router.post('/notification/add', studentAuth.verifyStudentMiddleware, student.createNotification);
 router.post('/notification/delete', studentAuth.verifyStudentMiddleware, student.deleteNotification);
 
-router.post('/utils/get-cover',student.createCover)
+router.post('/utils/get-cover', student.createCover);
+router.get('/jobs', student.getJobPost);
+router.post('/jobs/add', studentAuth.verifyStudentMiddleware, student.addJobPost);
 // router.post('/utils/cover', utils.uploadUserFile, student.createCover);
 
 

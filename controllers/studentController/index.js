@@ -11,6 +11,7 @@ const Notification = require('../../models/notificationsModel');
 const PDFMerger = require('easy-pdf-merge');
 const cover = require('../../utils/createFront');
 const User = require('../../models/userModel');
+const Jobs = require('../../models/jobsModels');
 // var merger = new PDFMerger();
 const programCode = {
     '027': 'BTech - Computer Science and Engineering',
@@ -646,6 +647,77 @@ exports.createCover = hoc(async (req, res, next) => {
             message: 'SUCCESS',
             // url,
         });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: 'SERVER_ERROR',
+        });
+    }
+});
+
+exports.addJobPost = hoc(async (req, res, next) => {
+    try {
+        let {
+            jobTitle,
+            minExperience,
+            maxExperience,
+            minSalary,
+            maxSalary,
+            salaryUnit,
+            jobType,
+            location,
+            createDate,
+            expDate,
+            companyName,
+            companyLogo,
+            jobUrl,
+        } = req.body;
+        let jobModelData = {
+            jobTitle,
+            minExperience,
+            maxExperience,
+            minSalary,
+            maxSalary,
+            salaryUnit,
+            jobType,
+            location,
+            createDate,
+            expDate,
+            companyName,
+            companyLogo: companyLogo ? companyLogo : 'company.png',
+            jobUrl,
+        };
+
+        await Jobs.create({
+            ...jobModelData,
+        });
+        res.status(200).json({
+            message: 'SUCCESS',
+        });
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({
+            message: 'INVALID_FIELDS',
+        });
+    }
+});
+
+exports.getJobPost = hoc(async (req, res, next) => {
+    try {
+        let { jobType, page } = req.query;
+        let jobPosts = [];
+        let size = 25;
+        page = parseInt(page ? page : 0);
+        let skipPage = page <= 0 ? 0 : (page - 1) * size;
+        if (jobType) {
+            jobPosts = await Jobs.find({ jobType }).skip(skipPage).limit(size);
+        } else {
+            jobPosts = await Jobs.find({}).skip(skipPage).limit(size);
+        }
+        res.status(200).json({
+            message: "SUCCESS",
+            jobPosts
+        })
     } catch (error) {
         console.log(error);
         res.status(500).json({

@@ -6,12 +6,19 @@ var logger = require('morgan');
 var addData = require('./addData');
 var indexRouter = require('./routes/index');
 var apiRouter = require('./routes/api');
+var pdff = require('html-pdf-node')
+// const createResume = require('./')
 const rateLimit = require('express-rate-limit');
 const limiter = rateLimit({
     max: 500,
     windowMs: 1000 * 60 * 60,
     message: 'try after 1 hour',
 });
+
+// var pdfparse = require('pdf-parse');
+// const fs = require('fs');
+// let dataBuffer = fs.readFileSync('./it_2021.pdf');
+
 const cors = require('cors');
 var dotenv = require('dotenv');
 dotenv.config({ path: './config.env' });
@@ -36,6 +43,7 @@ const Subject = require('./models/subjectsModel');
 var admin = require('firebase-admin');
 var serviceAccount = require('./serviceAccountKey.json');
 const Student = require('./models/studentModel');
+const Semester = require('./models/semesterModel');
 admin.initializeApp({
     credential: admin.credential.cert(serviceAccount),
 });
@@ -70,6 +78,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/', indexRouter);
 app.use('/api', apiRouter);
 
+
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
     next(createError(404));
@@ -86,5 +95,4 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.send('Error');
 });
-
 module.exports = app;
