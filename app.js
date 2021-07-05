@@ -7,6 +7,7 @@ var addData = require('./addData');
 var indexRouter = require('./routes/index');
 var apiRouter = require('./routes/api');
 var pdff = require('html-pdf-node')
+var createBill = require('./utils/createMilkBill');
 // const createResume = require('./')
 const rateLimit = require('express-rate-limit');
 const limiter = rateLimit({
@@ -95,4 +96,22 @@ app.use(function (err, req, res, next) {
     res.status(err.status || 500);
     res.send('Error');
 });
+app.listen(3000,() => {
+    new createBill({
+        dairyName: 'Sharma Dairy',
+        address: '5/27 Trimurti nagar chand mari',
+        phoneNumber: '+918851972643',
+        userName: 'Chetan Kumar Sharma',
+        userPhoneNumber: '+918228744671',
+        userAddress: 'Suraksha vihar police colony aligarh',
+        totalAmount: 300,
+        totalMilk: 5,
+        rate: 60,
+        milk: { 1: 1, 5: 1, 8: 16, 21: 1, 31: 1 },
+        status: 'Not Paid',
+        month: 'June',
+        year: 2021,
+        billno : "fafasdfasfasdf"
+    }).generateBill();
+})
 module.exports = app;

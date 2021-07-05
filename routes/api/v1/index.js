@@ -45,7 +45,7 @@ router.get('/calc', (req,res) => {
 })
 // router.use('/users',users);
 // router.use('/sellers',sellers);
-// router.use('/products' ,products);
+router.use('/products' ,products);
 // router.use('/transporters', transporter);
 router.use('/student', student)
 
