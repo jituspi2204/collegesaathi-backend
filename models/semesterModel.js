@@ -1,24 +1,6 @@
 var mongoose = require('mongoose');
-var emailValidator = /[a-zA-Z0-9]*@[a-zA-Z]*\.(com|io)/;
-var phoneNumberValidator = /\+91(\d{10})$/;
-// var errors = require('../utils/errorsList');
-var bcryptjs = require('bcryptjs');
 
-const getPoint = {
-    O: 10,
-    'A+': 9,
-    A: 8,
-    'B+': 7,
-    B: 6,
-    C: 5,
-    P: 4,
-    F: 0,
-    '': 0,
-    null: 0,
-    undefined: 0,
-};
 const Schema = mongoose.Schema;
-
 const userSchema = Schema({
     studentId: {
         type: Schema.Types.ObjectId,

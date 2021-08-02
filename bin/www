@@ -6,61 +6,24 @@
 // var pdfparse = require('pdf-parse');
 // const fs = require('fs');
 // let dataBuffer = fs.readFileSync('./ece_2021.pdf');
-var { arr } = require('../io');
 var app = require('../app');
 var debug = require('debug')('quasars-backend:server');
 var http = require('http');
 const Student = require('../models/studentModel');
+const Subject = require('../models/subjectsModel');
+const Semester = require('../models/semesterModel');
+const College = require('../models/collegeModel');
+const { getPoint } = require('../utils/constants');
 /**
  * Get port from environment and store in Express.
  */
 
 var port = normalizePort(process.env.PORT || '3000');
 app.set('port', port);
-
-const getPoint = {
-    O: 10,
-    'A+': 9,
-    A: 8,
-    'B+': 7,
-    B: 6,
-    C: 5,
-    P: 4,
-    F: 0,
-    '': 0,
-    null: 0,
-    undefined: 0,
-};
 /**
  * Create HTTP server.
  */
 
-var server = http.createServer(app);
-var socketio = require('socket.io');
-const Subject = require('../models/subjectsModel');
-const Semester = require('../models/semesterModel');
-const College = require('../models/collegeModel');
-var io = socketio(server);
-
-io.on('connection', (socket) => {
-    console.log('New User connected', socket.id);
-    socket.emit('join-room', 'delivery');
-    socket.on('join', (room) => {
-        console.log('Room Joined', room);
-        socket.join(room);
-    });
-    socket.emit('getLocation', 'Provide your location');
-    socket.on('location', (coords) => {
-        try {
-            arr.push(coords);
-            console.log(coords);
-        } catch (error) {
-            console.log(error);
-        }
-    });
-});
-
-app.set('socketio', io);
 /**
  * Listen on provided port, on all network interfaces.
  */
@@ -119,6 +82,9 @@ function onError(error) {
  * Event listener for HTTP server "listening" event.
  */
 
+
+// Parser for pdf to upload result
+//load user first time
 let loadStudents = async () => {
     var vd = /^\d{11}/;
     pdfparse(dataBuffer).then(async (data) => {
@@ -292,7 +258,7 @@ let loadStudents = async () => {
         // console.log('user', result['02515002719']);
     });
 };
-
+//update batch
 const updateBatch = async () => {
     var vd = /^\d{11}/;
     pdfparse(dataBuffer).then(async (data) => {
@@ -350,6 +316,8 @@ const updateBatch = async () => {
     });
 };
 
+
+//update result per semester
 const updateSemester = async () => {
     let tempSet = new Set();
     let semesters = await Semester.find();
@@ -421,16 +389,7 @@ const updateSemester = async () => {
     }
 };
 
-const rt = async () => {
-    await Student.updateMany(
-        {},
-        {
-            course: 'BTech - Computer Science and Engineering',
-        }
-    );
-    console.log('done');
-};
-
+//create college
 const createCollege = async () => {
     pdfparse(dataBuffer).then(async (data) => {
         let dd = data.text.split('\n');
@@ -465,25 +424,8 @@ const createCollege = async () => {
     });
 };
 
-const updateName = async () => {
-    let students = await Student.find({});
-    for (let i = 0; i < students.length; i++) {
-        await Semester.updateMany(
-            { rollno: students[i].rollno },
-            { $set: { name: students[i].name } }
-        );
-        console.log(i, '->', students[i].rollno, students[i].name);
-    }
-};
-
 function onListening() {
     var addr = server.address();
     var bind = typeof addr === 'string' ? 'pipe ' + addr : 'port ' + addr.port;
     debug('Listening on ' + bind);
-    // updateSemester();
-    // updateBatch();
-    // loadStudents();
-    // rt()
-    // createCollege();
-    updateName();
 }
