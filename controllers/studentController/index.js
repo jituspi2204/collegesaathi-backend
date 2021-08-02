@@ -1,5 +1,4 @@
 const hoc = require('../utils/hoc');
-
 const Student = require('../../models/studentModel');
 const Semester = require('../../models/semesterModel');
 const College = require('../../models/collegeModel');
@@ -8,9 +7,7 @@ const firebaseAdmin = require('../utils/admin');
 const jwtUtils = require('../utils/jwtUtils');
 const File = require('../../models/fileModel');
 const Notification = require('../../models/notificationsModel');
-const PDFMerger = require('easy-pdf-merge');
 const cover = require('../../utils/createFront');
-const User = require('../../models/userModel');
 const Jobs = require('../../models/jobsModels');
 // var merger = new PDFMerger();
 const programCode = {
@@ -75,7 +72,6 @@ const updateMarks = async (rollno) => {
                 },
             }
         );
-        // console.log(i, temp[i].total, temp[i].obtained, 'Updated');
     }
 };
 
@@ -575,151 +571,6 @@ exports.deleteNotification = hoc(async (req, res, next) => {
             user,
         });
     } catch (error) {
-        res.status(500).json({
-            message: 'SERVER_ERROR',
-        });
-    }
-});
-
-exports.createCover = hoc(async (req, res, next) => {
-    try {
-        const {
-            type,
-            semester,
-            subject,
-            subjectName,
-            syllabus1,
-            syllabus2,
-            syllabus3,
-            syllabus4,
-            syllabus,
-            unit,
-            cat,
-            year,
-            filename,
-            description,
-        } = req.body;
-        let pdf = new cover({
-            type,
-            semester,
-            subject,
-            subjectName,
-            unit,
-            description,
-            year,
-            cat,
-            syllabus1,
-            syllabus2,
-            syllabus3,
-            syllabus4,
-            syllabus,
-        });
-
-        let url = 'https://quiet-scrubland-22380.herokuapp.com/';
-        if (type == 'notes') {
-            url += pdf.generateNotes();
-        } else if (type == 'papers') {
-            url += pdf.generatePaper();
-        } else if (type === 'labfiles') {
-            url += pdf.generateFile();
-        }
-
-        // merger.add('public/bills/' + semester + "/" + filename);
-        // merger.add('public/bills/' + req.file.filename);
-        // merger.save(req.file.path)
-        // PDFMerger(
-        //     ['public/bills/' + semester + '/' + filename, req.file.path],
-        //     'public/bills/' + filename,
-        //     function (err) {
-        //         if (err) {
-        //             console.log(err);
-        //             res.status(500).json({
-        //                 message: 'SERVER_ERROR',
-        //             });
-        //         }
-        //         res.status(200).json({
-        //             message: 'SUCCESS',
-        //         });
-        //     }
-        // );
-
-        res.status(200).json({
-            message: 'SUCCESS',
-            // url,
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            message: 'SERVER_ERROR',
-        });
-    }
-});
-
-exports.addJobPost = hoc(async (req, res, next) => {
-    try {
-        let {
-            jobTitle,
-            minExperience,
-            maxExperience,
-            minSalary,
-            maxSalary,
-            salaryUnit,
-            jobType,
-            location,
-            createDate,
-            expDate,
-            companyName,
-            companyLogo,
-            jobUrl,
-        } = req.body;
-        let jobModelData = {
-            jobTitle,
-            minExperience,
-            maxExperience,
-            minSalary,
-            maxSalary,
-            salaryUnit,
-            jobType,
-            location,
-            createDate,
-            expDate,
-            companyName,
-            companyLogo: companyLogo ? companyLogo : 'company.png',
-            jobUrl,
-        };
-
-        await Jobs.create({
-            ...jobModelData,
-        });
-        res.status(200).json({
-            message: 'SUCCESS',
-        });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({
-            message: 'INVALID_FIELDS',
-        });
-    }
-});
-
-exports.getJobPost = hoc(async (req, res, next) => {
-    try {
-        let { jobType, page } = req.query;
-        let jobPosts = [];
-        let size = 25;
-        page = parseInt(page ? page : 0);
-        let skipPage = page <= 0 ? 0 : (page - 1) * size;
-        if (jobType) {
-            jobPosts = await Jobs.find({ jobType }).skip(skipPage).limit(size);
-        } else {
-            jobPosts = await Jobs.find({}).skip(skipPage).limit(size);
-        }
-        res.status(200).json({
-            message: "SUCCESS",
-            jobPosts
-        })
-    } catch (error) {
-        console.log(error);
         res.status(500).json({
             message: 'SERVER_ERROR',
         });

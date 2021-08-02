@@ -13,7 +13,7 @@ router.get('/semester', student.getMarksBySemester);
 router.get('/semesters', student.getMarks);
 router.get('/college-rank', student.collegeRank);
 router.get('/university-rank', student.universityRank);
-router.get('/utils', student.utils)
+router.get('/utils', student.utils);
 router.get('/files', studentAuth.verifyStudentMiddleware, student.getFiles);
 router.post('/files/download', studentAuth.verifyStudentMiddleware, student.downloadFile);
 router.get('/files/like', studentAuth.verifyStudentMiddleware, student.likeFile);
@@ -23,16 +23,10 @@ router.get('/update/current-semester', studentAuth.verifyStudentMiddleware, stud
 router.post('/update/subjects', studentAuth.verifyStudentMiddleware, student.updateCurSubjects);
 router.get('/request/upload', studentAuth.verifyStudentMiddleware, student.reqForUpload);
 router.post('/notification/add', studentAuth.verifyStudentMiddleware, student.createNotification);
-router.post('/notification/delete', studentAuth.verifyStudentMiddleware, student.deleteNotification);
-
-router.post('/utils/get-cover', student.createCover);
-router.get('/jobs', student.getJobPost);
-router.post('/jobs/add', studentAuth.verifyStudentMiddleware, student.addJobPost);
-// router.post('/utils/cover', utils.uploadUserFile, student.createCover);
-
-
+router.post(
+    '/notification/delete',
+    studentAuth.verifyStudentMiddleware,
+    student.deleteNotification
+);
 
 module.exports = router;
-
-
-
